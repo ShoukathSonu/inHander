@@ -1,6 +1,6 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
-import LiveIstBadge from './LiveIstBadge.astro';
+import WeatherBadge from './WeatherBadge.astro';
 import { BadgeIndianRupee } from 'lucide-react';
 
 interface Props {
@@ -63,10 +63,10 @@ const { activeTab = 'calculator' } = Astro.props;
       </a>
     </nav>
 
-    <!-- Right: Live IST Badge & Theme Toggle -->
+    <!-- Right: Weather Badge & Theme Toggle -->
     <div class="flex items-center gap-2 sm:gap-2.5">
-      <!-- Live Indian Standard Time & Weather Pill (placed on the right beside dark mode toggle) -->
-      <LiveIstBadge />
+      <!-- Zero-Permission Edge-Powered Weather Badge -->
+      <WeatherBadge />
 
       <!-- Dark/Light Mode Theme Toggle -->
       <ThemeToggle />

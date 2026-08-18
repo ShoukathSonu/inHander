@@ -1,0 +1,110 @@
+---
+// Zero-lag, Zero-permission Edge Weather Badge
+---
+
+<div 
+  id="weather-badge"
+  class="hidden items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full bg-[#f5f5f5] dark:bg-[#1a1a1a] border border-[#ebebeb] dark:border-[#262626] text-[11px] sm:text-[12px] font-mono font-medium text-[#171717] dark:text-[#ededed] select-none whitespace-nowrap transition-opacity duration-200"
+  title="Live Local Weather"
+>
+  <span id="weather-text" class="tracking-tight leading-none">📍 -- • --°C</span>
+</div>
+
+<script is:inline>
+  // 0ms instant paint from sessionStorage cache
+  (function() {
+    try {
+      var cached = sessionStorage.getItem('inhander_weather');
+      if (cached) {
+        var data = JSON.parse(cached);
+        if (data && data.city && typeof data.temp === 'number' && (Date.now() - (data.timestamp || 0) < 3600000)) {
+          var el = document.getElementById('weather-badge');
+          var textEl = document.getElementById('weather-text');
+          if (el && textEl) {
+            textEl.textContent = '📍 ' + data.city + ' • ' + data.temp + '°C';
+            el.classList.remove('hidden');
+            el.classList.add('inline-flex');
+          }
+        }
+      }
+    } catch(e) {}
+  })();
+</script>
+
+<script>
+  function initWeatherBadge() {
+    const badge = document.getElementById('weather-badge');
+    const textEl = document.getElementById('weather-text');
+    if (!badge || !textEl) return;
+
+    const CACHE_KEY = 'inhander_weather';
+    const CACHE_TTL_MS = 3600000; // 1 hour
+
+    function renderBadge(city: string, temp: number) {
+      if (!textEl || !badge) return;
+      textEl.textContent = `📍 ${city} • ${temp}°C`;
+      badge.classList.remove('hidden');
+      badge.classList.add('inline-flex');
+    }
+
+    function hideBadge() {
+      if (!badge) return;
+      badge.classList.add('hidden');
+      badge.classList.remove('inline-flex');
+    }
+
+    // 1. Check sessionStorage cache
+    try {
+      const cachedStr = sessionStorage.getItem(CACHE_KEY);
+      if (cachedStr) {
+        const cached = JSON.parse(cachedStr);
+        if (
+          cached &&
+          typeof cached.city === 'string' &&
+          typeof cached.temp === 'number' &&
+          Date.now() - (cached.timestamp || 0) < CACHE_TTL_MS
+        ) {
+          renderBadge(cached.city, cached.temp);
+          return;
+        }
+      }
+    } catch {
+      // Storage unavailable or disabled
+    }
+
+    // 2. Fetch from Edge API Route (/api/weather)
+    fetch('/api/weather')
+      .then(async (response) => {
+        if (!response.ok) {
+          hideBadge();
+          return;
+        }
+        const data = await response.json();
+        if (data && typeof data.city === 'string' && typeof data.temp === 'number') {
+          renderBadge(data.city, data.temp);
+          try {
+            sessionStorage.setItem(
+              CACHE_KEY,
+              JSON.stringify({
+                city: data.city,
+                temp: data.temp,
+                timestamp: Date.now()
+              })
+            );
+          } catch {
+            // Storage quota or private browsing
+          }
+        } else {
+          hideBadge();
+        }
+      })
+      .catch(() => {
+        // Keep widget completely hidden on network or parsing error
+        hideBadge();
+      });
+  }
+
+  // Initial mount & Astro client navigation hook
+  initWeatherBadge();
+  document.addEventListener('astro:after-swap', initWeatherBadge);
+</script>
