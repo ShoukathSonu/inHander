@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { formatINR } from '../lib/formatters';
 import type { FullSalaryAnalysis } from '../lib/taxEngine';
-import { Printer, Copy, Check, X, ShieldCheck } from 'lucide-react';
+import { Printer, Copy, Check, X, ShieldCheck, Share2 } from 'lucide-react';
 
 interface SalarySlipModalProps {
   analysis: FullSalaryAnalysis;
@@ -17,6 +17,7 @@ export const SalarySlipModal: React.FC<SalarySlipModalProps> = ({
   onClose
 }) => {
   const [copied, setCopied] = useState(false);
+  const [shared, setShared] = useState(false);
   const [employeeName, setEmployeeName] = useState('Senior Software Engineer');
   const [companyName, setCompanyName] = useState('Tech Enterprises India Pvt. Ltd.');
 
@@ -68,6 +69,26 @@ Generated via In Hand Salary (inHander.com)
     setTimeout(() => setCopied(false), 2500);
   };
 
+  const handleShareModal = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'In Hand Salary Slip',
+          text: `My In Hand Take-Home Salary: ${formatINR(netMonthlyPay)}/month (${selectedRegime} Regime)`,
+          url: window.location.href,
+        });
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        setShared(true);
+        setTimeout(() => setShared(false), 2500);
+      }
+    } catch {
+      await navigator.clipboard.writeText(window.location.href);
+      setShared(true);
+      setTimeout(() => setShared(false), 2500);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6">
       <div className="bg-white dark:bg-[#121212] rounded-2xl max-w-3xl w-full shadow-modal overflow-hidden border border-[#ebebeb] dark:border-[#262626] animate-in fade-in zoom-in-95 duration-200">
@@ -79,22 +100,30 @@ Generated via In Hand Salary (inHander.com)
           </div>
           <div className="flex items-center gap-2">
             <button
+              onClick={handleShareModal}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#222222] text-[12px] font-medium text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#f5f5f5] dark:hover:bg-[#2a2a2a] transition-colors"
+              title="Share or copy calculation link"
+            >
+              {shared ? <Check className="w-3.5 h-3.5 text-[#10b981]" /> : <Share2 className="w-3.5 h-3.5" />}
+              <span>{shared ? 'Link Copied' : 'Share'}</span>
+            </button>
+            <button
               onClick={handleCopyText}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#222222] text-[12px] font-medium text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#f5f5f5] dark:hover:bg-[#2a2a2a] transition-colors"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-[#10b981]" /> : <Copy className="w-3.5 h-3.5" />}
-              {copied ? 'Copied' : 'Copy Text'}
+              <span>{copied ? 'Copied' : 'Copy Text'}</span>
             </button>
             <button
               onClick={handlePrint}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#171717] dark:bg-white text-white dark:text-[#171717] text-[12px] font-medium hover:bg-[#333333] dark:hover:bg-[#e0e0e0] transition-colors shadow-sm"
             >
               <Printer className="w-3.5 h-3.5" />
-              Print / Save PDF
+              <span>Print / Save PDF</span>
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-[#888888] dark:text-[#737373] hover:text-[#171717] dark:hover:text-white hover:bg-[#f5f5f5] dark:hover:bg-[#222222] transition-colors ml-2"
+              className="p-1.5 rounded-lg text-[#888888] dark:text-[#737373] hover:text-[#171717] dark:hover:text-white hover:bg-[#f5f5f5] dark:hover:bg-[#222222] transition-colors ml-1"
             >
               <X className="w-5 h-5" />
             </button>

@@ -260,8 +260,8 @@ Calculated on inHander: ${shareUrl}`;
       <div className="bg-white dark:bg-[#121212] rounded-2xl border border-[#ebebeb] dark:border-[#262626] shadow-stacked overflow-hidden transition-colors">
         {/* Card Header & Quick CTC Presets */}
         <div className="p-6 sm:p-8 border-b border-[#ebebeb] dark:border-[#262626] bg-[#fafafa]/50 dark:bg-[#181818]/50">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div className="space-y-1.5">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 lg:gap-14">
+            <div className="space-y-1.5 shrink-0">
               <div className="flex items-center gap-2">
                 <span className="text-[12px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] font-semibold">
                   Annual Cost to Company (CTC)
@@ -271,7 +271,7 @@ Calculated on inHander: ${shareUrl}`;
                 </span>
               </div>
               
-              {/* Typeable & Editable CTC Display with /year + State Selector */}
+              {/* Typeable & Editable CTC Display with /year */}
               <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
                 <div className="inline-flex items-center gap-1.5 bg-white dark:bg-[#181818] px-3.5 py-1.5 rounded-2xl border border-[#ebebeb] dark:border-[#262626] shadow-xs focus-within:border-[#0070f3] dark:focus-within:border-[#38bdf8] focus-within:ring-2 focus-within:ring-[#0070f3]/20 transition-all group">
                   <span className="text-2xl sm:text-3xl lg:text-4xl font-bold font-mono text-[#888888] dark:text-[#737373] select-none">
@@ -304,41 +304,45 @@ Calculated on inHander: ${shareUrl}`;
               </div>
             </div>
 
-            {/* Quick Actions - All 5 aligned in a single row */}
-            <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+            {/* Quick Actions - 4 Buttons in 2x2 Grid (two in each row) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 w-full lg:w-auto shrink-0">
+              {/* Row 1: Upload Payslip */}
               <button
                 type="button"
                 onClick={() => setIsImportModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 h-9.5 sm:h-10 rounded-full bg-white dark:bg-[#181818] border border-[#0070f3]/50 hover:border-[#0070f3] text-[#0070f3] dark:text-[#38bdf8] text-[12.5px] sm:text-[13px] font-semibold hover:bg-[#0070f3]/5 dark:hover:bg-[#0070f3]/10 transition-all hover:scale-102 shadow-xs cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-4 h-9.5 sm:h-10 rounded-full bg-white dark:bg-[#181818] border border-[#0070f3]/50 hover:border-[#0070f3] text-[#0070f3] dark:text-[#38bdf8] text-[13px] font-semibold hover:bg-[#0070f3]/5 dark:hover:bg-[#0070f3]/10 transition-all hover:scale-102 shadow-xs cursor-pointer min-w-[165px]"
                 title="Upload & Scan Payslip, Offer Letter, or Screenshot (PDF / PNG / JPG)"
               >
-                <Upload className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0070f3] dark:text-[#38bdf8]" />
+                <Upload className="w-4 h-4 text-[#0070f3] dark:text-[#38bdf8]" />
                 <span>Upload Payslip</span>
               </button>
 
+              {/* Row 1: Maximize In-Hand */}
               <button
                 onClick={handleOptimizeTax}
-                className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 h-9.5 sm:h-10 rounded-full bg-[#171717] dark:bg-white text-white dark:text-[#171717] text-[12.5px] sm:text-[13px] font-medium hover:bg-[#333333] dark:hover:bg-[#e0e0e0] transition-all hover:scale-102 shadow-sm cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-4 h-9.5 sm:h-10 rounded-full bg-[#171717] dark:bg-white text-white dark:text-[#171717] text-[13px] font-medium hover:bg-[#333333] dark:hover:bg-[#e0e0e0] transition-all hover:scale-102 shadow-sm cursor-pointer min-w-[165px]"
               >
-                <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#f9cb28] dark:text-[#d97706]" />
+                <Zap className="w-4 h-4 text-[#f9cb28] dark:text-[#d97706]" />
                 <span>{isOptimized ? 'Deductions Maxed' : 'Maximize In-Hand'}</span>
               </button>
 
+              {/* Row 2: Salary Slip PDF with Share Icon */}
               <button
                 onClick={() => setIsSlipOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 h-9.5 sm:h-10 rounded-full border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[#171717] dark:text-white text-[12.5px] sm:text-[13px] font-medium hover:bg-[#f5f5f5] dark:hover:bg-[#222222] transition-colors shadow-stacked-sm cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-4 h-9.5 sm:h-10 rounded-full border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[#171717] dark:text-white text-[13px] font-medium hover:bg-[#f5f5f5] dark:hover:bg-[#222222] transition-colors shadow-stacked-sm cursor-pointer min-w-[165px]"
+                title="View, Print and Share Salary Slip PDF"
               >
-                <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#4d4d4d] dark:text-[#a1a1a1]" />
+                <Share2 className="w-4 h-4 text-[#4d4d4d] dark:text-[#a1a1a1]" />
                 <span>Salary Slip PDF</span>
               </button>
 
-              {/* State / Location Selector Button (Compact) */}
-              <div className="inline-flex items-center gap-1 px-2.5 sm:px-3 h-9.5 sm:h-10 rounded-full border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[#171717] dark:text-white shadow-stacked-sm hover:border-[#0070f3] dark:hover:border-[#38bdf8] transition-colors group">
-                <MapPin className="w-3.5 h-3.5 text-[#0070f3] dark:text-[#38bdf8] shrink-0" />
+              {/* Row 2: State / Location Selector Button */}
+              <div className="inline-flex items-center justify-center gap-1.5 px-3.5 h-9.5 sm:h-10 rounded-full border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[#171717] dark:text-white shadow-stacked-sm hover:border-[#0070f3] dark:hover:border-[#38bdf8] transition-colors group min-w-[165px]">
+                <MapPin className="w-4 h-4 text-[#0070f3] dark:text-[#38bdf8] shrink-0" />
                 <select
                   value={inputs.stateCode}
                   onChange={(e) => setInputs(prev => ({ ...prev, stateCode: e.target.value }))}
-                  className="bg-transparent text-[12px] sm:text-[12.5px] font-medium text-[#171717] dark:text-white border-0 focus:outline-hidden cursor-pointer"
+                  className="bg-transparent text-[13px] font-medium text-[#171717] dark:text-white border-0 focus:outline-hidden cursor-pointer"
                   title="Select work location for dynamic state-wise professional tax calculation"
                   aria-label="Work State for Professional Tax"
                 >
@@ -349,16 +353,6 @@ Calculated on inHander: ${shareUrl}`;
                   ))}
                 </select>
               </div>
-
-              {/* Share Button (Icon Only) */}
-              <button
-                onClick={handleShareLink}
-                className="inline-flex items-center justify-center w-9.5 sm:w-10 h-9.5 sm:h-10 rounded-full border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#f5f5f5] dark:hover:bg-[#222222] transition-all shadow-stacked-sm cursor-pointer shrink-0"
-                title="Share or bookmark this calculation"
-                aria-label="Share"
-              >
-                {copiedLink ? <Check className="w-4 h-4 text-[#10b981]" /> : <Share2 className="w-4 h-4" />}
-              </button>
             </div>
           </div>
 
