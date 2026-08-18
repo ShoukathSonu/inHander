@@ -301,24 +301,6 @@ Calculated on inHander: ${shareUrl}`;
                 <span className="text-xl sm:text-2xl font-mono text-[#888888] dark:text-[#737373] select-none">
                   / year
                 </span>
-
-                {/* State / Professional Tax Selector Dropdown */}
-                <div className="inline-flex items-center gap-1.5 bg-white dark:bg-[#181818] px-3 py-1.5 rounded-full border border-[#ebebeb] dark:border-[#262626] shadow-xs hover:border-[#0070f3] dark:hover:border-[#38bdf8] transition-colors group">
-                  <MapPin className="w-4 h-4 text-[#0070f3] dark:text-[#38bdf8] shrink-0" />
-                  <select
-                    value={inputs.stateCode}
-                    onChange={(e) => setInputs(prev => ({ ...prev, stateCode: e.target.value }))}
-                    className="bg-transparent text-[13px] font-medium text-[#171717] dark:text-white border-0 focus:outline-hidden cursor-pointer"
-                    title="Select work location for dynamic state-wise professional tax calculation"
-                    aria-label="Work State for Professional Tax"
-                  >
-                    {PRIMARY_STATE_OPTIONS.map(st => (
-                      <option key={st.code} value={st.code} className="bg-white dark:bg-[#181818] text-[#171717] dark:text-white">
-                        {st.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
               </div>
             </div>
 
@@ -341,6 +323,26 @@ Calculated on inHander: ${shareUrl}`;
                 <Zap className="w-4 h-4 text-[#f9cb28] dark:text-[#d97706]" />
                 {isOptimized ? 'Deductions Maxed' : '1-Click Maximize In-Hand'}
               </button>
+
+              {/* State / Location Selector Button */}
+              <div className="inline-flex items-center gap-1.5 px-3.5 h-10 rounded-full border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[#171717] dark:text-white shadow-xs hover:border-[#0070f3] dark:hover:border-[#38bdf8] transition-colors group">
+                <MapPin className="w-4 h-4 text-[#0070f3] dark:text-[#38bdf8] shrink-0" />
+                <select
+                  value={inputs.stateCode}
+                  onChange={(e) => setInputs(prev => ({ ...prev, stateCode: e.target.value }))}
+                  className="bg-transparent text-[13px] font-medium text-[#171717] dark:text-white border-0 focus:outline-hidden cursor-pointer"
+                  title="Select work location for dynamic state-wise professional tax calculation"
+                  aria-label="Work State for Professional Tax"
+                >
+                  {PRIMARY_STATE_OPTIONS.map(st => (
+                    <option key={st.code} value={st.code} className="bg-white dark:bg-[#181818] text-[#171717] dark:text-white">
+                      {st.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Salary Slip PDF */}
               <button
                 onClick={() => setIsSlipOpen(true)}
                 className="inline-flex items-center gap-1.5 px-4 h-10 rounded-full border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[#171717] dark:text-white text-[13px] font-medium hover:bg-[#f5f5f5] dark:hover:bg-[#222222] transition-colors shadow-stacked-sm cursor-pointer"
@@ -348,6 +350,8 @@ Calculated on inHander: ${shareUrl}`;
                 <FileText className="w-4 h-4 text-[#4d4d4d] dark:text-[#a1a1a1]" />
                 Salary Slip PDF
               </button>
+
+              {/* Share Link */}
               <button
                 onClick={handleShareLink}
                 className="inline-flex items-center justify-center gap-1.5 px-3.5 h-10 rounded-full border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#f5f5f5] dark:hover:bg-[#222222] transition-all shadow-stacked-sm cursor-pointer text-[13px] font-medium"
