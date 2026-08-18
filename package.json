@@ -9,7 +9,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "preview:cf": "astro build && wrangler dev",
-    "deploy": "astro build && wrangler deploy",
+    "deploy": "astro build && wrangler pages deploy dist --project-name=inhander",
+    "deploy:worker": "astro build && wrangler deploy",
     "deploy:pages": "astro build && wrangler pages deploy dist --project-name=inhander",
     "astro": "astro"
   },
