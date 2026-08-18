@@ -1,0 +1,102 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Scale, ShieldAlert, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
+---
+
+<Layout
+  title="Terms and Conditions of Use | inHander.com"
+  description="Terms and conditions for using the inHander in-hand salary calculator, job offer comparator, and tax modeling tools."
+>
+  <div class="max-w-4xl mx-auto space-y-10 py-6 sm:py-10">
+    <!-- Header -->
+    <div class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm">
+        <Scale className="w-4 h-4 text-[#0070f3]" />
+        <span class="text-[12px] font-mono font-medium text-[#4d4d4d] dark:text-[#a1a1a1]">
+          Terms of Service &amp; Legal Disclaimers
+        </span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-bold text-[#171717] dark:text-white tracking-tight">
+        Terms and Conditions
+      </h1>
+      <p class="text-base sm:text-lg text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed max-w-2xl">
+        Please read these terms carefully before using inHander.com. By accessing or using our salary calculators, you agree to be bound by these terms.
+      </p>
+      <div class="flex items-center gap-3 pt-2 text-[12px] font-mono text-[#888888] dark:text-[#737373]">
+        <span>Effective Date: February 2026</span>
+        <span>•</span>
+        <span>Applies to inhander.com &amp; all subpages</span>
+      </div>
+    </div>
+
+    <!-- Important Disclaimer Alert Box -->
+    <div class="p-5 rounded-2xl bg-[#fef2f2] dark:bg-[#2a1215] border border-[#fecaca] dark:border-[#5c1d24] flex items-start gap-4">
+      <div class="p-2 rounded-xl bg-white dark:bg-[#3d1a1e] text-[#ef4444] shrink-0 mt-0.5">
+        <ShieldAlert className="w-5 h-5" />
+      </div>
+      <div class="space-y-1">
+        <h3 class="text-[15px] font-semibold text-[#991b1b] dark:text-[#f87171]">
+          Important Financial &amp; Tax Disclaimer
+        </h3>
+        <p class="text-[13px] text-[#7f1d1d] dark:text-[#fca5a5] leading-relaxed">
+          inHander provides automated tax estimates, payslip approximations, and dual-regime comparisons for informational and educational purposes only. It does not constitute formal tax, legal, or chartered accountancy (CA) advice. You should consult a qualified Chartered Accountant (CA) or tax professional for your specific filing needs and customized tax planning.
+        </p>
+      </div>
+    </div>
+
+    <!-- Terms Sections -->
+    <div class="space-y-8 pt-4 text-[14px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold text-[#171717] dark:text-white">1. Use of Services &amp; License</h2>
+        <p>
+          inHander grants you a revocable, non-exclusive, non-transferable, limited license to access and use our website and web calculators strictly in accordance with these Terms. You agree to use the site only for lawful personal or non-commercial internal benchmarking purposes.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold text-[#171717] dark:text-white">2. Calculation Accuracy &amp; Tax Law Slabs</h2>
+        <p>
+          While we make every effort to incorporate the latest Indian Income Tax Act regulations, Union Budget revisions (including FY 2025-26 &amp; 2026-27 tax slabs), Standard Deductions, and state-wise Professional Tax (PT) rules, variances may arise due to company-specific payroll rules, employer PF policies, discretionary allowances, or bespoke tax declarations.
+        </p>
+        <p>
+          inHander does not guarantee 100% parity with your specific employer's payroll software and disclaims any liability for variance between calculator estimations and actual payroll credits.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold text-[#171717] dark:text-white">3. Intellectual Property Rights</h2>
+        <p>
+          All content, software code, UI designs, brand marks, logos, and algorithmic engines on inHander.com are the proprietary intellectual property of inHander. You may not scrape, frame, clone, reverse engineer, or redistribute our calculator engines without prior written authorization.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold text-[#171717] dark:text-white">4. Privacy &amp; Data Security</h2>
+        <p>
+          Your privacy is paramount. As outlined in our <a href="/privacy" class="text-[#0070f3] hover:underline">Privacy Policy</a>, inHander processes your calculations and document OCR scans 100% locally in your browser memory without transmitting or storing salary figures in any remote database.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold text-[#171717] dark:text-white">5. Limitation of Liability</h2>
+        <p>
+          To the maximum extent permitted by applicable Indian law, inHander, its founders, and contributors shall not be liable for any direct, indirect, incidental, special, or consequential damages resulting from the use or inability to use this service, or any decisions made based on calculator estimations.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold text-[#171717] dark:text-white">6. Governing Law &amp; Jurisdiction</h2>
+        <p>
+          These Terms shall be governed and construed in accordance with the laws of the Republic of India. Any disputes arising in connection with these terms shall be subject to the exclusive jurisdiction of the courts located in Bengaluru, Karnataka, India.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold text-[#171717] dark:text-white">7. Modifications &amp; Questions</h2>
+        <p>
+          We reserve the right to revise these Terms of Service at any time. Your continued use of the site after revisions constitutes acceptance of the updated terms. If you have any inquiries, visit our <a href="/contact" class="text-[#0070f3] hover:underline">Contact page</a> or email us at <a href="mailto:support@inhander.com" class="text-[#0070f3] hover:underline font-mono">support@inhander.com</a>.
+        </p>
+      </section>
+    </div>
+  </div>
+</Layout>

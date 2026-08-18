@@ -1,0 +1,138 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { SalaryCalculator } from '../../components/SalaryCalculator';
+import QuickPackages from '../../components/QuickPackages.astro';
+import FaqSection from '../../components/FaqSection.astro';
+import { calculateSalary, DEFAULT_SALARY_INPUTS } from '../../lib/taxEngine';
+import { formatINR } from '../../lib/formatters';
+
+export function getStaticPaths() {
+  const packages = [
+    { lpa: '3-lpa', ctc: 300000, label: '3 LPA' },
+    { lpa: '4-lpa', ctc: 400000, label: '4 LPA' },
+    { lpa: '4-5-lpa', ctc: 450000, label: '4.5 LPA' },
+    { lpa: '5-lpa', ctc: 500000, label: '5 LPA' },
+    { lpa: '6-lpa', ctc: 600000, label: '6 LPA' },
+    { lpa: '7-lpa', ctc: 700000, label: '7 LPA' },
+    { lpa: '7-5-lpa', ctc: 750000, label: '7.5 LPA' },
+    { lpa: '8-lpa', ctc: 800000, label: '8 LPA' },
+    { lpa: '9-lpa', ctc: 900000, label: '9 LPA' },
+    { lpa: '10-lpa', ctc: 1000000, label: '10 LPA' },
+    { lpa: '12-lpa', ctc: 1200000, label: '12 LPA' },
+    { lpa: '15-lpa', ctc: 1500000, label: '15 LPA' },
+    { lpa: '18-lpa', ctc: 1800000, label: '18 LPA' },
+    { lpa: '20-lpa', ctc: 2000000, label: '20 LPA' },
+    { lpa: '25-lpa', ctc: 2500000, label: '25 LPA' },
+    { lpa: '30-lpa', ctc: 3000000, label: '30 LPA' },
+    { lpa: '40-lpa', ctc: 4000000, label: '40 LPA' },
+    { lpa: '50-lpa', ctc: 5000000, label: '50 LPA' },
+    { lpa: '1-cr', ctc: 10000000, label: '1 Crore' },
+  ];
+
+  return packages.map(pkg => ({
+    params: { lpa: pkg.lpa },
+    props: { pkg }
+  }));
+}
+
+const { pkg } = Astro.props;
+const analysis = calculateSalary({ ...DEFAULT_SALARY_INPUTS, annualCtc: pkg.ctc });
+const bestRegime = analysis.betterRegime === 'OLD' ? analysis.oldRegime : analysis.newRegime;
+---
+
+<Layout
+  title={`₹${pkg.label} In Hand Salary in India (FY 2025-26 & 26-27) | inHander.com`}
+  description={`Calculate exact ₹${pkg.label} in-hand salary per month. Monthly take-home is approximately ${formatINR(bestRegime.monthlyTakeHome)}/mo with ${formatINR(bestRegime.totalAnnualTax)} annual income tax under the ${analysis.betterRegime} Tax Regime.`}
+  activeTab="calculator"
+>
+  <div class="space-y-10">
+    <!-- Package Hero Header -->
+    <section class="text-center space-y-4 max-w-4xl mx-auto pt-4">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm">
+        <span class="text-[12px] font-mono font-medium text-[#4d4d4d] dark:text-[#a1a1a1]">
+          Pre-Computed Package Breakdown · FY 2025-26 & 26-27
+        </span>
+      </div>
+
+      <h1 class="text-3xl sm:text-5xl font-bold text-[#171717] dark:text-white tracking-tight">
+        ₹{pkg.label} In Hand Salary.
+      </h1>
+
+      <p class="text-base sm:text-lg text-[#4d4d4d] dark:text-[#a1a1a1] max-w-2xl mx-auto leading-relaxed">
+        For an annual CTC of <strong class="text-[#171717] dark:text-white">{formatINR(pkg.ctc)}</strong>, your estimated monthly in-hand take-home salary is <strong class="text-[#10b981] font-mono text-xl">{formatINR(bestRegime.monthlyTakeHome)}/month</strong>.
+      </p>
+
+      {/* Snapshot cards */}
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto pt-4 text-left">
+        <div class="p-4 rounded-xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm">
+          <span class="text-[11px] font-mono uppercase text-[#888888] dark:text-[#737373] block">Monthly In-Hand</span>
+          <span class="text-xl sm:text-2xl font-bold font-mono text-[#10b981]">{formatINR(bestRegime.monthlyTakeHome)}</span>
+        </div>
+        <div class="p-4 rounded-xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm">
+          <span class="text-[11px] font-mono uppercase text-[#888888] dark:text-[#737373] block">Annual Net Pay</span>
+          <span class="text-xl sm:text-2xl font-bold font-mono text-[#171717] dark:text-white">{formatINR(bestRegime.annualTakeHome)}</span>
+        </div>
+        <div class="p-4 rounded-xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm">
+          <span class="text-[11px] font-mono uppercase text-[#888888] dark:text-[#737373] block">Annual Income Tax</span>
+          <span class="text-xl sm:text-2xl font-bold font-mono text-[#ee0000]">{formatINR(bestRegime.totalAnnualTax)}</span>
+        </div>
+        <div class="p-4 rounded-xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm">
+          <span class="text-[11px] font-mono uppercase text-[#888888] dark:text-[#737373] block">Best Tax Regime</span>
+          <span class="text-xl sm:text-2xl font-bold font-mono text-[#0070f3]">{analysis.betterRegime}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Calculator (Pre-loaded with this CTC) -->
+    <section>
+      <SalaryCalculator client:load initialCtc={pkg.ctc} />
+    </section>
+
+    <!-- CTC Breakdown Narrative Section -->
+    <section class="max-w-5xl mx-auto p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-4">
+      <h2 class="text-xl font-bold text-[#171717] dark:text-white">Detailed CTC Structure for ₹{pkg.label}</h2>
+      <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+        Under standard corporate compensation structures in India (assuming 50% Basic Salary split and Metro location):
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[13px]">
+        <div class="space-y-1.5 p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626]">
+          <strong class="text-[#171717] dark:text-white block font-mono text-[12px] uppercase">Annual Earnings</strong>
+          <div class="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+            <span>Basic Salary (50%):</span>
+            <span class="font-mono text-[#171717] dark:text-white">{formatINR(analysis.basicAnnual)}</span>
+          </div>
+          <div class="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+            <span>House Rent Allowance (HRA):</span>
+            <span class="font-mono text-[#171717] dark:text-white">{formatINR(analysis.hraAnnual)}</span>
+          </div>
+          <div class="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+            <span>Special Allowance:</span>
+            <span class="font-mono text-[#171717] dark:text-white">{formatINR(analysis.specialAllowanceAnnual)}</span>
+          </div>
+        </div>
+
+        <div class="space-y-1.5 p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626]">
+          <strong class="text-[#171717] dark:text-white block font-mono text-[12px] uppercase">Annual Deductions & Statutory</strong>
+          <div class="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+            <span>Employee Provident Fund (12%):</span>
+            <span class="font-mono text-[#171717] dark:text-white">{formatINR(analysis.employeePfAnnual)}</span>
+          </div>
+          <div class="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+            <span>Professional Tax (Bengaluru/Mumbai):</span>
+            <span class="font-mono text-[#171717] dark:text-white">{formatINR(analysis.ptAnnual)}</span>
+          </div>
+          <div class="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+            <span>Income Tax TDS ({analysis.betterRegime} Regime):</span>
+            <span class="font-mono text-[#ee0000]">{formatINR(bestRegime.totalAnnualTax)}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Other Packages -->
+    <QuickPackages />
+
+    <!-- FAQ -->
+    <FaqSection />
+  </div>
+</Layout>

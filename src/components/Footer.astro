@@ -1,0 +1,83 @@
+---
+// Clean Developer-Grade 4-Column Footer with Dark Mode support
+import { BadgeIndianRupee } from 'lucide-react';
+---
+
+<footer class="w-full bg-white dark:bg-[#0a0a0a] border-t border-[#ebebeb] dark:border-[#262626] pt-16 pb-12 mt-20 transition-colors">
+  <div class="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-[#ebebeb] dark:border-[#262626]">
+      {/* Brand & Mission */}
+      <div class="lg:col-span-2 space-y-4">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-[#171717] dark:bg-white flex items-center justify-center text-white dark:text-[#171717] shadow-sm">
+            <BadgeIndianRupee className="w-4 h-4" />
+          </div>
+          <span class="text-[17px] font-semibold text-[#171717] dark:text-white tracking-tight">In Hand Salary</span>
+          <span class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-[#f5f5f5] dark:bg-[#181818] text-[#4d4d4d] dark:text-[#a1a1a1] border border-[#ebebeb] dark:border-[#262626]">inHander.com</span>
+        </div>
+        <p class="text-[14px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed max-w-sm">
+          The developer-grade in hand salary calculator for Indian professionals. Dual-regime comparison, HRA exemption modeling, state-wise professional tax, and executive payslips.
+        </p>
+        <div class="flex items-center gap-2 pt-1 text-[12px] font-mono text-[#888888] dark:text-[#737373]">
+          <span class="inline-block w-2 h-2 rounded-full bg-[#10b981]"></span>
+          <span>100% Client-Side Private · Zero Data Trackers · DPDP Compliant</span>
+        </div>
+      </div>
+
+      {/* Column 1: Core Calculators */}
+      <div>
+        <h4 class="text-[12px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] font-semibold mb-4">Calculators</h4>
+        <ul class="space-y-2.5 text-[14px]">
+          <li><a href="/" class="text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white transition-colors">CTC to In-Hand Calculator</a></li>
+          <li><a href="/compare-offers" class="text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white transition-colors">Offer Letter Comparator</a></li>
+          <li><a href="/hike-calculator" class="text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white transition-colors">Salary Hike & Raise Simulator</a></li>
+          <li><a href="/44ada-freelance" class="text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white transition-colors">44ADA Freelancer Tax</a></li>
+          <li><a href="/tax-slabs" class="text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white transition-colors">FY 2025-26 & 26-27 Slabs</a></li>
+        </ul>
+      </div>
+
+      {/* Column 2: Quick Packages */}
+      <div>
+        <h4 class="text-[12px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] font-semibold mb-4">Popular CTCs</h4>
+        <ul class="space-y-2.5 text-[14px]">
+          <li><a href="/salary/6-lpa" class="text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white transition-colors">₹6 LPA In-Hand Salary</a></li>
+          <li><a href="/salary/10-lpa" class="text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white transition-colors">₹10 LPA In-Hand Salary</a></li>
+          <li><a href="/salary/15-lpa" class="text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white transition-colors">₹15 LPA In-Hand Salary</a></li>
+          <li><a href="/salary/25-lpa" class="text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white transition-colors">₹25 LPA In-Hand Salary</a></li>
+          <li><a href="/salary/50-lpa" class="text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white transition-colors">₹50 LPA In-Hand Salary</a></li>
+        </ul>
+      </div>
+
+      {/* Column 3: Company & Legal */}
+      <div>
+        <h4 class="text-[12px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] font-semibold mb-4">Company &amp; Legal</h4>
+        <ul class="space-y-2.5 text-[14px]">
+          <li><a href="/about" class="text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white transition-colors">About Us</a></li>
+          <li><a href="/contact" class="text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white transition-colors">Contact &amp; Support</a></li>
+          <li><a href="/privacy" class="text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white transition-colors">Privacy Policy</a></li>
+          <li><a href="/terms" class="text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white transition-colors">Terms &amp; Conditions</a></li>
+          <li><a href="/tax-slabs" class="text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white transition-colors">Statutory Tax Slabs</a></li>
+        </ul>
+      </div>
+    </div>
+
+    {/* Bottom Copyright & Disclaimer */}
+    <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[12px] text-[#888888] dark:text-[#737373]">
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+        <p>© 2026 In Hand Salary (inHander.com). All rights reserved.</p>
+        <div class="flex items-center gap-3 text-[11px] font-medium">
+          <a href="/about" class="hover:text-[#171717] dark:hover:text-white transition-colors">About</a>
+          <span>·</span>
+          <a href="/privacy" class="hover:text-[#171717] dark:hover:text-white transition-colors">Privacy</a>
+          <span>·</span>
+          <a href="/terms" class="hover:text-[#171717] dark:hover:text-white transition-colors">Terms</a>
+          <span>·</span>
+          <a href="/contact" class="hover:text-[#171717] dark:hover:text-white transition-colors">Contact</a>
+        </div>
+      </div>
+      <p class="text-center md:text-right max-w-xl text-[11px] leading-relaxed">
+        Disclaimer: Computations are based on the latest Indian Income Tax Acts, Budget 2024 amendments, and standard payroll practices. While calculations are strictly tested, please consult a certified Chartered Accountant (CA) for formal tax filing.
+      </p>
+    </div>
+  </div>
+</footer>

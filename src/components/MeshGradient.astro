@@ -1,0 +1,16 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<div class={`absolute inset-0 overflow-hidden pointer-events-none -z-10 ${className}`} aria-hidden="true">
+  <!-- Atmospheric multi-color mesh gradient backdrop -->
+  <div class="absolute -top-[20%] left-1/2 -translate-x-1/2 w-[1200px] h-[550px] opacity-75 sm:opacity-90 blur-[80px]">
+    <div class="w-full h-full bg-gradient-to-tr from-[#007cf0]/20 via-[#7928ca]/20 to-[#ff0080]/15 rounded-full transform -rotate-12 scale-110"></div>
+  </div>
+  <div class="absolute top-[10%] right-[10%] w-[450px] h-[350px] bg-gradient-to-br from-[#50e3c2]/20 to-[#007cf0]/15 rounded-full blur-[70px]"></div>
+  <div class="absolute top-[5%] left-[5%] w-[400px] h-[300px] bg-gradient-to-br from-[#ff0080]/15 via-[#f9cb28]/15 to-transparent rounded-full blur-[70px]"></div>
+</div>

@@ -1,0 +1,155 @@
+---
+import Layout from '../layouts/Layout.astro';
+import FaqSection from '../components/FaqSection.astro';
+import { STATE_PT_RULES } from '../lib/statePtRules';
+---
+
+<Layout
+  title="Income Tax Slabs India (FY 2025-26 & 2026-27) | New vs Old Regime | inHander.com"
+  description="Official Income Tax Slabs for FY 2025-26 and FY 2026-27 (AY 2026-27 / AY 2027-28). New vs Old Regime comparison, standard deductions, and 87A rebate rules."
+  activeTab="slabs"
+>
+  <div class="max-w-5xl mx-auto space-y-12">
+    <!-- Header -->
+    <div class="text-center space-y-3 pt-4">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm">
+        <span class="w-2 h-2 rounded-full bg-[#0070f3]"></span>
+        <span class="text-[12px] font-mono font-medium text-[#4d4d4d] dark:text-[#a1a1a1]">
+          Budget 2024 & Budget 2025 Updates
+        </span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#171717] dark:text-white tracking-tight">
+        Income Tax Slabs (FY 2025-26 & 26-27).
+      </h1>
+      <p class="text-base text-[#4d4d4d] dark:text-[#a1a1a1] max-w-2xl mx-auto leading-relaxed">
+        Comprehensive tax rate schedules, standard deductions, 87A rebate provisions, and chapter VI-A deduction eligibility for Indian salaried employees.
+      </p>
+    </div>
+
+    <!-- Slabs Comparison Tables -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {/* New Tax Regime Table */}
+      <div class="p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#0070f3]/40 shadow-stacked-sm space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-[#ebebeb] dark:border-[#262626]">
+          <div>
+            <h2 class="text-lg font-bold text-[#171717] dark:text-white">New Tax Regime (Section 115BAC)</h2>
+            <span class="text-[11px] font-mono text-[#0070f3]">Default Regime · Standard Deduction ₹75,000</span>
+          </div>
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-[#0070f3]/10 text-[#0070f3]">
+            Revised
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-[13px] text-left">
+            <thead>
+              <tr class="border-b border-[#ebebeb] dark:border-[#262626] text-[#888888] dark:text-[#737373] font-mono text-[11px] uppercase">
+                <th class="py-2.5">Income Slab</th>
+                <th class="py-2.5 text-right">Tax Rate</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#ebebeb] dark:divide-[#262626] text-[#4d4d4d] dark:text-[#a1a1a1]">
+              <tr>
+                <td class="py-2.5">Up to ₹3,00,000</td>
+                <td class="py-2.5 text-right font-mono font-semibold text-[#10b981]">NIL (0%)</td>
+              </tr>
+              <tr>
+                <td class="py-2.5">₹3,00,001 – ₹7,00,000</td>
+                <td class="py-2.5 text-right font-mono font-medium text-[#171717] dark:text-white">5%</td>
+              </tr>
+              <tr>
+                <td class="py-2.5">₹7,00,001 – ₹10,00,000</td>
+                <td class="py-2.5 text-right font-mono font-medium text-[#171717] dark:text-white">10%</td>
+              </tr>
+              <tr>
+                <td class="py-2.5">₹10,00,001 – ₹12,00,000</td>
+                <td class="py-2.5 text-right font-mono font-medium text-[#171717] dark:text-white">15%</td>
+              </tr>
+              <tr>
+                <td class="py-2.5">₹12,00,001 – ₹15,00,000</td>
+                <td class="py-2.5 text-right font-mono font-medium text-[#171717] dark:text-white">20%</td>
+              </tr>
+              <tr>
+                <td class="py-2.5">Above ₹15,00,000</td>
+                <td class="py-2.5 text-right font-mono font-semibold text-[#ee0000]">30%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-3 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1] space-y-1">
+          <div>• <strong>Section 87A Rebate:</strong> Taxable income up to ₹7,00,000 pays ₹0 tax.</div>
+          <div>• <strong>Effective Zero Tax:</strong> Salaried up to <strong>₹7,75,000</strong> pay zero tax after ₹75k standard deduction.</div>
+          <div>• <strong>Marginal Relief:</strong> Guaranteed relief for income slightly exceeding ₹7 Lakhs.</div>
+        </div>
+      </div>
+
+      {/* Old Tax Regime Table */}
+      <div class="p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-[#ebebeb] dark:border-[#262626]">
+          <div>
+            <h2 class="text-lg font-bold text-[#171717] dark:text-white">Old Tax Regime</h2>
+            <span class="text-[11px] font-mono text-[#888888] dark:text-[#737373]">Optional Regime · Standard Deduction ₹50,000</span>
+          </div>
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+            Traditional
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-[13px] text-left">
+            <thead>
+              <tr class="border-b border-[#ebebeb] dark:border-[#262626] text-[#888888] dark:text-[#737373] font-mono text-[11px] uppercase">
+                <th class="py-2.5">Income Slab</th>
+                <th class="py-2.5 text-right">Tax Rate</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#ebebeb] dark:divide-[#262626] text-[#4d4d4d] dark:text-[#a1a1a1]">
+              <tr>
+                <td class="py-2.5">Up to ₹2,50,000</td>
+                <td class="py-2.5 text-right font-mono font-semibold text-[#10b981]">NIL (0%)</td>
+              </tr>
+              <tr>
+                <td class="py-2.5">₹2,50,001 – ₹5,00,000</td>
+                <td class="py-2.5 text-right font-mono font-medium text-[#171717] dark:text-white">5%</td>
+              </tr>
+              <tr>
+                <td class="py-2.5">₹5,00,001 – ₹10,00,000</td>
+                <td class="py-2.5 text-right font-mono font-medium text-[#171717] dark:text-white">20%</td>
+              </tr>
+              <tr>
+                <td class="py-2.5">Above ₹10,00,000</td>
+                <td class="py-2.5 text-right font-mono font-semibold text-[#ee0000]">30%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-3 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1] space-y-1">
+          <div>• <strong>Deductions Allowed:</strong> Section 80C (₹1.5L), 80D (₹75k), 80CCD(1B) NPS (₹50k).</div>
+          <div>• <strong>HRA Exemption:</strong> Section 10(13A) rent exemption permitted.</div>
+          <div>• <strong>Home Loan:</strong> Section 24(b) interest deduction up to ₹2,00,000.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State-wise Professional Tax Reference -->
+    <div id="pt" class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-4">
+      <h3 class="text-xl font-bold text-[#171717] dark:text-white">State-Wise Professional Tax (PT) Slabs</h3>
+      <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1]">
+        Professional Tax is levied by State Governments and deducted by employers monthly. It is capped at a maximum of ₹2,500/year under Article 276(2) of the Indian Constitution.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+        {Object.values(STATE_PT_RULES).map(rule => (
+          <div class="p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] space-y-1">
+            <h4 class="font-semibold text-[#171717] dark:text-white text-[14px]">{rule.name}</h4>
+            <p class="text-[12px] font-mono text-[#0070f3]">{rule.monthlyNote}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <FaqSection />
+  </div>
+</Layout>

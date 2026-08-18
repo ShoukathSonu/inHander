@@ -1,0 +1,112 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { ShieldCheck, Lock, EyeOff, ServerOff, DatabaseZap, Scan, FileCheck, HelpCircle } from 'lucide-react';
+---
+
+<Layout
+  title="Privacy Policy & Client-Side Architecture | inHander.com"
+  description="Learn about inHander's 100% client-side privacy architecture. Zero server logs, on-device OCR document processing, and India DPDP Act 2023 compliance."
+>
+  <div class="max-w-4xl mx-auto space-y-10 py-6 sm:py-10">
+    <!-- Header -->
+    <div class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/20">
+        <ShieldCheck className="w-4 h-4" />
+        <span class="text-[12px] font-mono font-medium">100% Client-Side Privacy Guarantee</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-bold text-[#171717] dark:text-white tracking-tight">
+        Privacy Policy &amp; Security Architecture
+      </h1>
+      <p class="text-base sm:text-lg text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed max-w-2xl">
+        We believe your salary, financial compensation, payslips, and tax deductions are strictly private. inHander is engineered from the ground up with zero backend data persistence.
+      </p>
+      <div class="flex items-center gap-3 pt-2 text-[12px] font-mono text-[#888888] dark:text-[#737373]">
+        <span>Last Updated: February 2026</span>
+        <span>•</span>
+        <span>DPDP Act 2023 &amp; GDPR Compliant</span>
+      </div>
+    </div>
+
+    <!-- Core Privacy Pillars Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div class="p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-3">
+        <div class="w-10 h-10 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#171717] dark:text-white">
+          <ServerOff className="w-5 h-5 text-[#10b981]" />
+        </div>
+        <h3 class="text-[16px] font-semibold text-[#171717] dark:text-white">100% Client-Side Processing</h3>
+        <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+          All tax calculations, dual regime modeling, HRA exemptions, and EPF computations execute locally inside your web browser's JavaScript sandbox. No calculation figures are ever transmitted to any remote server.
+        </p>
+      </div>
+
+      <div class="p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-3">
+        <div class="w-10 h-10 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#171717] dark:text-white">
+          <Scan className="w-5 h-5 text-[#0070f3]" />
+        </div>
+        <h3 class="text-[16px] font-semibold text-[#171717] dark:text-white">On-Device OCR &amp; PDF Parsing</h3>
+        <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+          When you upload or paste an offer letter, screenshot, or payslip PDF, document text extraction and OCR run entirely in your local browser memory using WebAssembly. Your files are never uploaded to the cloud.
+        </p>
+      </div>
+
+      <div class="p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-3">
+        <div class="w-10 h-10 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#171717] dark:text-white">
+          <DatabaseZap className="w-5 h-5 text-[#f5a623]" />
+        </div>
+        <h3 class="text-[16px] font-semibold text-[#171717] dark:text-white">Zero Database Storage</h3>
+        <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+          inHander maintains zero databases for user data. We do not store your name, salary numbers, company details, or tax numbers. Once you close your browser tab, all session memory is purged.
+        </p>
+      </div>
+
+      <div class="p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-3">
+        <div class="w-10 h-10 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#171717] dark:text-white">
+          <EyeOff className="w-5 h-5 text-[#7928ca]" />
+        </div>
+        <h3 class="text-[16px] font-semibold text-[#171717] dark:text-white">No Tracking Cookies</h3>
+        <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+          We do not use invasive third-party cross-site trackers, advertising pixels, or device fingerprinting. You visit and calculate anonymously every single session.
+        </p>
+      </div>
+    </div>
+
+    <!-- Detailed Legal & Architectural Sections -->
+    <div class="space-y-8 pt-6 border-t border-[#ebebeb] dark:border-[#262626] text-[14px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold text-[#171717] dark:text-white">1. Data Minimization &amp; Information We Collect</h2>
+        <p>
+          inHander (<a href="https://inhander.com" class="text-[#0070f3] hover:underline">inhander.com</a>) strictly adheres to the principle of <em>data minimization</em>. Because all computations occur within your client browser environment:
+        </p>
+        <ul class="list-disc pl-6 space-y-1.5">
+          <li><strong>No Personal Identifiable Information (PII):</strong> We do not ask for your Aadhaar, PAN card number, bank details, or employer credentials.</li>
+          <li><strong>No Account Creation:</strong> No sign-up, email registration, or phone number authentication is required to use any calculator or tool.</li>
+          <li><strong>Web Server Logs:</strong> Standard HTTP server logs (such as IP address and user-agent) may be recorded by our edge CDN host solely for routing traffic, DDoS mitigation, and site reliability. These logs are not correlated with your salary inputs.</li>
+        </ul>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold text-[#171717] dark:text-white">2. URL Query Sharing &amp; Local Storage</h2>
+        <p>
+          When you customize numbers in the calculator, parameters (such as <code class="px-1.5 py-0.5 rounded bg-[#f5f5f5] dark:bg-[#1e1e1e] font-mono text-[12px]">ctc</code>, <code class="px-1.5 py-0.5 rounded bg-[#f5f5f5] dark:bg-[#1e1e1e] font-mono text-[12px]">basic</code>, <code class="px-1.5 py-0.5 rounded bg-[#f5f5f5] dark:bg-[#1e1e1e] font-mono text-[12px]">sec80c</code>) are encoded into the URL query string using standard URI encoding.
+        </p>
+        <p>
+          This enables you to bookmark your calculation or share it with yourself. We do not store these share URLs in a remote database; the state lives entirely within the URL string itself.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold text-[#171717] dark:text-white">3. Compliance with India DPDP Act 2023 &amp; Global Standards</h2>
+        <p>
+          inHander complies with the <em>Digital Personal Data Protection Act, 2023 (DPDP)</em> of India and the European Union's <em>General Data Protection Regulation (GDPR)</em>. Because we do not process, store, or profile your personal financial data on our servers, your statutory right to privacy is respected by architectural design.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold text-[#171717] dark:text-white">4. Contact &amp; Grievance Redressal</h2>
+        <p>
+          If you have questions regarding this privacy policy or wish to report a security inquiry, please visit our <a href="/contact" class="text-[#0070f3] hover:underline">Contact Us</a> page or email us at <a href="mailto:support@inhander.com" class="text-[#0070f3] hover:underline font-mono">support@inhander.com</a>.
+        </p>
+      </section>
+    </div>
+  </div>
+</Layout>

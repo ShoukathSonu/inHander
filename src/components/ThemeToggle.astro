@@ -1,0 +1,166 @@
+---
+// Theme Toggle with System / Light / Dark modes
+---
+
+<div class="relative inline-block text-left" id="theme-toggle-container">
+  <button
+    id="theme-toggle-btn"
+    type="button"
+    aria-label="Toggle theme mode"
+    class="flex items-center justify-center w-9 h-9 rounded-full bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] text-[#4d4d4d] dark:text-[#ededed] hover:text-[#171717] dark:hover:text-white hover:bg-[#f5f5f5] dark:hover:bg-[#222222] transition-colors shadow-stacked-sm"
+  >
+    <!-- Sun Icon (Light) -->
+    <svg id="theme-icon-sun" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="4" stroke-width="2"/>
+      <path stroke-width="2" stroke-linecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41m14.14-14.14l-1.41 1.41"/>
+    </svg>
+    <!-- Moon Icon (Dark) -->
+    <svg id="theme-icon-moon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+    </svg>
+    <!-- Monitor Icon (System) -->
+    <svg id="theme-icon-system" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <rect x="2" y="3" width="20" height="14" rx="2" stroke-width="2"/>
+      <path stroke-width="2" stroke-linecap="round" d="M8 21h8m-4-4v4"/>
+    </svg>
+  </button>
+
+  <!-- Dropdown Menu -->
+  <div
+    id="theme-menu"
+    class="hidden absolute right-0 mt-2 w-32 rounded-xl bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-modal py-1 z-50 text-[13px] font-medium"
+  >
+    <button
+      data-set-theme="light"
+      class="theme-option flex items-center justify-between w-full px-3 py-2 text-left text-[#4d4d4d] dark:text-[#a1a1a1] hover:bg-[#f5f5f5] dark:hover:bg-[#262626] hover:text-[#171717] dark:hover:text-white transition-colors"
+    >
+      <span class="flex items-center gap-2">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" stroke-width="2"/><path stroke-width="2" stroke-linecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41m14.14-14.14l-1.41 1.41"/></svg>
+        Light
+      </span>
+      <span class="check-mark hidden font-mono text-[#10b981]">✓</span>
+    </button>
+    <button
+      data-set-theme="dark"
+      class="theme-option flex items-center justify-between w-full px-3 py-2 text-left text-[#4d4d4d] dark:text-[#a1a1a1] hover:bg-[#f5f5f5] dark:hover:bg-[#262626] hover:text-[#171717] dark:hover:text-white transition-colors"
+    >
+      <span class="flex items-center gap-2">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        Dark
+      </span>
+      <span class="check-mark hidden font-mono text-[#10b981]">✓</span>
+    </button>
+    <button
+      data-set-theme="system"
+      class="theme-option flex items-center justify-between w-full px-3 py-2 text-left text-[#4d4d4d] dark:text-[#a1a1a1] hover:bg-[#f5f5f5] dark:hover:bg-[#262626] hover:text-[#171717] dark:hover:text-white transition-colors"
+    >
+      <span class="flex items-center gap-2">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" stroke-width="2"/><path stroke-width="2" stroke-linecap="round" d="M8 21h8m-4-4v4"/></svg>
+        System
+      </span>
+      <span class="check-mark hidden font-mono text-[#10b981]">✓</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  function setupThemeToggle() {
+    const btn = document.getElementById('theme-toggle-btn');
+    const menu = document.getElementById('theme-menu');
+    const sunIcon = document.getElementById('theme-icon-sun');
+    const moonIcon = document.getElementById('theme-icon-moon');
+    const systemIcon = document.getElementById('theme-icon-system');
+    const options = document.querySelectorAll('.theme-option');
+
+    function getSavedTheme() {
+      return localStorage.getItem('theme') || 'system';
+    }
+
+    function applyTheme(theme: string) {
+      const isDark =
+        theme === 'dark' ||
+        (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+
+      // Update button icon
+      if (sunIcon && moonIcon && systemIcon) {
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.add('hidden');
+        systemIcon.classList.add('hidden');
+
+        if (theme === 'light') {
+          sunIcon.classList.remove('hidden');
+        } else if (theme === 'dark') {
+          moonIcon.classList.remove('hidden');
+        } else {
+          // system
+          if (isDark) {
+            moonIcon.classList.remove('hidden');
+          } else {
+            sunIcon.classList.remove('hidden');
+          }
+        }
+      }
+
+      // Update checkmark in dropdown
+      options.forEach(opt => {
+        const val = opt.getAttribute('data-set-theme');
+        const check = opt.querySelector('.check-mark');
+        if (check) {
+          if (val === theme) {
+            check.classList.remove('hidden');
+          } else {
+            check.classList.add('hidden');
+          }
+        }
+      });
+    }
+
+    // Toggle menu
+    if (btn && menu) {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('hidden');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target as Node) && !btn.contains(e.target as Node)) {
+          menu.classList.add('hidden');
+        }
+      });
+    }
+
+    // Option clicks
+    options.forEach(opt => {
+      opt.addEventListener('click', () => {
+        const val = opt.getAttribute('data-set-theme') || 'system';
+        if (val === 'system') {
+          localStorage.removeItem('theme');
+        } else {
+          localStorage.setItem('theme', val);
+        }
+        applyTheme(val);
+        if (menu) menu.classList.add('hidden');
+      });
+    });
+
+    // Listen to OS scheme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (!localStorage.getItem('theme') || localStorage.getItem('theme') === 'system') {
+        applyTheme('system');
+      }
+    });
+
+    // Initial run
+    applyTheme(getSavedTheme());
+  }
+
+  // Run on page load and view transitions
+  setupThemeToggle();
+  document.addEventListener('astro:after-swap', setupThemeToggle);
+</script>

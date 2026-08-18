@@ -1,0 +1,158 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+import LiveIstBadge from './LiveIstBadge.astro';
+import { BadgeIndianRupee } from 'lucide-react';
+
+interface Props {
+  activeTab?: 'calculator' | 'offers' | 'hike' | 'freelance' | 'slabs';
+}
+
+const { activeTab = 'calculator' } = Astro.props;
+---
+
+<header 
+  id="main-floating-header"
+  class="fixed top-3 sm:top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-1.5rem)] sm:w-[calc(100%-3rem)] max-w-[1240px] transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] transform will-change-transform"
+>
+  <div class="w-full bg-white/85 dark:bg-[#121212]/85 backdrop-blur-xl border border-[#ebebeb]/90 dark:border-[#262626]/90 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.35)] px-3.5 sm:px-5 h-13 sm:h-14 flex items-center justify-between transition-colors">
+    
+    <!-- Left: Brand Logo -->
+    <div class="flex items-center gap-2 shrink-0">
+      <a href="/" class="flex items-center gap-2.5 group" aria-label="inHander Homepage">
+        <div class="w-8 h-8 rounded-full bg-[#171717] dark:bg-white flex items-center justify-center text-white dark:text-[#171717] shadow-xs group-hover:scale-105 transition-all">
+          <BadgeIndianRupee className="w-4 h-4" />
+        </div>
+        <div class="flex flex-col">
+          <span class="text-[15px] font-semibold text-[#171717] dark:text-white tracking-tight leading-none">In Hand Salary</span>
+          <span class="text-[10px] font-mono text-[#888888] dark:text-[#737373] tracking-normal leading-tight">inHander.com</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Center: Desktop Navigation Links -->
+    <nav class="hidden lg:flex items-center gap-1">
+      <a 
+        href="/" 
+        class={`px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors ${activeTab === 'calculator' ? 'bg-[#f5f5f5] dark:bg-[#1e1e1e] text-[#171717] dark:text-white font-semibold' : 'text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#fafafa] dark:hover:bg-[#181818]'}`}
+      >
+        Calculator
+      </a>
+      <a 
+        href="/compare-offers" 
+        class={`px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors ${activeTab === 'offers' ? 'bg-[#f5f5f5] dark:bg-[#1e1e1e] text-[#171717] dark:text-white font-semibold' : 'text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#fafafa] dark:hover:bg-[#181818]'}`}
+      >
+        Compare Offers
+      </a>
+      <a 
+        href="/hike-calculator" 
+        class={`px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors ${activeTab === 'hike' ? 'bg-[#f5f5f5] dark:bg-[#1e1e1e] text-[#171717] dark:text-white font-semibold' : 'text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#fafafa] dark:hover:bg-[#181818]'}`}
+      >
+        Hike Simulator
+      </a>
+      <a 
+        href="/44ada-freelance" 
+        class={`px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors ${activeTab === 'freelance' ? 'bg-[#f5f5f5] dark:bg-[#1e1e1e] text-[#171717] dark:text-white font-semibold' : 'text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#fafafa] dark:hover:bg-[#181818]'}`}
+      >
+        44ADA Freelance
+      </a>
+      <a 
+        href="/tax-slabs" 
+        class={`px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors ${activeTab === 'slabs' ? 'bg-[#f5f5f5] dark:bg-[#1e1e1e] text-[#171717] dark:text-white font-semibold' : 'text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#fafafa] dark:hover:bg-[#181818]'}`}
+      >
+        Tax Slabs
+      </a>
+    </nav>
+
+    <!-- Right: Live IST Badge & Theme Toggle -->
+    <div class="flex items-center gap-2 sm:gap-2.5">
+      <!-- Live Indian Standard Time & Weather Pill (placed on the right beside dark mode toggle) -->
+      <LiveIstBadge />
+
+      <!-- Dark/Light Mode Theme Toggle -->
+      <ThemeToggle />
+
+      <!-- Mobile menu trigger -->
+      <button 
+        id="mobile-menu-btn"
+        aria-label="Toggle mobile menu"
+        class="lg:hidden p-2 rounded-full text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#f5f5f5] dark:hover:bg-[#181818] transition-colors"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation Dropdown -->
+  <div id="mobile-menu" class="hidden lg:hidden mt-2 rounded-2xl border border-[#ebebeb] dark:border-[#262626] bg-white/95 dark:bg-[#121212]/95 backdrop-blur-xl px-4 py-3 space-y-1 shadow-modal">
+    <a href="/" class="block px-3 py-2 rounded-lg text-sm font-medium text-[#171717] dark:text-white hover:bg-[#f5f5f5] dark:hover:bg-[#1e1e1e]">Take-Home Calculator</a>
+    <a href="/compare-offers" class="block px-3 py-2 rounded-lg text-sm font-medium text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#f5f5f5] dark:hover:bg-[#1e1e1e]">Compare Job Offers</a>
+    <a href="/hike-calculator" class="block px-3 py-2 rounded-lg text-sm font-medium text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#f5f5f5] dark:hover:bg-[#1e1e1e]">Salary Hike Simulator</a>
+    <a href="/44ada-freelance" class="block px-3 py-2 rounded-lg text-sm font-medium text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#f5f5f5] dark:hover:bg-[#1e1e1e]">44ADA Freelance &amp; Consultant</a>
+    <a href="/tax-slabs" class="block px-3 py-2 rounded-lg text-sm font-medium text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#f5f5f5] dark:hover:bg-[#1e1e1e]">Tax Slabs (FY 2025-26 &amp; 26-27)</a>
+    <a href="/privacy" class="block px-3 py-2 rounded-lg text-sm font-medium text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#f5f5f5] dark:hover:bg-[#1e1e1e]">Privacy (100% Client-Side)</a>
+  </div>
+</header>
+
+<script>
+  function setupHeaderScroll() {
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+    const header = document.getElementById('main-floating-header');
+    const menu = document.getElementById('mobile-menu');
+    const btn = document.getElementById('mobile-menu-btn');
+
+    if (btn && menu) {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('hidden');
+      };
+
+      document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target as Node) && !btn.contains(e.target as Node)) {
+          menu.classList.add('hidden');
+        }
+      });
+    }
+
+    function updateNavbar() {
+      if (!header) return;
+      const currentScrollY = window.scrollY;
+      const scrollDelta = currentScrollY - lastScrollY;
+
+      if (currentScrollY <= 40) {
+        // Near top of page: always display
+        header.classList.remove('-translate-y-28', 'opacity-0', 'scale-[0.98]', 'pointer-events-none');
+        header.classList.add('translate-y-0', 'opacity-100', 'scale-100');
+      } else if (scrollDelta > 8 && currentScrollY > 80) {
+        // Scrolling DOWN: smoothly slide up and hide
+        header.classList.add('-translate-y-28', 'opacity-0', 'scale-[0.98]', 'pointer-events-none');
+        header.classList.remove('translate-y-0', 'opacity-100', 'scale-100');
+        if (menu && !menu.classList.contains('hidden')) {
+          menu.classList.add('hidden');
+        }
+      } else if (scrollDelta < -8) {
+        // Scrolling UP: smoothly slide down and reveal
+        header.classList.remove('-translate-y-28', 'opacity-0', 'scale-[0.98]', 'pointer-events-none');
+        header.classList.add('translate-y-0', 'opacity-100', 'scale-100');
+      }
+
+      lastScrollY = Math.max(0, currentScrollY);
+      ticking = false;
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        window.requestAnimationFrame(updateNavbar);
+        ticking = true;
+      }
+    }
+
+    window.removeEventListener('scroll', onScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  setupHeaderScroll();
+  document.addEventListener('astro:after-swap', setupHeaderScroll);
+</script>

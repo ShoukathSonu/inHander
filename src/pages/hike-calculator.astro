@@ -1,0 +1,35 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { HikeSimulator } from '../components/HikeSimulator';
+import FaqSection from '../components/FaqSection.astro';
+---
+
+<Layout
+  title="Salary Hike & Increment Calculator India | Post-Tax Raise Simulator | inHander.com"
+  description="Calculate your real monthly in-hand bank credit after a 10%, 20%, 30%, or 50% salary hike in India. Models tax slab jumps and net percentage growth."
+  activeTab="hike"
+>
+  <div class="space-y-12">
+    <HikeSimulator client:load />
+
+    <!-- Hike Strategy Advice -->
+    <section class="max-w-5xl mx-auto p-6 sm:p-8 rounded-2xl bg-white border border-[#ebebeb] shadow-stacked-sm space-y-4">
+      <h3 class="text-xl font-bold text-[#171717]">Understanding the Tax Slab Drag on Salary Hikes.</h3>
+      <p class="text-[13px] text-[#4d4d4d] leading-relaxed">
+        When you get a 25% salary hike, your in-hand salary might only grow by 18-20%. This is because the incremental portion of your salary is taxed at your highest marginal tax bracket (e.g. 20% or 30% slab plus 4% cess).
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 text-[13px]">
+        <div class="p-4 rounded-xl bg-[#fafafa] border border-[#ebebeb]">
+          <strong class="text-[#171717] block mb-1">New Tax Regime Advantage for Hikes:</strong>
+          <span class="text-[#4d4d4d]">Because New Regime tax slabs are broader (e.g. ₹12L to ₹15L is only 20%, instead of 30% in Old Regime), your incremental raise retains significantly more take-home cash.</span>
+        </div>
+        <div class="p-4 rounded-xl bg-[#fafafa] border border-[#ebebeb]">
+          <strong class="text-[#171717] block mb-1">Corporate NPS Restructuring:</strong>
+          <span class="text-[#4d4d4d]">If your hike puts you in the 30% tax bracket, ask your employer for Section 80CCD(2) Corporate NPS (up to 10% of basic) to save tax directly under both regimes.</span>
+        </div>
+      </div>
+    </section>
+
+    <FaqSection />
+  </div>
+</Layout>

@@ -1,0 +1,70 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { ContactForm } from '../components/ContactForm';
+import { Mail, MessageCircle, HelpCircle, ShieldCheck, Sparkles, MapPin } from 'lucide-react';
+---
+
+<Layout
+  title="Contact Us & Feedback | inHander.com"
+  description="Get in touch with the inHander team for tax calculation questions, bug reports, feature requests, or general inquiries."
+>
+  <div class="max-w-4xl mx-auto space-y-10 py-6 sm:py-10">
+    <!-- Header -->
+    <div class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm">
+        <Mail className="w-4 h-4 text-[#0070f3]" />
+        <span class="text-[12px] font-mono font-medium text-[#4d4d4d] dark:text-[#a1a1a1]">
+          We'd Love to Hear From You
+        </span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-bold text-[#171717] dark:text-white tracking-tight">
+        Contact &amp; Support
+      </h1>
+      <p class="text-base sm:text-lg text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed max-w-2xl">
+        Have a question about Indian tax slabs, noticed a formula discrepancy, or want to suggest a new feature? Reach out to our engineering team directly.
+      </p>
+    </div>
+
+    <!-- Contact Channels & Interactive Form Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <!-- Left: Direct Channels -->
+      <div class="space-y-4">
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-3">
+          <div class="w-9 h-9 rounded-xl bg-[#0070f3]/10 text-[#0070f3] flex items-center justify-center">
+            <Mail className="w-4 h-4" />
+          </div>
+          <div>
+            <h4 class="text-[15px] font-semibold text-[#171717] dark:text-white">Support &amp; Inquiries</h4>
+            <p class="text-[12px] text-[#888888] dark:text-[#737373] mt-0.5">For general questions and tool feedback</p>
+          </div>
+          <a 
+            href="mailto:support@inhander.com" 
+            class="text-[13px] font-mono font-semibold text-[#0070f3] hover:underline block"
+          >
+            support@inhander.com
+          </a>
+        </div>
+
+
+
+        <div class="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] space-y-2">
+          <div class="flex items-center gap-2 text-[12px] font-mono text-[#888888] dark:text-[#737373]">
+            <MapPin className="w-3.5 h-3.5" />
+            <span>HQ / Operations</span>
+          </div>
+          <p class="text-[13px] text-[#171717] dark:text-white font-medium">
+            Bengaluru, Karnataka, India
+          </p>
+          <p class="text-[11px] text-[#888888] dark:text-[#737373]">
+            Serving professionals across India &amp; global remote tech teams.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right: Interactive Form -->
+      <div class="lg:col-span-2">
+        <ContactForm client:load />
+      </div>
+    </div>
+  </div>
+</Layout>

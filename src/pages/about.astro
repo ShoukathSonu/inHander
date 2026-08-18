@@ -1,0 +1,157 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { 
+  BadgeIndianRupee, 
+  ShieldCheck, 
+  Cpu, 
+  Zap, 
+  Scale, 
+  FileText, 
+  Lock, 
+  CheckCircle2, 
+  ArrowRight,
+  Split,
+  Scan,
+  TrendingUp
+} from 'lucide-react';
+---
+
+<Layout
+  title="About inHander | The Developer-Grade In Hand Salary Calculator for India"
+  description="Learn about inHander's mission: delivering the most accurate, ad-free, 100% private in-hand salary calculator and offer analyzer for Indian professionals."
+>
+  <div class="max-w-4xl mx-auto space-y-12 py-6 sm:py-10">
+    <!-- Hero Banner -->
+    <div class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm">
+        <span class="w-2 h-2 rounded-full bg-[#10b981] animate-pulse"></span>
+        <span class="text-[12px] font-mono font-medium text-[#4d4d4d] dark:text-[#a1a1a1]">
+          Engineered for Indian Tech &amp; Corporate Professionals
+        </span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-bold text-[#171717] dark:text-white tracking-tight leading-[1.1]">
+        Rebuilding the paycheck calculator for modern India.
+      </h1>
+      <p class="text-base sm:text-lg text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed max-w-2xl">
+        inHander was built with a simple conviction: discovering your actual monthly take-home pay shouldn't require slow, ad-cluttered portals that guess your taxes or harvest your personal data.
+      </p>
+    </div>
+
+    <!-- The Problem & Our Solution -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="p-6 rounded-2xl bg-[#fafafa] dark:bg-[#141414] border border-[#ebebeb] dark:border-[#262626] space-y-3">
+        <span class="text-[11px] font-mono uppercase text-[#ee0000] font-bold tracking-wider">The Problem</span>
+        <h3 class="text-lg font-semibold text-[#171717] dark:text-white">Why traditional CTC calculators fail</h3>
+        <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+          Most online calculators in India use outdated tax slabs, omit statutory EPF wage ceilings (₹15,000 basic rule), ignore state-level Professional Tax rules, or neglect Section 87A marginal relief. Worse, many demand phone numbers to sell your data to financial loan brokers.
+        </p>
+      </div>
+
+      <div class="p-6 rounded-2xl bg-white dark:bg-[#181818] border border-[#10b981]/30 dark:border-[#10b981]/30 shadow-stacked-sm space-y-3 ring-1 ring-[#10b981]/20">
+        <span class="text-[11px] font-mono uppercase text-[#10b981] font-bold tracking-wider">The inHander Standard</span>
+        <h3 class="text-lg font-semibold text-[#171717] dark:text-white">Accurate. Private. Instant.</h3>
+        <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+          inHander runs 100% in your browser. It calculates exact dual-regime tax obligations under Union Budget 2024 / FY 2025-26 &amp; 2026-27 rules, accounts for city-specific HRA exemptions, models VPF and Gratuity splits, and produces verified corporate salary slips in 1-click.
+        </p>
+      </div>
+    </div>
+
+    <!-- 6 Architectural Principles -->
+    <div class="space-y-6">
+      <div class="space-y-1">
+        <span class="text-[11px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] font-semibold">
+          Core Pillars
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-[#171717] dark:text-white tracking-tight">
+          What makes inHander different.
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-2.5">
+          <div class="w-9 h-9 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#0070f3]">
+            <Split className="w-4 h-4" />
+          </div>
+          <h4 class="text-[15px] font-semibold text-[#171717] dark:text-white">Dual-Regime Engine</h4>
+          <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+            Side-by-side computation of New vs Old Regime with dynamic breakeven threshold and exact rupee savings.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-2.5">
+          <div class="w-9 h-9 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#10b981]">
+            <Scan className="w-4 h-4" />
+          </div>
+          <h4 class="text-[15px] font-semibold text-[#171717] dark:text-white">Offer Letter OCR &amp; PDF</h4>
+          <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+            Drop your job offer screenshot or PDF to automatically extract CTC, base pay, variable bonus, and RSUs locally.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-2.5">
+          <div class="w-9 h-9 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#f5a623]">
+            <Scale className="w-4 h-4" />
+          </div>
+          <h4 class="text-[15px] font-semibold text-[#171717] dark:text-white">State PT Regulations</h4>
+          <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+            Accurate state-wise Professional Tax slabs for Karnataka, Maharashtra, Telangana, Delhi, Tamil Nadu, and 23+ states.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-2.5">
+          <div class="w-9 h-9 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#7928ca]">
+            <TrendingUp className="w-4 h-4" />
+          </div>
+          <h4 class="text-[15px] font-semibold text-[#171717] dark:text-white">Offer Comparator</h4>
+          <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+            Evaluate Startup vs MNC vs Remote job offers with 1st-year total compensation modeling.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-2.5">
+          <div class="w-9 h-9 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#0070f3]">
+            <FileText className="w-4 h-4" />
+          </div>
+          <h4 class="text-[15px] font-semibold text-[#171717] dark:text-white">Corporate Pay Slips</h4>
+          <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+            Generate printable, beautifully formatted salary statement PDFs ready for visa interviews, loan proofs, or HR negotiations.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-2.5">
+          <div class="w-9 h-9 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#10b981]">
+            <Lock className="w-4 h-4" />
+          </div>
+          <h4 class="text-[15px] font-semibold text-[#171717] dark:text-white">100% Privacy by Design</h4>
+          <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+            Zero databases, zero logins, zero tracking pixels. Your salary details never leave your web browser.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick CTA Banner -->
+    <div class="p-8 rounded-2xl bg-gradient-to-r from-[#171717] to-[#262626] text-white space-y-4 shadow-stacked">
+      <div class="max-w-xl space-y-2">
+        <h3 class="text-xl sm:text-2xl font-bold tracking-tight">Ready to calculate your exact take-home pay?</h3>
+        <p class="text-[14px] text-[#a1a1a1] leading-relaxed">
+          Test any CTC from ₹3 LPA to ₹1 Cr+ and discover your optimal tax regime in under 2 seconds.
+        </p>
+      </div>
+      <div class="pt-2 flex flex-wrap gap-3">
+        <a 
+          href="/" 
+          class="inline-flex items-center gap-2 px-5 h-11 rounded-full bg-white text-[#171717] font-semibold text-[13px] hover:bg-[#f0f0f0] transition-transform hover:scale-102"
+        >
+          Open Salary Calculator <ArrowRight className="w-4 h-4" />
+        </a>
+        <a 
+          href="/compare-offers" 
+          class="inline-flex items-center gap-2 px-5 h-11 rounded-full bg-[#333333] text-white font-medium text-[13px] hover:bg-[#444444] border border-white/10 transition-colors"
+        >
+          Compare Multiple Offers
+        </a>
+      </div>
+    </div>
+  </div>
+</Layout>

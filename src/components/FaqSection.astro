@@ -1,0 +1,131 @@
+---
+// Interactive Dropdown / Accordion FAQ Component with SEO-optimized schema & high-intent search questions
+
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+export interface Props {
+  items?: FAQItem[];
+  title?: string;
+  subtitle?: string;
+}
+
+export const FAQ_ITEMS: FAQItem[] = [
+  {
+    question: "How is in hand salary calculated from CTC in India?",
+    answer: "<p>In Hand Salary (or net take-home pay) is calculated by subtracting statutory deductions and income tax from your Gross Salary. The formula is: <strong>Net In Hand Salary = Gross Salary &minus; (Employee Provident Fund + Professional Tax + Monthly TDS Income Tax)</strong>. Gross Salary itself is Cost to Company (CTC) minus employer-side benefits like Employer EPF (12%) and Gratuity provision (~4.81% of basic).</p>"
+  },
+  {
+    question: "Why is ₹7.75 Lakhs salary 100% Tax-Free under the New Tax Regime (FY 2025-26 & 26-27)?",
+    answer: "<p>Under Budget 2024 (Section 115BAC), salaried employees receive a flat <strong>₹75,000 Standard Deduction</strong>. For a gross salary of ₹7,75,000, subtracting ₹75,000 leaves exactly ₹7,00,000 in net taxable income. Under <strong>Section 87A</strong>, taxable income up to ₹7,00,000 receives a full 100% rebate (up to ₹25,000), reducing total income tax liability to <strong>₹0</strong>.</p>"
+  },
+  {
+    question: "What is the monthly in hand salary for 4 LPA, 4.5 LPA, 6 LPA, 10 LPA, 12 LPA, and 18 LPA packages?",
+    answer: "<p>Based on standard corporate 50% basic salary structures and the New Tax Regime:<br />• <strong>4 LPA:</strong> ~₹30,800/month (₹0 tax)<br />• <strong>4.5 LPA:</strong> ~₹34,800/month (₹0 tax)<br />• <strong>6 LPA:</strong> ~₹46,200/month (₹0 tax)<br />• <strong>10 LPA:</strong> ~₹72,800/month (~₹3,900/mo tax)<br />• <strong>12 LPA:</strong> ~₹86,400/month (~₹6,500/mo tax)<br />• <strong>18 LPA:</strong> ~₹1,24,500/month (~₹16,250/mo tax).</p>"
+  },
+  {
+    question: "How does Section 87A Marginal Relief protect taxpayers earning just above ₹7 Lakhs?",
+    answer: "<p>Without marginal relief, earning ₹7,00,100 would cause you to lose the entire ₹25,000 rebate and pay ₹20,015 in tax for just ₹100 extra income. Section 115BAC marginal relief guarantees that the total tax payable cannot exceed the excess amount earned over ₹7,00,000. For example, on a taxable income of ₹7,05,000, your tax is capped at exactly ₹5,000 plus cess.</p>"
+  },
+  {
+    question: "What is the difference between New Tax Regime and Old Tax Regime, and which is better?",
+    answer: "<p>The <strong>New Tax Regime</strong> offers lower, wider slab rates and a higher standard deduction (₹75,000) with zero documentation or investment proofs. The <strong>Old Tax Regime</strong> allows extensive exemptions including Section 80C (₹1.5L), 80D (₹75k), 80CCD(1B) NPS (₹50k), Section 24 Home Loan Interest (₹2L), and Section 10(13A) HRA. The Old Regime is better only if your total eligible deductions exceed ~₹3.75 Lakhs to ₹4.25 Lakhs per year.</p>"
+  },
+  {
+    question: "How is Section 10(13A) HRA (House Rent Allowance) exemption calculated?",
+    answer: "<p>HRA exemption is calculated as the lowest of three statutory limits: (1) Actual HRA received from employer, (2) Actual rent paid minus 10% of Basic Salary, or (3) 50% of Basic Salary for metro cities (Delhi, Mumbai, Kolkata, Chennai) or 40% for non-metro cities. HRA exemption is exclusively available under the Old Tax Regime.</p>"
+  },
+  {
+    question: "What is the EPF statutory ceiling cap (₹1,800/month) vs uncapped 12% contribution?",
+    answer: "<p>By EPFO statutory rules, the mandatory minimum EPF contribution is 12% of basic salary capped at ₹15,000/month basic (equaling ₹1,800/month employee + ₹1,800/month employer). Some employers allow capping PF at ₹1,800/month to increase monthly in-hand take-home cash flow, whereas tech companies generally deduct a full 12% on uncapped basic pay for retirement accumulation.</p>"
+  },
+  {
+    question: "When is Gratuity payable and how is the 15/26 statutory formula calculated?",
+    answer: "<p>Gratuity is a statutory terminal benefit under the Payment of Gratuity Act, 1972, payable when an employee completes 5 or more continuous years of service upon resignation or retirement. The statutory formula is: <strong>(15 / 26) &times; Last Drawn Basic Salary &times; Number of Completed Years of Service</strong>. Companies typically budget ~4.81% of basic salary inside your CTC.</p>"
+  },
+  {
+    question: "What tax deductions can I claim under Section 80C, 80D, and 80CCD(1B) NPS?",
+    answer: "<p>Under the Old Tax Regime:<br />• <strong>Section 80C (Max ₹1,50,000):</strong> EPF, PPF, ELSS mutual funds, life insurance, principal home loan repayment, SSY.<br />• <strong>Section 80D (Max ₹25,000–₹1,00,000):</strong> Health insurance premiums for self & family (₹25k) and senior citizen parents (₹50k).<br />• <strong>Section 80CCD(1B) (Max ₹50,000):</strong> Voluntary National Pension System (NPS) Tier-1 contribution over and above the ₹1.5L 80C limit.</p>"
+  },
+  {
+    question: "How are annual variable bonuses, joining bonuses, and RSUs/ESOPs taxed in India?",
+    answer: "<p>Variable bonuses and joining bonuses are treated as regular salary income and taxed at your marginal slab rate via TDS in the month they are credited. RSUs/ESOPs are taxed in two stages: (1) At Vesting: Fair Market Value (FMV) is taxed as perquisite salary income, (2) At Sale: Capital gains tax applies on the difference between sale price and vesting FMV.</p>"
+  },
+  {
+    question: "How does Section 44ADA presumptive taxation work for software freelancers and contractors?",
+    answer: "<p>Section 44ADA allows eligible professionals (software developers, designers, technical consultants) with gross receipts up to ₹75 Lakhs to declare only <strong>50% of gross revenue as taxable profit</strong>. The remaining 50% is treated as business expenses with zero book-keeping or mandatory CA audits required.</p>"
+  },
+  {
+    question: "How does state-wise Professional Tax (PT) affect monthly take-home pay across India?",
+    answer: "<p>Professional Tax is deducted monthly by employers based on your work state:<br />• <strong>Karnataka (Bengaluru):</strong> ₹200/month (₹2,400/year)<br />• <strong>Maharashtra (Mumbai/Pune):</strong> ₹200/month (₹300 in Feb = ₹2,500/year)<br />• <strong>Telangana (Hyderabad) &amp; AP:</strong> ₹200/month (₹2,400/year)<br />• <strong>Tamil Nadu, West Bengal, Gujarat:</strong> Tiered slabs<br />• <strong>Delhi, Haryana (Gurugram), Rajasthan:</strong> ₹0 (No PT levied).</p>"
+  },
+  {
+    question: "Is any of my salary or compensation data stored on inHander servers?",
+    answer: "<p>No. inHander.com operates with a <strong>100% client-side privacy architecture</strong>. All tax algorithms and payslip generators run purely in your browser memory via JavaScript. No salary amounts, employer names, or tax deduction figures are ever logged, tracked, or transmitted to any server.</p>"
+  }
+];
+
+const {
+  items = FAQ_ITEMS,
+  title = "Frequently Asked Questions about Indian In-Hand Salary.",
+  subtitle = "Clear answers to common questions on CTC structure, take-home calculations, Budget 2024 tax slabs, and Section 87A rebate rules."
+} = Astro.props;
+
+// Schema.org FAQPage JSON-LD
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": items.map(item => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer.startsWith('<p>') ? item.answer : `<p>${item.answer}</p>`
+    }
+  }))
+};
+---
+
+<section class="w-full max-w-5xl mx-auto space-y-8 pt-16" id="faq">
+  <!-- Schema.org FAQPage Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema, null, 2)} />
+
+  <!-- FAQ Section Header -->
+  <div class="text-center sm:text-left space-y-2">
+    <span class="text-[12px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] font-semibold">
+      Knowledge Base &amp; FAQ
+    </span>
+    <h2 class="text-2xl sm:text-3xl font-bold text-[#171717] dark:text-white tracking-tight">
+      {title}
+    </h2>
+    <p class="text-[14px] text-[#4d4d4d] dark:text-[#a1a1a1] max-w-2xl">
+      {subtitle}
+    </p>
+  </div>
+
+  <!-- Interactive Accordion / Dropdown List -->
+  <div class="space-y-3">
+    {items.map((item, index) => (
+      <details 
+        class="group p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm hover:border-[#a1a1a1] dark:hover:border-[#525252] transition-all cursor-pointer open:ring-1 open:ring-[#171717]/10 dark:open:ring-white/10"
+        open={index === 0}
+      >
+        <summary class="flex items-center justify-between font-semibold text-[15px] text-[#171717] dark:text-white list-none select-none">
+          <span class="pr-4">{item.question}</span>
+          <span class="w-6 h-6 rounded-full bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#888888] dark:text-[#737373] group-open:rotate-180 group-open:text-[#171717] dark:group-open:text-white transition-transform shrink-0">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </span>
+        </summary>
+        
+        <div 
+          class="mt-3 pt-3 border-t border-[#ebebeb] dark:border-[#262626] text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed animate-in fade-in duration-200"
+          set:html={item.answer}
+        />
+      </details>
+    ))}
+  </div>
+</section>

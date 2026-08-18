@@ -1,0 +1,49 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { FreelanceCalculator } from '../components/FreelanceCalculator';
+import FaqSection from '../components/FaqSection.astro';
+---
+
+<Layout
+  title="Section 44ADA Freelance & Consultant Tax Calculator India | inHander.com"
+  description="Presumptive taxation calculator for Indian software contractors, remote tech freelancers, and consultants. Calculate 50% profit tax under Section 44ADA."
+  activeTab="freelance"
+>
+  <div class="space-y-12">
+    <FreelanceCalculator client:load />
+
+    <!-- 44ADA Rules & Eligibility Reference -->
+    <section class="max-w-5xl mx-auto p-6 sm:p-8 rounded-2xl bg-white border border-[#ebebeb] shadow-stacked-sm space-y-6">
+      <h3 class="text-xl font-bold text-[#171717]">Key Rules for Section 44ADA Presumptive Taxation.</h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-[13px] text-[#4d4d4d] leading-relaxed">
+        <div class="space-y-2">
+          <h4 class="font-semibold text-[#171717]">Eligible Professions</h4>
+          <p>
+            Applies to IT/Software professionals, technical consultants, engineers, architects, lawyers, medical practitioners, chartered accountants, and interior decorators.
+          </p>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-semibold text-[#171717]">Gross Invoicing Limit</h4>
+          <p>
+            Maximum gross receipts limit is ₹75 Lakhs per financial year (provided cash receipts do not exceed 5% of total receipts; otherwise ₹50 Lakhs).
+          </p>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-semibold text-[#171717]">Zero Bookkeeping & Audit Exemption</h4>
+          <p>
+            You are NOT required to maintain detailed books of accounts under Section 44AA or undergo tax audit under Section 44AB, provided profit declared is ≥ 50%.
+          </p>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-semibold text-[#171717]">GST Letter of Undertaking (LUT)</h4>
+          <p>
+            If you bill clients in the US, Europe, or other foreign countries in foreign currency, you can file a simple GST LUT annually to export services at 0% GST.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <FaqSection />
+  </div>
+</Layout>

@@ -1,0 +1,51 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { RefreshCw, Home, AlertTriangle, ShieldCheck } from 'lucide-react';
+---
+
+<Layout
+  title="500 - Server Error | inHander.com"
+  description="An unexpected error occurred while rendering the page. Return to inHander."
+>
+  <div class="max-w-2xl mx-auto text-center py-16 sm:py-24 space-y-8">
+    <!-- 500 Visual Pill -->
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#fef2f2] dark:bg-[#2a1215] border border-[#fecaca] dark:border-[#5c1d24] text-[#ef4444]">
+      <AlertTriangle className="w-4 h-4" />
+      <span class="text-[12px] font-mono font-bold">ERROR 500 · SERVER ERROR</span>
+    </div>
+
+    <!-- Main Headline -->
+    <div class="space-y-3">
+      <h1 class="text-4xl sm:text-6xl font-bold text-[#171717] dark:text-white tracking-tight">
+        Something went wrong.
+      </h1>
+      <p class="text-base sm:text-lg text-[#4d4d4d] dark:text-[#a1a1a1] max-w-lg mx-auto leading-relaxed">
+        We encountered an unexpected issue while rendering this page. Because inHander processes calculations 100% locally in your browser, your data is safe.
+      </p>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+      <button
+        onclick="window.location.reload()"
+        class="inline-flex items-center gap-2 px-6 h-11 rounded-full bg-[#171717] dark:bg-white text-white dark:text-[#171717] font-semibold text-[13px] hover:bg-[#333333] dark:hover:bg-[#f0f0f0] transition-all hover:scale-102 shadow-sm cursor-pointer"
+      >
+        <RefreshCw className="w-4 h-4" />
+        <span>Reload Page</span>
+      </button>
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 px-6 h-11 rounded-full bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] text-[#171717] dark:text-white font-medium text-[13px] hover:bg-[#fafafa] dark:hover:bg-[#222222] transition-colors"
+      >
+        <Home className="w-4 h-4" />
+        <span>Return to Calculator</span>
+      </a>
+    </div>
+
+    <!-- Safe local processing card -->
+    <div class="p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] max-w-md mx-auto flex items-center justify-center gap-2.5 text-[12px] font-mono text-[#888888] dark:text-[#737373]">
+      <ShieldCheck className="w-4 h-4 text-[#10b981]" />
+      <span>Zero-tracking client sandbox active</span>
+    </div>
+  </div>
+</Layout>

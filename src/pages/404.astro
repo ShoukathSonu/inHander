@@ -1,0 +1,76 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Home, ArrowLeft, Search, Calculator, Sparkles } from 'lucide-react';
+
+const POPULAR_PAGES = [
+  { label: '₹6 LPA In-Hand', href: '/salary/6-lpa' },
+  { label: '₹10 LPA In-Hand', href: '/salary/10-lpa' },
+  { label: '₹12 LPA In-Hand', href: '/salary/12-lpa' },
+  { label: '₹15 LPA In-Hand', href: '/salary/15-lpa' },
+  { label: '₹20 LPA In-Hand', href: '/salary/20-lpa' },
+  { label: '₹25 LPA In-Hand', href: '/salary/25-lpa' },
+  { label: '₹50 LPA In-Hand', href: '/salary/50-lpa' },
+  { label: '₹1 Cr In-Hand', href: '/salary/1-cr' },
+  { label: 'Compare Job Offers', href: '/compare-offers' },
+  { label: 'Salary Hike Calculator', href: '/hike-calculator' },
+  { label: '44ADA Freelancer Tax', href: '/44ada-freelance' },
+  { label: 'FY 2025-26 & 26-27 Slabs', href: '/tax-slabs' },
+];
+---
+
+<Layout
+  title="404 - Page Not Found | inHander.com"
+  description="The page you are looking for does not exist or has moved. Return to inHander in-hand salary calculator."
+>
+  <div class="max-w-2xl mx-auto text-center py-16 sm:py-24 space-y-8">
+    <!-- 404 Visual Pill -->
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-xs">
+      <span class="w-2 h-2 rounded-full bg-[#ee0000] animate-ping"></span>
+      <span class="text-[12px] font-mono font-bold text-[#171717] dark:text-white">ERROR 404</span>
+    </div>
+
+    <!-- Main Headline -->
+    <div class="space-y-3">
+      <h1 class="text-4xl sm:text-6xl font-bold text-[#171717] dark:text-white tracking-tight">
+        Page Not Found.
+      </h1>
+      <p class="text-base sm:text-lg text-[#4d4d4d] dark:text-[#a1a1a1] max-w-lg mx-auto leading-relaxed">
+        The link you followed may be broken, or the salary package URL has been updated. Let's get you back to calculating.
+      </p>
+    </div>
+
+    <!-- Quick Navigation Actions -->
+    <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 px-6 h-11 rounded-full bg-[#171717] dark:bg-white text-white dark:text-[#171717] font-semibold text-[13px] hover:bg-[#333333] dark:hover:bg-[#f0f0f0] transition-all hover:scale-102 shadow-sm"
+      >
+        <Home className="w-4 h-4" />
+        <span>Go to Main Calculator</span>
+      </a>
+      <a
+        href="/compare-offers"
+        class="inline-flex items-center gap-2 px-6 h-11 rounded-full bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] text-[#171717] dark:text-white font-medium text-[13px] hover:bg-[#fafafa] dark:hover:bg-[#222222] transition-colors"
+      >
+        <span>Compare Job Offers</span>
+      </a>
+    </div>
+
+    <!-- Popular Shortcuts -->
+    <div class="pt-8 border-t border-[#ebebeb] dark:border-[#262626] space-y-4">
+      <span class="text-[11px] font-mono uppercase text-[#888888] dark:text-[#737373] tracking-wider block">
+        Popular Salary Calculations &amp; Slabs
+      </span>
+      <div class="flex flex-wrap justify-center gap-2">
+        {POPULAR_PAGES.map(item => (
+          <a
+            href={item.href}
+            class="px-3 py-1.5 rounded-full text-[12px] font-mono text-[#4d4d4d] dark:text-[#a1a1a1] bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#a1a1a1] dark:hover:border-[#525252] hover:text-[#171717] dark:hover:text-white transition-colors"
+          >
+            {item.label}
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>

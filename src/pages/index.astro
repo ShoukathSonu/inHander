@@ -1,0 +1,113 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { SalaryCalculator } from '../components/SalaryCalculator';
+import QuickPackages from '../components/QuickPackages.astro';
+import SeoContentSection from '../components/SeoContentSection.astro';
+import FaqSection from '../components/FaqSection.astro';
+import { Sparkles, ShieldCheck, Zap, Lock, FileText, Split, Scan, Upload, FileSpreadsheet } from 'lucide-react';
+---
+
+<Layout 
+  title="In Hand Salary Calculator India (FY 2025-26 & 26-27) | inHander.com"
+  description="Calculate exact in hand salary from CTC in India under New and Old Tax Regimes (FY 2025-26 & 26-27). Standard deduction ₹75,000, 87A rebate, HRA exemption, and payslip PDF export."
+  keywords="In Hand Salary, in hand salary calculator, in hand salary calculator india, calculate in hand salary, india in hand salary calculator, lpa in hand salary, tax calculator, income tax calculator, paycheck tax calculator, 4 lpa in hand salary, 4.5 lpa in hand salary, 10 lpa in hand salary, 12 lpa in hand salary, 18 lpa in hand salary, in hand salary calculator after tax"
+  activeTab="calculator"
+>
+  <!-- Hero Band -->
+  <section class="text-center space-y-6 pt-4 pb-12 sm:pb-16 max-w-4xl mx-auto">
+    <!-- Section Eyebrow Badge -->
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm">
+      <span class="w-2 h-2 rounded-full bg-[#10b981] animate-pulse"></span>
+      <span class="text-[12px] font-mono font-medium text-[#4d4d4d] dark:text-[#a1a1a1]">
+        Budget 2024 / FY 2025-26 &amp; 26-27 Slabs Active
+      </span>
+    </div>
+
+    <!-- Sentence-case Hero Headline with negative tracking -->
+    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#171717] dark:text-white tracking-tight leading-[1.08]">
+      Calculate your in hand salary.
+    </h1>
+
+    <!-- Subhead -->
+    <p class="text-base sm:text-lg text-[#4d4d4d] dark:text-[#a1a1a1] max-w-2xl mx-auto leading-relaxed">
+      Convert your CTC to exact monthly take-home pay. Side-by-side Dual Tax Regime comparison, HRA exemption, EPF statutory cap, and instant payslip PDF export.
+    </p>
+
+    <!-- Quick highlights pill strip -->
+    <div class="flex flex-wrap items-center justify-center gap-3 pt-2 text-[12px] font-mono text-[#888888] dark:text-[#737373]">
+      <span class="inline-flex items-center gap-1.5 bg-white dark:bg-[#181818] px-2.5 py-1 rounded-full border border-[#ebebeb] dark:border-[#262626]">
+        <ShieldCheck className="w-3.5 h-3.5 text-[#10b981]" /> ₹7.75L Tax-Free in New Regime
+      </span>
+      <span class="inline-flex items-center gap-1.5 bg-white dark:bg-[#181818] px-2.5 py-1 rounded-full border border-[#ebebeb] dark:border-[#262626]">
+        <Upload className="w-3.5 h-3.5 text-[#0070f3]" /> Upload Payslip &amp; PDF
+      </span>
+      <span class="inline-flex items-center gap-1.5 bg-white dark:bg-[#181818] px-2.5 py-1 rounded-full border border-[#ebebeb] dark:border-[#262626]">
+        <Zap className="w-3.5 h-3.5 text-[#f5a623]" /> 1-Click Tax Optimizer
+      </span>
+      <span class="inline-flex items-center gap-1.5 bg-white dark:bg-[#181818] px-2.5 py-1 rounded-full border border-[#ebebeb] dark:border-[#262626]">
+        <Lock className="w-3.5 h-3.5 text-[#10b981]" /> 100% Client-Side Private
+      </span>
+    </div>
+  </section>
+
+  <!-- Primary Interactive Salary Calculator -->
+  <section class="w-full">
+    <SalaryCalculator client:load />
+  </section>
+
+  <!-- Value Props / Feature Matrix Cards (Vercel Style) -->
+  <section class="max-w-6xl mx-auto mt-20 space-y-6">
+    <div class="text-center space-y-2">
+      <span class="text-[12px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] font-semibold">
+        Engineered for Accuracy
+      </span>
+      <h2 class="text-2xl sm:text-3xl font-bold text-[#171717] dark:text-white tracking-tight">
+        Why Indian professionals rely on inHander.
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+      {/* Feature 1 */}
+      <div class="p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-3">
+        <div class="w-10 h-10 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#171717] dark:text-white">
+          <Split className="w-5 h-5" />
+        </div>
+        <h3 class="text-[16px] font-semibold text-[#171717] dark:text-white">Live Dual Regime Matrix</h3>
+        <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+          Instantly models New Regime (₹75k standard deduction + 87A rebate & marginal relief) against Old Regime (HRA, 80C, 80D, 24b) with direct rupee difference.
+        </p>
+      </div>
+
+      {/* Feature 2 */}
+      <div class="p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-3">
+        <div class="w-10 h-10 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#171717] dark:text-white">
+          <FileSpreadsheet className="w-5 h-5" />
+        </div>
+        <h3 class="text-[16px] font-semibold text-[#171717] dark:text-white">Corporate Salary Slip & PDF</h3>
+        <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+          Generate an authentic corporate salary slip formatted with gross monthly earnings, itemized deductions, employer PF, and net pay for negotiation or loan proof.
+        </p>
+      </div>
+
+      {/* Feature 3 */}
+      <div class="p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-3">
+        <div class="w-10 h-10 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#171717] dark:text-white">
+          <Lock className="w-5 h-5" />
+        </div>
+        <h3 class="text-[16px] font-semibold text-[#171717] dark:text-white">Zero-Tracking Privacy</h3>
+        <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+          All computations execute strictly in your browser memory. We never track your IP, salary figures, or employer name on any server.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular CTC Package Hub -->
+  <QuickPackages />
+
+  <!-- Comprehensive 800-1200 Word SEO Editorial Guide -->
+  <SeoContentSection />
+
+  <!-- Comprehensive FAQs -->
+  <FaqSection />
+</Layout>

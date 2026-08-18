@@ -1,0 +1,101 @@
+---
+// Live IST Time & Weather Badge (Indian Standard Time)
+---
+
+<div 
+  id="ist-badge-container"
+  class="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-[#f5f5f5] dark:bg-[#1a1a1a] border border-[#ebebeb] dark:border-[#2a2a2a] text-[12px] sm:text-[13px] font-mono transition-colors select-none"
+  title="Indian Standard Time (IST) & Bengaluru Live Weather"
+>
+  <span id="ist-clock" class="font-bold text-[#171717] dark:text-white tracking-tight">--:--</span>
+  <span id="ist-weather-icon" class="text-[13px] sm:text-[14px] leading-none">☁️</span>
+  <span id="ist-temp" class="font-bold text-[#171717] dark:text-white">24°</span>
+  <span class="text-[#888888] dark:text-[#737373] text-[11px] sm:text-[12px] font-medium hidden xs:inline">IST</span>
+</div>
+
+<script>
+  function initIstBadge() {
+    const clockEl = document.getElementById('ist-clock');
+    const weatherIconEl = document.getElementById('ist-weather-icon');
+    const tempEl = document.getElementById('ist-temp');
+
+    function updateTime() {
+      try {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-GB', {
+          timeZone: 'Asia/Kolkata',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        });
+        if (clockEl) {
+          clockEl.textContent = timeStr;
+        }
+
+        // Get IST current hour for dynamic day/night icon
+        const istHourStr = now.toLocaleTimeString('en-US', {
+          timeZone: 'Asia/Kolkata',
+          hour: 'numeric',
+          hour12: false
+        });
+        const istHour = parseInt(istHourStr, 10);
+
+        if (weatherIconEl && !weatherIconEl.dataset.custom) {
+          if (istHour >= 6 && istHour < 17) {
+            weatherIconEl.textContent = '☀️';
+          } else if (istHour >= 17 && istHour < 19) {
+            weatherIconEl.textContent = '⛅';
+          } else {
+            weatherIconEl.textContent = '☁️';
+          }
+        }
+      } catch (e) {
+        // fallback
+      }
+    }
+
+    async function fetchWeather() {
+      try {
+        // Lightweight Open-Meteo API for Bengaluru (12.97, 77.59)
+        const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=12.9716&longitude=77.5946&current=temperature_2m,weather_code&timezone=Asia%2FKolkata');
+        if (res.ok) {
+          const data = await res.json();
+          const temp = Math.round(data?.current?.temperature_2m ?? 24);
+          const code = data?.current?.weather_code ?? 0;
+          
+          if (tempEl) {
+            tempEl.textContent = `${temp}°`;
+          }
+
+          if (weatherIconEl) {
+            weatherIconEl.dataset.custom = 'true';
+            if (code <= 1) {
+              const hour = new Date().getUTCHours() + 5.5;
+              weatherIconEl.textContent = (hour >= 6 && hour < 18) ? '☀️' : '🌙';
+            } else if (code <= 3) {
+              weatherIconEl.textContent = '⛅';
+            } else if (code <= 48) {
+              weatherIconEl.textContent = '☁️';
+            } else if (code <= 67 || code >= 80) {
+              weatherIconEl.textContent = '🌧️';
+            } else {
+              weatherIconEl.textContent = '☁️';
+            }
+          }
+        }
+      } catch (e) {
+        // keep fallback 24°
+      }
+    }
+
+    updateTime();
+    fetchWeather();
+
+    const timer = setInterval(updateTime, 10000);
+    return () => clearInterval(timer);
+  }
+
+  // Run on initial load and after Astro page transitions
+  initIstBadge();
+  document.addEventListener('astro:after-swap', initIstBadge);
+</script>

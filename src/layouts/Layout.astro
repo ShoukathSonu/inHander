@@ -1,0 +1,152 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import MeshGradient from '../components/MeshGradient.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  keywords?: string;
+  ogImage?: string;
+  activeTab?: 'calculator' | 'offers' | 'hike' | 'freelance' | 'slabs';
+}
+
+const {
+  title = "In Hand Salary Calculator India (FY 2025-26 & 26-27) | inHander.com",
+  description = "Calculate exact in hand salary, monthly take-home pay, EPF, and dual income tax regime (New vs Old) in India. Free paycheck tax calculator with payslip PDF export.",
+  keywords = "In Hand Salary, in hand salary calculator, in hand salary calculator india, calculate in hand salary, india in hand salary calculator, lpa in hand salary, tax calculator, income tax calculator, paycheck tax calculator, 4 lpa in hand salary, 4.5 lpa in hand salary, 10 lpa in hand salary, 12 lpa in hand salary, 18 lpa in hand salary, in hand salary calculator after tax",
+  ogImage = "https://inhander.com/og-image.svg",
+  activeTab = 'calculator'
+} = Astro.props;
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site || 'https://inhander.com').href;
+
+// WebApplication JSON-LD Schema
+const schemaData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://inhander.com/#webapp",
+      "url": "https://inhander.com",
+      "name": "In Hand Salary Calculator India",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "All",
+      "browserRequirements": "Requires JavaScript",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "INR"
+      },
+      "description": "Developer-grade in hand salary calculator for Indian professionals. Calculate take-home pay, compare New vs Old tax regimes, model HRA exemptions and state professional tax.",
+      "featureList": [
+        "New Tax Regime Budget 2024 calculation with Section 87A rebate & marginal relief",
+        "Old Tax Regime with 80C, 80D, 80CCD, Section 24 and HRA exemption",
+        "State-wise Professional Tax calculation (Karnataka, Maharashtra, Telangana, Delhi, etc.)",
+        "EPF 12% uncapped vs ₹1,800/mo statutory cap comparison",
+        "Corporate printable salary slip and PDF download",
+        "Multi-offer comparison matrix and appraisal hike simulator"
+      ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://inhander.com/#organization",
+      "name": "inHander",
+      "url": "https://inhander.com",
+      "logo": "https://inhander.com/favicon.svg"
+    }
+  ]
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RR18EERMBE"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-RR18EERMBE');
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Favicon & PWA Icons -->
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="inHander" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="sitemap" href="/sitemap.xml" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Inline Theme Initializer: Defaults to system theme if not explicitly chosen -->
+    <script is:inline>
+      (function() {
+        const storedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (storedTheme === 'dark' || (!storedTheme && systemPrefersDark) || (storedTheme === 'system' && systemPrefersDark)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
+
+    <!-- SEO & Metadata -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content="inHander.com" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <link rel="canonical" href={canonicalUrl} />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content="In Hand Salary Calculator India (inHander.com)" />
+    <meta property="og:site_name" content="In Hand Salary (inHander.com)" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalUrl} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={ogImage} />
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json" set:html={JSON.stringify(schemaData)} />
+
+    <!-- Google Fonts for Geist / Inter and Geist Mono / JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Geist:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-[#fafafa] dark:bg-[#0a0a0a] text-[#171717] dark:text-[#ededed] min-h-screen flex flex-col antialiased selection:bg-[#171717] selection:text-white dark:selection:bg-white dark:selection:text-[#171717] transition-colors duration-150">
+    <!-- Header -->
+    <Header activeTab={activeTab} />
+
+    <!-- Main Content Container with Mesh Gradient Background -->
+    <div class="relative flex-1 pt-16 sm:pt-20">
+      <MeshGradient />
+      <main class="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+        <slot />
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <Footer />
+  </body>
+</html>
