@@ -304,66 +304,61 @@ Calculated on inHander: ${shareUrl}`;
               </div>
             </div>
 
-            {/* Quick Actions in 2 organized rows */}
-            <div className="flex flex-col sm:items-end gap-2.5">
-              {/* Row 1: Primary Actions */}
-              <div className="flex flex-wrap items-center gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => setIsImportModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 px-4 h-10 rounded-full bg-white dark:bg-[#181818] border border-[#0070f3]/50 hover:border-[#0070f3] text-[#0070f3] dark:text-[#38bdf8] text-[13px] font-semibold hover:bg-[#0070f3]/5 dark:hover:bg-[#0070f3]/10 transition-all hover:scale-102 shadow-xs cursor-pointer"
-                  title="Upload & Scan Payslip, Offer Letter, or Screenshot (PDF / PNG / JPG)"
-                >
-                  <Upload className="w-4 h-4 text-[#0070f3] dark:text-[#38bdf8]" />
-                  <span>Upload Payslip</span>
-                </button>
+            {/* Quick Actions - All 5 aligned in a single row */}
+            <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+              <button
+                type="button"
+                onClick={() => setIsImportModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 h-9.5 sm:h-10 rounded-full bg-white dark:bg-[#181818] border border-[#0070f3]/50 hover:border-[#0070f3] text-[#0070f3] dark:text-[#38bdf8] text-[12.5px] sm:text-[13px] font-semibold hover:bg-[#0070f3]/5 dark:hover:bg-[#0070f3]/10 transition-all hover:scale-102 shadow-xs cursor-pointer"
+                title="Upload & Scan Payslip, Offer Letter, or Screenshot (PDF / PNG / JPG)"
+              >
+                <Upload className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0070f3] dark:text-[#38bdf8]" />
+                <span>Upload Payslip</span>
+              </button>
 
-                <button
-                  onClick={handleOptimizeTax}
-                  className="inline-flex items-center gap-1.5 px-4 h-10 rounded-full bg-[#171717] dark:bg-white text-white dark:text-[#171717] text-[13px] font-medium hover:bg-[#333333] dark:hover:bg-[#e0e0e0] transition-all hover:scale-102 shadow-sm cursor-pointer"
+              <button
+                onClick={handleOptimizeTax}
+                className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 h-9.5 sm:h-10 rounded-full bg-[#171717] dark:bg-white text-white dark:text-[#171717] text-[12.5px] sm:text-[13px] font-medium hover:bg-[#333333] dark:hover:bg-[#e0e0e0] transition-all hover:scale-102 shadow-sm cursor-pointer"
+              >
+                <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#f9cb28] dark:text-[#d97706]" />
+                <span>{isOptimized ? 'Deductions Maxed' : 'Maximize In-Hand'}</span>
+              </button>
+
+              <button
+                onClick={() => setIsSlipOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 h-9.5 sm:h-10 rounded-full border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[#171717] dark:text-white text-[12.5px] sm:text-[13px] font-medium hover:bg-[#f5f5f5] dark:hover:bg-[#222222] transition-colors shadow-stacked-sm cursor-pointer"
+              >
+                <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#4d4d4d] dark:text-[#a1a1a1]" />
+                <span>Salary Slip PDF</span>
+              </button>
+
+              {/* State / Location Selector Button (Compact) */}
+              <div className="inline-flex items-center gap-1 px-2.5 sm:px-3 h-9.5 sm:h-10 rounded-full border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[#171717] dark:text-white shadow-stacked-sm hover:border-[#0070f3] dark:hover:border-[#38bdf8] transition-colors group">
+                <MapPin className="w-3.5 h-3.5 text-[#0070f3] dark:text-[#38bdf8] shrink-0" />
+                <select
+                  value={inputs.stateCode}
+                  onChange={(e) => setInputs(prev => ({ ...prev, stateCode: e.target.value }))}
+                  className="bg-transparent text-[12px] sm:text-[12.5px] font-medium text-[#171717] dark:text-white border-0 focus:outline-hidden cursor-pointer"
+                  title="Select work location for dynamic state-wise professional tax calculation"
+                  aria-label="Work State for Professional Tax"
                 >
-                  <Zap className="w-4 h-4 text-[#f9cb28] dark:text-[#d97706]" />
-                  {isOptimized ? 'Deductions Maxed' : '1-Click Maximize In-Hand'}
-                </button>
+                  {PRIMARY_STATE_OPTIONS.map(st => (
+                    <option key={st.code} value={st.code} className="bg-white dark:bg-[#181818] text-[#171717] dark:text-white">
+                      {st.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              {/* Row 2: Secondary Actions & Location Selector in marked area */}
-              <div className="flex flex-wrap items-center gap-2.5">
-                <button
-                  onClick={() => setIsSlipOpen(true)}
-                  className="inline-flex items-center gap-1.5 px-4 h-10 rounded-full border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[#171717] dark:text-white text-[13px] font-medium hover:bg-[#f5f5f5] dark:hover:bg-[#222222] transition-colors shadow-stacked-sm cursor-pointer"
-                >
-                  <FileText className="w-4 h-4 text-[#4d4d4d] dark:text-[#a1a1a1]" />
-                  Salary Slip PDF
-                </button>
-
-                <button
-                  onClick={handleShareLink}
-                  className="inline-flex items-center justify-center gap-1.5 px-3.5 h-10 rounded-full border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#f5f5f5] dark:hover:bg-[#222222] transition-all shadow-stacked-sm cursor-pointer text-[13px] font-medium"
-                  title="Share or bookmark this calculation"
-                >
-                  {copiedLink ? <Check className="w-4 h-4 text-[#10b981]" /> : <Share2 className="w-4 h-4" />}
-                  <span>{copiedLink ? 'Copied' : 'Share'}</span>
-                </button>
-
-                {/* State / Location Selector Button in Marked Area */}
-                <div className="inline-flex items-center gap-1.5 px-3.5 h-10 rounded-full border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[#171717] dark:text-white shadow-stacked-sm hover:border-[#0070f3] dark:hover:border-[#38bdf8] transition-colors group">
-                  <MapPin className="w-4 h-4 text-[#0070f3] dark:text-[#38bdf8] shrink-0" />
-                  <select
-                    value={inputs.stateCode}
-                    onChange={(e) => setInputs(prev => ({ ...prev, stateCode: e.target.value }))}
-                    className="bg-transparent text-[13px] font-medium text-[#171717] dark:text-white border-0 focus:outline-hidden cursor-pointer"
-                    title="Select work location for dynamic state-wise professional tax calculation"
-                    aria-label="Work State for Professional Tax"
-                  >
-                    {PRIMARY_STATE_OPTIONS.map(st => (
-                      <option key={st.code} value={st.code} className="bg-white dark:bg-[#181818] text-[#171717] dark:text-white">
-                        {st.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+              {/* Share Button (Icon Only) */}
+              <button
+                onClick={handleShareLink}
+                className="inline-flex items-center justify-center w-9.5 sm:w-10 h-9.5 sm:h-10 rounded-full border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#f5f5f5] dark:hover:bg-[#222222] transition-all shadow-stacked-sm cursor-pointer shrink-0"
+                title="Share or bookmark this calculation"
+                aria-label="Share"
+              >
+                {copiedLink ? <Check className="w-4 h-4 text-[#10b981]" /> : <Share2 className="w-4 h-4" />}
+              </button>
             </div>
           </div>
 

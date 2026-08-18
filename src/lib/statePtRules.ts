@@ -125,10 +125,13 @@ export const STATE_PT_RULES: Record<string, StatePtInfo> = {
 export const PRIMARY_STATE_OPTIONS = [
   { code: 'KA', name: 'Karnataka' },
   { code: 'MH', name: 'Maharashtra' },
-  { code: 'TS_AP', name: 'Telangana / Andhra Pradesh' },
+  { code: 'TS', name: 'Telangana' },
+  { code: 'AP', name: 'Andhra Pradesh' },
   { code: 'TN', name: 'Tamil Nadu' },
+  { code: 'DL', name: 'Delhi NCR' },
+  { code: 'HR', name: 'Haryana' },
   { code: 'WB', name: 'West Bengal' },
   { code: 'GJ', name: 'Gujarat' },
-  { code: 'DL_HR', name: 'Delhi NCR / Haryana (0 PT)' },
+  { code: 'UP', name: 'Uttar Pradesh' },
   { code: 'OTHER', name: 'Other' }
 ];

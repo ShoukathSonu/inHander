@@ -6,12 +6,12 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "astro preview",
-    "preview:cf": "astro build && wrangler dev",
-    "deploy": "astro build && wrangler pages deploy dist --project-name=inhander",
-    "deploy:worker": "astro build && wrangler deploy",
-    "deploy:pages": "astro build && wrangler pages deploy dist --project-name=inhander",
+    "preview:cf": "ASTRO_TELEMETRY_DISABLED=1 astro build && wrangler dev",
+    "deploy": "ASTRO_TELEMETRY_DISABLED=1 astro build && wrangler pages deploy dist --project-name=inhander",
+    "deploy:worker": "ASTRO_TELEMETRY_DISABLED=1 astro build && wrangler deploy",
+    "deploy:pages": "ASTRO_TELEMETRY_DISABLED=1 astro build && wrangler pages deploy dist --project-name=inhander",
     "astro": "astro"
   },
   "dependencies": {
