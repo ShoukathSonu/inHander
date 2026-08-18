@@ -52,9 +52,9 @@ export const FinancialBlueprint: React.FC<FinancialBlueprintProps> = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
         {/* Card 1: 50/30/20 Budget Allocation */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-4 flex flex-col justify-between">
+        <div className="vessa-card p-6 rounded-2xl shadow-stacked-sm space-y-4 flex flex-col justify-between">
           <div className="space-y-3">
-            <div className="w-9 h-9 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#171717] dark:text-white">
+            <div className="w-9 h-9 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#e2e4e9] dark:border-[#262626] flex items-center justify-center text-[#171717] dark:text-white">
               <Compass className="w-4 h-4" />
             </div>
             <div>
@@ -62,29 +62,29 @@ export const FinancialBlueprint: React.FC<FinancialBlueprintProps> = ({
               <p className="text-[12px] text-[#888888] dark:text-[#737373] font-mono mt-0.5">Ideal monthly cash allocation</p>
             </div>
             <div className="space-y-2 text-[12px] pt-1">
-              <div className="flex justify-between items-center p-2 rounded-lg bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626]">
+              <div className="flex justify-between items-center p-2 rounded-lg bg-[#fafafa] dark:bg-[#181818] border border-dashed border-[#e2e4e9] dark:border-[#262626]">
                 <span className="text-[#4d4d4d] dark:text-[#a1a1a1]">50% Needs (Rent/EMI):</span>
                 <span className="font-mono font-bold text-[#171717] dark:text-white">{formatINR(needs50)}</span>
               </div>
-              <div className="flex justify-between items-center p-2 rounded-lg bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626]">
+              <div className="flex justify-between items-center p-2 rounded-lg bg-[#fafafa] dark:bg-[#181818] border border-dashed border-[#e2e4e9] dark:border-[#262626]">
                 <span className="text-[#4d4d4d] dark:text-[#a1a1a1]">30% Wants (Lifestyle):</span>
                 <span className="font-mono font-bold text-[#171717] dark:text-white">{formatINR(wants30)}</span>
               </div>
-              <div className="flex justify-between items-center p-2 rounded-lg bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626]">
+              <div className="flex justify-between items-center p-2 rounded-lg bg-[#fafafa] dark:bg-[#181818] border border-dashed border-[#e2e4e9] dark:border-[#262626]">
                 <span className="text-[#4d4d4d] dark:text-[#a1a1a1]">20% Wealth (SIPs/MF):</span>
                 <span className="font-mono font-bold text-[#10b981]">{formatINR(savings20)}</span>
               </div>
             </div>
           </div>
-          <p className="text-[11px] text-[#888888] dark:text-[#737373] leading-tight pt-2 border-t border-[#ebebeb] dark:border-[#262626]">
+          <p className="text-[11px] text-[#888888] dark:text-[#737373] leading-tight pt-2 border-t border-dashed border-[#e2e4e9] dark:border-[#262626]">
             Automate a monthly SIP of {formatINR(savings20)} on salary credit day.
           </p>
         </div>
 
         {/* Card 2: Emergency Fund Target */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-4 flex flex-col justify-between">
+        <div className="vessa-card p-6 rounded-2xl shadow-stacked-sm space-y-4 flex flex-col justify-between">
           <div className="space-y-3">
-            <div className="w-9 h-9 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#0070f3]">
+            <div className="w-9 h-9 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#e2e4e9] dark:border-[#262626] flex items-center justify-center text-[#0070f3]">
               <PiggyBank className="w-4 h-4" />
             </div>
             <div>
@@ -101,15 +101,15 @@ export const FinancialBlueprint: React.FC<FinancialBlueprintProps> = ({
               Maintain 6 months of mandatory living expenses ({formatINR(needs50)}/mo) in liquid funds, sweep-in fixed deposits, or high-yield savings accounts.
             </p>
           </div>
-          <p className="text-[11px] text-[#888888] dark:text-[#737373] leading-tight pt-2 border-t border-[#ebebeb] dark:border-[#262626]">
+          <p className="text-[11px] text-[#888888] dark:text-[#737373] leading-tight pt-2 border-t border-dashed border-[#e2e4e9] dark:border-[#262626]">
             Gives career independence during job transitions or layoffs.
           </p>
         </div>
 
         {/* Card 3: Term Life Insurance Protection */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-4 flex flex-col justify-between">
+        <div className="vessa-card p-6 rounded-2xl shadow-stacked-sm space-y-4 flex flex-col justify-between">
           <div className="space-y-3">
-            <div className="w-9 h-9 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#10b981]">
+            <div className="w-9 h-9 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#e2e4e9] dark:border-[#262626] flex items-center justify-center text-[#10b981]">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
@@ -118,21 +118,21 @@ export const FinancialBlueprint: React.FC<FinancialBlueprintProps> = ({
             </div>
             <div className="pt-2">
               <span className="text-[11px] font-mono uppercase text-[#888888] dark:text-[#737373] block">Recommended Life Cover</span>
-              <span className="text-2xl font-bold font-mono text-[#171717] dark:text-white tracking-tight">
+              <span className="text-2xl font-bold font-mono text-[#10b981] tracking-tight">
                 {formatINR(termInsuranceMin)} – {formatINR(termInsuranceMax)}
               </span>
             </div>
             <p className="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
-              A pure term plan protects your family’s financial future against debt & liabilities at low annual premiums (~₹8,000–₹15,000/yr), eligible for Section 80C tax deduction.
+              Pure term insurance policy ensures 100% financial security for your dependents without expensive endowment/ULIP traps.
             </p>
           </div>
-          <p className="text-[11px] text-[#888888] dark:text-[#737373] leading-tight pt-2 border-t border-[#ebebeb] dark:border-[#262626]">
-            Always choose pure term insurance over ULIPs or endowment plans.
+          <p className="text-[11px] text-[#888888] dark:text-[#737373] leading-tight pt-2 border-t border-dashed border-[#e2e4e9] dark:border-[#262626]">
+            Premium eligible under Sec 80C in Old Tax Regime.
           </p>
         </div>
 
         {/* Card 4: EPF Retirement Wealth Compounding */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-4 flex flex-col justify-between">
+        <div className="vessa-card p-6 rounded-2xl shadow-stacked-sm space-y-4 flex flex-col justify-between">
           <div className="space-y-3">
             <div className="w-9 h-9 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#7928ca]">
               <HeartHandshake className="w-4 h-4" />

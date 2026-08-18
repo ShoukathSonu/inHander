@@ -39,9 +39,9 @@ export const BreakdownChart: React.FC<BreakdownChartProps> = ({
   const otherOffset = -(takeHomeDash + taxDash + epfDash);
 
   return (
-    <div className="bg-[#fafafa] dark:bg-[#181818] rounded-2xl p-5 sm:p-6 border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm flex flex-col justify-between h-full space-y-4">
+    <div className="bg-[#fafafa]/80 dark:bg-[#181818]/80 rounded-2xl p-5 sm:p-6 border border-dashed border-[#e2e4e9] dark:border-[#262626] shadow-stacked-sm flex flex-col justify-between h-full space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[#ebebeb] dark:border-[#262626] pb-3">
+      <div className="flex items-center justify-between border-b border-dashed border-[#e2e4e9] dark:border-[#262626] pb-3">
         <div>
           <h4 className="text-[14px] font-semibold text-[#171717] dark:text-white">Annual CTC Distribution</h4>
           <span className="text-[11px] font-mono text-[#888888] dark:text-[#737373]">{regimeName} Tax Regime</span>

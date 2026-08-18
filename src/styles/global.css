@@ -30,11 +30,21 @@
     --bg-card: #ffffff;
     --bg-card-soft: #fafafa;
     --bg-card-muted: #f5f5f5;
-    --border-hairline: #ebebeb;
-    --border-hairline-hover: #d4d4d4;
+    --border-hairline: #e2e4e9;
+    --border-hairline-hover: #c4c7cf;
     --text-primary: #171717;
     --text-secondary: #4d4d4d;
     --text-muted: #888888;
+
+    /* Vessa-inspired Architectural Dash & Frame System */
+    --m-border: rgba(0, 0, 0, 0.14);
+    --m-border-subtle: rgba(0, 0, 0, 0.08);
+    --m-dash-on: 8px;
+    --m-dash-off: 5px;
+    --m-dash-h: repeating-linear-gradient(to right, var(--m-border) 0 var(--m-dash-on), transparent var(--m-dash-on) calc(var(--m-dash-on) + var(--m-dash-off)));
+    --m-dash-v: repeating-linear-gradient(to bottom, var(--m-border) 0 var(--m-dash-on), transparent var(--m-dash-on) calc(var(--m-dash-on) + var(--m-dash-off)));
+    --vessa-node-accent: #0070f3;
+    --vessa-well: #f5f6f8;
   }
 
   .dark {
@@ -43,10 +53,16 @@
     --bg-card-soft: #181818;
     --bg-card-muted: #1e1e1e;
     --border-hairline: #262626;
-    --border-hairline-hover: #404040;
+    --border-hairline-hover: #3d3d3d;
     --text-primary: #ededed;
     --text-secondary: #a1a1a1;
     --text-muted: #737373;
+
+    /* Vessa Dark Dash & Frame System */
+    --m-border: rgba(255, 255, 255, 0.15);
+    --m-border-subtle: rgba(255, 255, 255, 0.08);
+    --vessa-node-accent: #38bdf8;
+    --vessa-well: #161616;
   }
 
   html {
@@ -69,7 +85,110 @@
   }
 }
 
-/* Vercel-inspired Stacked Shadows & Insets */
+/* Vessa Architectural Guide Rails */
+.guides {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  margin: 0 auto;
+}
+
+.rail {
+  position: absolute;
+  background: var(--m-dash-v);
+  width: 1px;
+  top: 0;
+  bottom: 0;
+  -webkit-mask-image: linear-gradient(#0000 0, #000 120px calc(100% - 120px), #0000);
+  mask-image: linear-gradient(#0000 0, #000 120px calc(100% - 120px), #0000);
+}
+
+.rail--l {
+  left: clamp(0.75rem, 3vw, 2.5rem);
+}
+
+.rail--r {
+  right: clamp(0.75rem, 3vw, 2.5rem);
+}
+
+/* Vessa Stage Lines & Borders */
+.stage-line-h {
+  background: var(--m-dash-h);
+  height: 1px;
+  width: 100%;
+  position: relative;
+}
+
+.stage-line-v {
+  background: var(--m-dash-v);
+  width: 1px;
+  height: 100%;
+  position: relative;
+}
+
+/* Vessa Frame & Corner Accents (Stage Nodes & Crosshairs) */
+.vessa-frame {
+  position: relative;
+}
+
+.vessa-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-hairline);
+  box-shadow: 0 0 0 1px var(--m-border-subtle), 0 2px 4px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dark .vessa-card {
+  box-shadow: 0 0 0 1px var(--m-border-subtle), 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.vessa-card:hover {
+  border-color: var(--border-hairline-hover);
+}
+
+/* Precision Corner Crosshair Nodes */
+.stage-node {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: var(--vessa-node-accent);
+  pointer-events: none;
+  z-index: 10;
+  border-radius: 1px;
+  opacity: 0.85;
+}
+
+.stage-node--tl { top: -2.5px; left: -2.5px; }
+.stage-node--tr { top: -2.5px; right: -2.5px; }
+.stage-node--bl { bottom: -2.5px; left: -2.5px; }
+.stage-node--br { bottom: -2.5px; right: -2.5px; }
+
+/* Corner Crosshair (+) Markers */
+.corner-plus {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  pointer-events: none;
+  z-index: 10;
+  color: var(--color-mute);
+  opacity: 0.6;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.corner-plus--tl { top: -6px; left: -6px; }
+.corner-plus--tr { top: -6px; right: -6px; }
+.corner-plus--bl { bottom: -6px; left: -6px; }
+.corner-plus--br { bottom: -6px; right: -6px; }
+
+/* Stacked Inset Shadows */
 .shadow-stacked-sm {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
 }
@@ -86,14 +205,6 @@
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 2px 4px rgba(0, 0, 0, 0.4), 0 8px 16px -4px rgba(0, 0, 0, 0.4);
 }
 
-.shadow-stacked-lg {
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 20px 25px -5px rgba(0, 0, 0, 0.05);
-}
-
-.dark .shadow-stacked-lg {
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 20px 25px -5px rgba(0, 0, 0, 0.4);
-}
-
 .shadow-modal {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 8px 16px -4px rgba(0, 0, 0, 0.08), 0 24px 32px -8px rgba(0, 0, 0, 0.12);
 }
@@ -104,19 +215,19 @@
 
 /* Atmospheric Mesh Gradient Backdrop */
 .mesh-gradient-bg {
-  background: radial-gradient(at 15% 10%, rgba(0, 124, 240, 0.18) 0px, transparent 50%),
-              radial-gradient(at 85% 15%, rgba(121, 40, 202, 0.16) 0px, transparent 50%),
-              radial-gradient(at 50% 60%, rgba(255, 0, 128, 0.12) 0px, transparent 50%),
-              radial-gradient(at 20% 90%, rgba(80, 227, 194, 0.14) 0px, transparent 50%),
-              radial-gradient(at 80% 85%, rgba(249, 203, 40, 0.12) 0px, transparent 50%);
+  background: radial-gradient(at 15% 10%, rgba(0, 124, 240, 0.16) 0px, transparent 50%),
+              radial-gradient(at 85% 15%, rgba(121, 40, 202, 0.14) 0px, transparent 50%),
+              radial-gradient(at 50% 60%, rgba(255, 0, 128, 0.10) 0px, transparent 50%),
+              radial-gradient(at 20% 90%, rgba(80, 227, 194, 0.12) 0px, transparent 50%),
+              radial-gradient(at 80% 85%, rgba(249, 203, 40, 0.10) 0px, transparent 50%);
 }
 
 .dark .mesh-gradient-bg {
-  background: radial-gradient(at 15% 10%, rgba(0, 124, 240, 0.15) 0px, transparent 50%),
-              radial-gradient(at 85% 15%, rgba(121, 40, 202, 0.14) 0px, transparent 50%),
-              radial-gradient(at 50% 60%, rgba(255, 0, 128, 0.10) 0px, transparent 50%),
-              radial-gradient(at 20% 90%, rgba(80, 227, 194, 0.10) 0px, transparent 50%),
-              radial-gradient(at 80% 85%, rgba(249, 203, 40, 0.10) 0px, transparent 50%);
+  background: radial-gradient(at 15% 10%, rgba(0, 124, 240, 0.14) 0px, transparent 50%),
+              radial-gradient(at 85% 15%, rgba(121, 40, 202, 0.12) 0px, transparent 50%),
+              radial-gradient(at 50% 60%, rgba(255, 0, 128, 0.08) 0px, transparent 50%),
+              radial-gradient(at 20% 90%, rgba(80, 227, 194, 0.08) 0px, transparent 50%),
+              radial-gradient(at 80% 85%, rgba(249, 203, 40, 0.08) 0px, transparent 50%);
 }
 
 /* Custom Number Input & Range Sliders */

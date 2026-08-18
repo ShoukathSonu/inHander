@@ -1,7 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { SalaryCalculator } from '../../components/SalaryCalculator';
-import QuickPackages from '../../components/QuickPackages.astro';
 import FaqSection from '../../components/FaqSection.astro';
 import { calculateSalary, DEFAULT_SALARY_INPUTS } from '../../lib/taxEngine';
 import { formatINR } from '../../lib/formatters';
@@ -128,9 +127,6 @@ const bestRegime = analysis.betterRegime === 'OLD' ? analysis.oldRegime : analys
         </div>
       </div>
     </section>
-
-    <!-- Other Packages -->
-    <QuickPackages />
 
     <!-- FAQ -->
     <FaqSection />

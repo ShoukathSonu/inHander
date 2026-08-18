@@ -1,19 +1,47 @@
 ---
-// Compact Zero-lag, Zero-permission Edge Weather Badge
+// Compact Zero-lag, Zero-permission Edge Weather & Live Time Badge
 ---
 
 <div 
   id="weather-badge"
-  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#f5f5f5] dark:bg-[#1a1a1a] border border-[#ebebeb] dark:border-[#262626] text-[11px] sm:text-[12px] font-mono font-medium text-[#171717] dark:text-[#ededed] select-none whitespace-nowrap transition-all"
-  title="Live Weather"
+  class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-[#f5f5f5] dark:bg-[#1a1a1a] border border-[#ebebeb] dark:border-[#262626] text-[11px] sm:text-[12px] font-mono font-medium text-[#171717] dark:text-[#ededed] select-none whitespace-nowrap transition-all"
+  title="Live Time & Weather"
 >
-  <span id="weather-icon" class="text-[12px] leading-none" aria-hidden="true">📍</span>
+  <span id="header-time" class="tracking-tight">--:--</span>
+  <span class="text-[#888888] dark:text-[#737373] text-[10px]" aria-hidden="true">·</span>
+  <span id="weather-icon" class="text-[11px] leading-none" aria-hidden="true">📍</span>
   <span id="weather-temp" class="tracking-tight leading-none">24°C</span>
 </div>
 
 <script is:inline>
-  // 0ms instant paint from sessionStorage cache
+  // 0ms instant paint for live time & cached weather
   (function() {
+    function getNowTime() {
+      try {
+        var now = new Date();
+        return now.toLocaleTimeString('en-US', {
+          timeZone: 'Asia/Kolkata',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        });
+      } catch(e) {
+        var d = new Date();
+        var hours = d.getHours();
+        var minutes = d.getMinutes();
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        var minStr = minutes < 10 ? '0' + minutes : minutes;
+        return (hours < 10 ? '0' + hours : hours) + ':' + minStr + ' ' + ampm;
+      }
+    }
+
+    var timeEl = document.getElementById('header-time');
+    if (timeEl) {
+      timeEl.textContent = getNowTime();
+    }
+
     try {
       var cached = sessionStorage.getItem('inhander_weather');
       if (cached) {
@@ -30,11 +58,38 @@
 </script>
 
 <script>
-  function initWeatherBadge() {
+  function initLiveTimeAndWeather() {
     const badge = document.getElementById('weather-badge');
     const tempEl = document.getElementById('weather-temp');
-    if (!badge || !tempEl) return;
+    const timeEl = document.getElementById('header-time');
 
+    // 1. Live Clock update every second
+    function updateClock() {
+      if (!timeEl) return;
+      try {
+        const now = new Date();
+        timeEl.textContent = now.toLocaleTimeString('en-US', {
+          timeZone: 'Asia/Kolkata',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        });
+      } catch {
+        const now = new Date();
+        let hours = now.getHours();
+        const minutes = now.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12;
+        const hrStr = hours < 10 ? `0${hours}` : `${hours}`;
+        const minStr = minutes < 10 ? `0${minutes}` : `${minutes}`;
+        timeEl.textContent = `${hrStr}:${minStr} ${ampm}`;
+      }
+    }
+
+    updateClock();
+    const clockTimer = setInterval(updateClock, 1000);
+
+    // 2. Weather Loader
     const CACHE_KEY = 'inhander_weather';
     const CACHE_TTL_MS = 3600000; // 1 hour
 
@@ -43,11 +98,11 @@
         tempEl.textContent = `${temp}°C`;
       }
       if (badge) {
-        badge.title = `Live Weather: ${temp}°C`;
+        badge.title = `Live Time & Weather: ${temp}°C`;
       }
     }
 
-    // 1. Check sessionStorage cache
+    // Check sessionStorage cache
     try {
       const cachedStr = sessionStorage.getItem(CACHE_KEY);
       if (cachedStr) {
@@ -65,7 +120,7 @@
       // Storage unavailable
     }
 
-    // 2. Fetch from Edge API Route (/api/weather)
+    // Fetch from Edge API Route (/api/weather)
     fetch('/api/weather')
       .then(async (res) => {
         if (!res.ok) throw new Error('Edge function not available');
@@ -84,7 +139,7 @@
         }
       })
       .catch(async () => {
-        // Fallback for local development (`astro dev` on localhost) where Cloudflare edge headers aren't emulated
+        // Fallback for local development (`astro dev` on localhost)
         try {
           const fallbackRes = await fetch(
             'https://api.open-meteo.com/v1/forecast?latitude=12.9716&longitude=77.5946&current=temperature_2m'
@@ -110,6 +165,6 @@
   }
 
   // Initial mount & Astro page navigation hook
-  initWeatherBadge();
-  document.addEventListener('astro:after-swap', initWeatherBadge);
+  initLiveTimeAndWeather();
+  document.addEventListener('astro:after-swap', initLiveTimeAndWeather);
 </script>

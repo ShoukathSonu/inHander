@@ -256,10 +256,16 @@ Calculated on inHander: ${shareUrl}`;
         </div>
       )}
 
-      {/* Top Main Calculation Hub Card */}
-      <div className="bg-white dark:bg-[#121212] rounded-2xl border border-[#ebebeb] dark:border-[#262626] shadow-stacked overflow-hidden transition-colors">
+      {/* Top Main Calculation Hub Card - Vessa.design Framed Card */}
+      <div className="vessa-card vessa-frame rounded-2xl overflow-hidden transition-colors">
+        {/* Precision Corner Crosshair Nodes */}
+        <span className="corner-plus corner-plus--tl" aria-hidden="true">+</span>
+        <span className="corner-plus corner-plus--tr" aria-hidden="true">+</span>
+        <span className="corner-plus corner-plus--bl" aria-hidden="true">+</span>
+        <span className="corner-plus corner-plus--br" aria-hidden="true">+</span>
+
         {/* Card Header & Quick CTC Presets */}
-        <div className="p-6 sm:p-8 border-b border-[#ebebeb] dark:border-[#262626] bg-[#fafafa]/50 dark:bg-[#181818]/50">
+        <div className="p-6 sm:p-8 border-b border-dashed border-[#e2e4e9] dark:border-[#262626] bg-[#fafafa]/70 dark:bg-[#181818]/70">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 lg:gap-14">
             <div className="space-y-1.5 shrink-0">
               <div className="flex items-center gap-2">
@@ -462,9 +468,9 @@ Calculated on inHander: ${shareUrl}`;
         </div>
 
         {/* Dual Regime Recommendation Banner */}
-        <div className="p-4 sm:p-5 bg-[#fafafa] dark:bg-[#181818] border-b border-[#ebebeb] dark:border-[#262626] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="p-4 sm:p-5 bg-[#fafafa]/80 dark:bg-[#181818]/80 border-b border-dashed border-[#e2e4e9] dark:border-[#262626] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-white dark:bg-[#222222] border border-[#ebebeb] dark:border-[#262626] text-[#0070f3] shrink-0 mt-0.5 sm:mt-0">
+            <div className="p-2 rounded-lg bg-white dark:bg-[#222222] border border-[#e2e4e9] dark:border-[#262626] text-[#0070f3] shrink-0 mt-0.5 sm:mt-0">
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
@@ -489,7 +495,7 @@ Calculated on inHander: ${shareUrl}`;
           </div>
 
           {analysis.annualTaxSavings > 0 && (
-            <div className="shrink-0 text-left sm:text-right bg-white dark:bg-[#222222] sm:bg-transparent sm:dark:bg-transparent px-3 py-2 sm:p-0 rounded-lg border sm:border-0 border-[#ebebeb] dark:border-[#262626]">
+            <div className="shrink-0 text-left sm:text-right bg-white dark:bg-[#222222] sm:bg-transparent sm:dark:bg-transparent px-3 py-2 sm:p-0 rounded-lg border sm:border-0 border-[#e2e4e9] dark:border-[#262626]">
               <span className="text-[11px] font-mono text-[#888888] dark:text-[#737373] uppercase block">You Save</span>
               <span className="text-[16px] font-bold font-mono text-[#10b981]">
                 +{formatINR(analysis.annualTaxSavings)}/yr
@@ -499,7 +505,7 @@ Calculated on inHander: ${shareUrl}`;
         </div>
 
         {/* Big In-Hand Take Home Highlight Box & Annual CTC Distribution Box */}
-        <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch border-b border-[#ebebeb] dark:border-[#262626]">
+        <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch border-b border-dashed border-[#e2e4e9] dark:border-[#262626]">
           {/* Main In Hand Metric (7 Cols on desktop) */}
           <div className="lg:col-span-7 space-y-5 flex flex-col justify-between">
             <div className="space-y-4">
@@ -614,7 +620,7 @@ Calculated on inHander: ${shareUrl}`;
         </div>
 
         {/* Task 1: "Real Cash vs. Paper Money" 3-Card Output Strip */}
-        <div className="p-6 sm:p-8 border-b border-[#ebebeb] dark:border-[#262626] bg-[#fafafa]/40 dark:bg-[#181818]/40">
+        <div className="p-6 sm:p-8 border-b border-dashed border-[#e2e4e9] dark:border-[#262626] bg-[#fafafa]/40 dark:bg-[#181818]/40">
           <div className="flex items-center justify-between mb-4">
             <div>
               <span className="text-[11px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] font-semibold block">
@@ -624,7 +630,7 @@ Calculated on inHander: ${shareUrl}`;
                 Real Cash vs. Paper Money Breakdown
               </h3>
             </div>
-            <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] text-[#4d4d4d] dark:text-[#a1a1a1]">
+            <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-white dark:bg-[#181818] border border-[#e2e4e9] dark:border-[#262626] text-[#4d4d4d] dark:text-[#a1a1a1]">
               Guaranteed Base: {formatINR(analysis.compensationSplit.guaranteedBaseCtc)}
             </span>
           </div>
@@ -700,7 +706,7 @@ Calculated on inHander: ${shareUrl}`;
         />
 
         {/* Detailed Dual Regime Comparison Matrix */}
-        <div className="p-6 sm:p-8 bg-[#fafafa]/50 dark:bg-[#181818]/50 border-b border-[#ebebeb] dark:border-[#262626]">
+        <div className="p-6 sm:p-8 bg-[#fafafa]/50 dark:bg-[#181818]/50 border-b border-dashed border-[#e2e4e9] dark:border-[#262626]">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-[16px] font-semibold text-[#171717] dark:text-white">Tax Comparison</h3>

@@ -138,10 +138,17 @@ const schemaData = {
     <!-- Header -->
     <Header activeTab={activeTab} />
 
-    <!-- Main Content Container with Mesh Gradient Background -->
+    <!-- Main Content Container with Mesh Gradient Background & Vessa Guide Rails -->
     <div class="relative flex-1 pt-16 sm:pt-20">
       <MeshGradient />
-      <main class="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+      
+      <!-- Architectural Guide Rails (Vessa.design) -->
+      <div class="guides max-w-[1400px] pointer-events-none" aria-hidden="true">
+        <div class="rail rail--l"></div>
+        <div class="rail rail--r"></div>
+      </div>
+
+      <main class="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 relative z-10">
         <slot />
       </main>
     </div>

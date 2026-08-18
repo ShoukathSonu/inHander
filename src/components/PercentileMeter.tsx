@@ -47,7 +47,7 @@ export const PercentileMeter: React.FC<PercentileMeterProps> = ({
   const ctcLpaStr = formatCompactINR(annualCtc);
 
   return (
-    <div className="p-6 sm:p-7 bg-white dark:bg-[#121212] border-b border-[#ebebeb] dark:border-[#262626] space-y-6 transition-colors">
+    <div className="p-6 sm:p-7 bg-white dark:bg-[#121212] border-b border-dashed border-[#e2e4e9] dark:border-[#262626] space-y-6 transition-colors">
       {/* Top Header Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
