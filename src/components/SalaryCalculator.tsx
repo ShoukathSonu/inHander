@@ -302,27 +302,22 @@ Calculated on inHander: ${shareUrl}`;
                   / year
                 </span>
 
-                {/* Module 1: State / Professional Tax Selector Dropdown */}
-                <div className="inline-flex items-center gap-2 bg-white dark:bg-[#181818] px-3.5 py-1.5 rounded-2xl border border-[#ebebeb] dark:border-[#262626] shadow-xs hover:border-[#0070f3] dark:hover:border-[#38bdf8] transition-colors group">
+                {/* State / Professional Tax Selector Dropdown */}
+                <div className="inline-flex items-center gap-1.5 bg-white dark:bg-[#181818] px-3 py-1.5 rounded-full border border-[#ebebeb] dark:border-[#262626] shadow-xs hover:border-[#0070f3] dark:hover:border-[#38bdf8] transition-colors group">
                   <MapPin className="w-4 h-4 text-[#0070f3] dark:text-[#38bdf8] shrink-0" />
-                  <div className="flex flex-col text-left">
-                    <span className="text-[10px] font-mono text-[#888888] dark:text-[#737373] uppercase font-semibold leading-tight">
-                      Work State / PT
-                    </span>
-                    <select
-                      value={inputs.stateCode}
-                      onChange={(e) => setInputs(prev => ({ ...prev, stateCode: e.target.value }))}
-                      className="bg-transparent text-[13px] font-bold text-[#171717] dark:text-white border-0 focus:outline-hidden cursor-pointer -ml-0.5 pt-0.5"
-                      title="Select work location for dynamic state-wise professional tax calculation"
-                      aria-label="Work State for Professional Tax"
-                    >
-                      {PRIMARY_STATE_OPTIONS.map(st => (
-                        <option key={st.code} value={st.code} className="bg-white dark:bg-[#181818] text-[#171717] dark:text-white">
-                          {st.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <select
+                    value={inputs.stateCode}
+                    onChange={(e) => setInputs(prev => ({ ...prev, stateCode: e.target.value }))}
+                    className="bg-transparent text-[13px] font-medium text-[#171717] dark:text-white border-0 focus:outline-hidden cursor-pointer"
+                    title="Select work location for dynamic state-wise professional tax calculation"
+                    aria-label="Work State for Professional Tax"
+                  >
+                    {PRIMARY_STATE_OPTIONS.map(st => (
+                      <option key={st.code} value={st.code} className="bg-white dark:bg-[#181818] text-[#171717] dark:text-white">
+                        {st.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>
