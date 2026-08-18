@@ -46,9 +46,6 @@ export default defineConfig({
       alias: {
         '@': path.resolve('./src')
       }
-    },
-    oxc: {
-      tsconfig: path.resolve('./tsconfig.json')
     }
   }
 });

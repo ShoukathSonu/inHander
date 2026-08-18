@@ -123,7 +123,7 @@ export const STATE_PT_RULES: Record<string, StatePtInfo> = {
 };
 
 export const PRIMARY_STATE_OPTIONS = [
-  { code: 'KA', name: 'Karnataka (Default)' },
+  { code: 'KA', name: 'Karnataka' },
   { code: 'MH', name: 'Maharashtra' },
   { code: 'TS_AP', name: 'Telangana / Andhra Pradesh' },
   { code: 'TN', name: 'Tamil Nadu' },

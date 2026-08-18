@@ -1,13 +1,14 @@
 ---
-// Zero-lag, Zero-permission Edge Weather Badge
+// Compact Zero-lag, Zero-permission Edge Weather Badge
 ---
 
 <div 
   id="weather-badge"
-  class="hidden items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full bg-[#f5f5f5] dark:bg-[#1a1a1a] border border-[#ebebeb] dark:border-[#262626] text-[11px] sm:text-[12px] font-mono font-medium text-[#171717] dark:text-[#ededed] select-none whitespace-nowrap transition-opacity duration-200"
-  title="Live Local Weather"
+  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#f5f5f5] dark:bg-[#1a1a1a] border border-[#ebebeb] dark:border-[#262626] text-[11px] sm:text-[12px] font-mono font-medium text-[#171717] dark:text-[#ededed] select-none whitespace-nowrap transition-all"
+  title="Live Weather"
 >
-  <span id="weather-text" class="tracking-tight leading-none">📍 -- • --°C</span>
+  <span id="weather-icon" class="text-[12px] leading-none" aria-hidden="true">📍</span>
+  <span id="weather-temp" class="tracking-tight leading-none">24°C</span>
 </div>
 
 <script is:inline>
@@ -17,13 +18,10 @@
       var cached = sessionStorage.getItem('inhander_weather');
       if (cached) {
         var data = JSON.parse(cached);
-        if (data && data.city && typeof data.temp === 'number' && (Date.now() - (data.timestamp || 0) < 3600000)) {
-          var el = document.getElementById('weather-badge');
-          var textEl = document.getElementById('weather-text');
-          if (el && textEl) {
-            textEl.textContent = '📍 ' + data.city + ' • ' + data.temp + '°C';
-            el.classList.remove('hidden');
-            el.classList.add('inline-flex');
+        if (data && typeof data.temp === 'number' && (Date.now() - (data.timestamp || 0) < 3600000)) {
+          var tempEl = document.getElementById('weather-temp');
+          if (tempEl) {
+            tempEl.textContent = data.temp + '°C';
           }
         }
       }
@@ -34,23 +32,19 @@
 <script>
   function initWeatherBadge() {
     const badge = document.getElementById('weather-badge');
-    const textEl = document.getElementById('weather-text');
-    if (!badge || !textEl) return;
+    const tempEl = document.getElementById('weather-temp');
+    if (!badge || !tempEl) return;
 
     const CACHE_KEY = 'inhander_weather';
     const CACHE_TTL_MS = 3600000; // 1 hour
 
-    function renderBadge(city: string, temp: number) {
-      if (!textEl || !badge) return;
-      textEl.textContent = `📍 ${city} • ${temp}°C`;
-      badge.classList.remove('hidden');
-      badge.classList.add('inline-flex');
-    }
-
-    function hideBadge() {
-      if (!badge) return;
-      badge.classList.add('hidden');
-      badge.classList.remove('inline-flex');
+    function renderTemp(temp: number) {
+      if (tempEl) {
+        tempEl.textContent = `${temp}°C`;
+      }
+      if (badge) {
+        badge.title = `Live Weather: ${temp}°C`;
+      }
     }
 
     // 1. Check sessionStorage cache
@@ -60,51 +54,62 @@
         const cached = JSON.parse(cachedStr);
         if (
           cached &&
-          typeof cached.city === 'string' &&
           typeof cached.temp === 'number' &&
           Date.now() - (cached.timestamp || 0) < CACHE_TTL_MS
         ) {
-          renderBadge(cached.city, cached.temp);
+          renderTemp(cached.temp);
           return;
         }
       }
     } catch {
-      // Storage unavailable or disabled
+      // Storage unavailable
     }
 
     // 2. Fetch from Edge API Route (/api/weather)
     fetch('/api/weather')
-      .then(async (response) => {
-        if (!response.ok) {
-          hideBadge();
-          return;
-        }
-        const data = await response.json();
-        if (data && typeof data.city === 'string' && typeof data.temp === 'number') {
-          renderBadge(data.city, data.temp);
+      .then(async (res) => {
+        if (!res.ok) throw new Error('Edge function not available');
+        const data = await res.json();
+        if (data && typeof data.temp === 'number') {
+          renderTemp(data.temp);
           try {
             sessionStorage.setItem(
               CACHE_KEY,
               JSON.stringify({
-                city: data.city,
                 temp: data.temp,
                 timestamp: Date.now()
               })
             );
-          } catch {
-            // Storage quota or private browsing
-          }
-        } else {
-          hideBadge();
+          } catch {}
         }
       })
-      .catch(() => {
-        // Keep widget completely hidden on network or parsing error
-        hideBadge();
+      .catch(async () => {
+        // Fallback for local development (`astro dev` on localhost) where Cloudflare edge headers aren't emulated
+        try {
+          const fallbackRes = await fetch(
+            'https://api.open-meteo.com/v1/forecast?latitude=12.9716&longitude=77.5946&current=temperature_2m'
+          );
+          if (fallbackRes.ok) {
+            const fbData = await fallbackRes.json();
+            const temp = Math.round(fbData?.current?.temperature_2m ?? 24);
+            renderTemp(temp);
+            try {
+              sessionStorage.setItem(
+                CACHE_KEY,
+                JSON.stringify({
+                  temp: temp,
+                  timestamp: Date.now()
+                })
+              );
+            } catch {}
+          }
+        } catch {
+          // Retain default 24°C
+        }
       });
   }
 
-  // Initial mount & Astro client navigation hook
+  // Initial mount & Astro page navigation hook
   initWeatherBadge();
   document.addEventListener('astro:after-swap', initWeatherBadge);
 </script>
