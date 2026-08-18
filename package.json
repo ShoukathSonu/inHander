@@ -4,8 +4,8 @@
   "description": "In Hand Salary Calculator for Indian Professionals",
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "start": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
     "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "astro preview",
     "preview:cf": "ASTRO_TELEMETRY_DISABLED=1 astro build && wrangler dev",
