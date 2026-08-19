@@ -6,248 +6,446 @@
 // 10 lpa in hand salary, 12 lpa in hand salary, 18 lpa in hand salary, in hand salary calculator after tax.
 ---
 
-<section class="w-full max-w-5xl mx-auto pt-16 space-y-12 text-[#171717] dark:text-[#ededed]">
-  <!-- Main Editorial Title -->
-  <div class="space-y-3 text-center sm:text-left border-b border-[#ebebeb] dark:border-[#262626] pb-6">
-    <span class="text-[12px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] font-semibold">
-      Comprehensive Indian Payroll &amp; Tax Guide
-    </span>
-    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#171717] dark:text-white">
-      The Complete Guide to In Hand Salary &amp; Take-Home Pay in India (FY 2025-26 &amp; 2026-27)
-    </h2>
-    <p class="text-[14px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed max-w-3xl">
-      Everything you need to know about converting Cost to Company (CTC) into net monthly bank credits, understanding the <strong>in hand salary calculator after tax</strong>, Section 87A rebate rules, and selecting the optimal tax regime.
+<section class="w-full max-w-5xl mx-auto pt-16 scroll-mt-24 space-y-6 text-[#171717] dark:text-[#ededed]" id="salary-guide">
+  <!-- Main Editorial Title & Overview Header -->
+  <div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#ebebeb] dark:border-[#262626] pb-5">
+      <div class="space-y-1">
+        <span class="text-[12px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] font-semibold flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-[#0070f3]"></span>
+          Comprehensive Indian Payroll &amp; Tax Guide
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#171717] dark:text-white">
+          The Complete Guide to In Hand Salary &amp; Take-Home Pay in India (FY 2025-26 &amp; 2026-27)
+        </h2>
+      </div>
+
+      <!-- Expand / Collapse All Trigger Button -->
+      <button
+        type="button"
+        id="guide-toggle-all-btn"
+        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] text-[12px] font-mono font-medium text-[#171717] dark:text-white hover:border-[#a1a1a1] dark:hover:border-[#525252] shadow-sm transition-all cursor-pointer select-none shrink-0 self-start sm:self-center"
+      >
+        <span id="guide-toggle-text">Expand All Chapters</span>
+        <svg id="guide-toggle-icon" class="w-3.5 h-3.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+    </div>
+
+    <p class="text-[14px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed max-w-4xl">
+      Everything you need to know about converting Cost to Company (CTC) into net monthly bank credits, understanding the <strong>in hand salary calculator after tax</strong>, Section 87A rebate rules, and selecting the optimal tax regime. Click any chapter below to explore the detailed breakdown.
     </p>
+
+    <!-- Quick Meta Badges -->
+    <div class="flex flex-wrap items-center gap-2.5 pt-1 text-[11px] font-mono text-[#888888] dark:text-[#737373]">
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626]">
+        📖 5 In-Depth Chapters
+      </span>
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626]">
+        ⏱️ 5 min read
+      </span>
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] text-[#0070f3] dark:text-[#38bdf8]">
+        ⚡ Budget 2024 Slabs Active
+      </span>
+    </div>
   </div>
 
-  <!-- Article Body -->
-  <div class="prose dark:prose-invert max-w-none space-y-10 text-[14px] leading-relaxed text-[#4d4d4d] dark:text-[#a1a1a1]">
+  <!-- Collapsible Chapter Accordions -->
+  <div class="space-y-3">
     
-    <!-- Section 1: CTC vs Gross vs In Hand -->
-    <div class="space-y-4">
-      <h3 class="text-xl sm:text-2xl font-bold text-[#171717] dark:text-white tracking-tight">
-        1. Understanding CTC vs Gross Salary vs In Hand Salary
-      </h3>
-      <p>
-        When an employer offers a job offer letter in India, the headline number quoted is typically the <strong>Cost to Company (CTC)</strong>. However, what arrives in your bank account at the end of the month is your <strong>in hand salary</strong> (also known as net take-home pay). Understanding the mathematical bridge between CTC, Gross Pay, and Net Pay is essential for every salaried employee in India.
-      </p>
-      
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4 not-prose">
-        <div class="p-4 rounded-xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] space-y-1.5 shadow-stacked-sm">
-          <span class="text-[11px] font-mono uppercase text-[#0070f3] font-bold">1. Cost to Company (CTC)</span>
-          <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1]">
-            Total cost incurred by the employer. Includes basic pay, allowances, employer PF contribution (12%), gratuity provisions (15/26), and corporate health insurance.
-          </p>
-        </div>
-
-        <div class="p-4 rounded-xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] space-y-1.5 shadow-stacked-sm">
-          <span class="text-[11px] font-mono uppercase text-[#7928ca] font-bold">2. Gross Salary</span>
-          <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1]">
-            CTC minus employer-side contributions (Employer PF and Gratuity). This is the pre-tax salary stated at the top of your monthly payslip before employee deductions.
-          </p>
-        </div>
-
-        <div class="p-4 rounded-xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] space-y-1.5 shadow-stacked-sm">
-          <span class="text-[11px] font-mono uppercase text-[#10b981] font-bold">3. In Hand Salary (Net)</span>
-          <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1]">
-            The exact amount transferred to your bank account after deducting Employee Provident Fund (12%), Professional Tax (PT), and Income Tax TDS.
-          </p>
-        </div>
-      </div>
-
-      <div class="p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] font-mono text-[13px] text-[#171717] dark:text-white">
-        <strong>In Hand Salary Formula:</strong><br />
-        <span class="text-[#0070f3]">Net In Hand Pay</span> = Gross Salary &minus; (Employee EPF + Professional Tax + Monthly TDS Income Tax)
-      </div>
-    </div>
-
-    <!-- Section 2: How to Calculate In Hand Salary Step by Step -->
-    <div class="space-y-4">
-      <h3 class="text-xl sm:text-2xl font-bold text-[#171717] dark:text-white tracking-tight">
-        2. How to Calculate In Hand Salary in India: Step-by-Step
-      </h3>
-      <p>
-        To <strong>calculate in hand salary</strong> accurately using an <strong>india in hand salary calculator</strong>, follow these four foundational payroll calculations:
-      </p>
-      
-      <ol class="list-decimal pl-5 space-y-2.5">
-        <li>
-          <strong>Step 1: Compute Basic Salary &amp; HRA:</strong> In most Indian IT and corporate salary structures, Basic Salary constitutes 40% to 50% of your total CTC. House Rent Allowance (HRA) is structured at 50% of Basic Salary for metro cities (Delhi, Mumbai, Kolkata, Chennai) or 40% for non-metro cities. The remaining amount is assigned to Special Allowance.
-        </li>
-        <li>
-          <strong>Step 2: Calculate Employee Provident Fund (EPF):</strong> Under the Employees' Provident Funds and Miscellaneous Provisions Act, 1952, employees contribute 12% of their Basic Salary towards EPF. Some organizations offer a statutory wage ceiling cap of ₹1,800/month (12% of ₹15,000 ceiling), while tech companies deduct the full uncapped 12% to accelerate long-term retirement savings.
-        </li>
-        <li>
-          <strong>Step 3: Deduct State Professional Tax (PT):</strong> Under Article 276(2) of the Constitution of India, state governments levy Professional Tax capped at ₹2,500 annually. For instance, Karnataka levies ₹200/month (₹2,400/year), Maharashtra levies ₹200/month with ₹300 in February (₹2,500/year), and Telangana/Andhra Pradesh levy ₹200/month for earnings above ₹20,000/month.
-        </li>
-        <li>
-          <strong>Step 4: Compute Income Tax (TDS) using a Tax Calculator:</strong> Your employer computes your annual tax liability under the New or Old Tax Regime, divides it across the remaining months of the financial year, and withholds Tax Deducted at Source (TDS) each pay cycle.
-        </li>
-      </ol>
-    </div>
-
-    <!-- Section 3: Dual Tax Regime Comparison (Budget 2024 Amendments) -->
-    <div class="space-y-4">
-      <h3 class="text-xl sm:text-2xl font-bold text-[#171717] dark:text-white tracking-tight">
-        3. New Tax Regime vs Old Tax Regime: Budget 2024 &amp; FY 2025-26 &amp; 2026-27
-      </h3>
-      <p>
-        The Finance Act, 2024 revised the New Tax Regime (Section 115BAC) slabs and increased the <strong>Standard Deduction for salaried employees to ₹75,000</strong> (compared to ₹50,000 in the Old Regime). Choosing between regimes using an advanced <strong>income tax calculator</strong> depends on the total exemptions and deductions you can claim.
-      </p>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-4 not-prose">
-        <div class="p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#0070f3]/30 shadow-stacked-sm space-y-3">
-          <div class="flex items-center justify-between">
-            <h4 class="font-bold text-[15px] text-[#171717] dark:text-white">New Tax Regime (Section 115BAC)</h4>
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#0070f3]/10 text-[#0070f3] font-semibold">Default</span>
+    <!-- Chapter 1: CTC vs Gross vs In Hand -->
+    <details 
+      class="guide-chapter group p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm hover:border-[#a1a1a1] dark:hover:border-[#525252] transition-all cursor-pointer open:ring-1 open:ring-[#171717]/10 dark:open:ring-white/10"
+      id="guide-chapter-1"
+    >
+      <summary class="flex items-center justify-between gap-4 list-none select-none">
+        <div class="flex items-start sm:items-center gap-3.5 min-w-0">
+          <span class="w-7 h-7 rounded-lg bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center font-mono text-[11px] font-bold text-[#0070f3] shrink-0 mt-0.5 sm:mt-0">
+            01
+          </span>
+          <div class="min-w-0 space-y-0.5">
+            <h3 class="font-bold text-[15px] sm:text-[16px] text-[#171717] dark:text-white tracking-tight leading-snug">
+              Understanding CTC vs Gross Salary vs In Hand Salary
+            </h3>
+            <p class="text-[12px] text-[#888888] dark:text-[#737373] line-clamp-1">
+              CTC math, gross pay components, employee deductions, and the net take-home formula.
+            </p>
           </div>
-          <ul class="text-[13px] space-y-2 text-[#4d4d4d] dark:text-[#a1a1a1]">
-            <li>• <strong>Standard Deduction:</strong> ₹75,000 flat deduction for all salaried individuals.</li>
-            <li>• <strong>Section 87A Tax Rebate:</strong> Taxable income up to ₹7,00,000 pays <strong>₹0 tax</strong>. Therefore, a gross salary up to <strong>₹7.75 Lakhs is 100% tax-free</strong>.</li>
-            <li>• <strong>Marginal Relief:</strong> Protects taxpayers earning slightly above ₹7 Lakhs from abrupt tax spikes.</li>
-            <li>• <strong>Zero Paperwork:</strong> No need to collect rent receipts, investment proofs, or insurance certificates.</li>
-          </ul>
         </div>
-
-        <div class="p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-3">
-          <div class="flex items-center justify-between">
-            <h4 class="font-bold text-[15px] text-[#171717] dark:text-white">Old Tax Regime (With Exemptions)</h4>
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold">Optional</span>
+        <span class="w-6 h-6 rounded-full bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#888888] dark:text-[#737373] group-open:rotate-180 group-open:text-[#171717] dark:group-open:text-white transition-transform shrink-0">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </span>
+      </summary>
+      
+      <div class="mt-4 pt-4 border-t border-[#ebebeb] dark:border-[#262626] space-y-4 text-[14px] leading-relaxed text-[#4d4d4d] dark:text-[#a1a1a1] animate-in fade-in duration-200">
+        <p>
+          When an employer offers a job offer letter in India, the headline number quoted is typically the <strong>Cost to Company (CTC)</strong>. However, what arrives in your bank account at the end of the month is your <strong>in hand salary</strong> (also known as net take-home pay). Understanding the mathematical bridge between CTC, Gross Pay, and Net Pay is essential for every salaried employee in India.
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4 not-prose">
+          <div class="p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] space-y-1.5 shadow-stacked-sm">
+            <span class="text-[11px] font-mono uppercase text-[#0070f3] font-bold">1. Cost to Company (CTC)</span>
+            <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1]">
+              Total cost incurred by the employer. Includes basic pay, allowances, employer PF contribution (12%), gratuity provisions (15/26), and corporate health insurance.
+            </p>
           </div>
-          <ul class="text-[13px] space-y-2 text-[#4d4d4d] dark:text-[#a1a1a1]">
-            <li>• <strong>Standard Deduction:</strong> ₹50,000.</li>
-            <li>• <strong>HRA Exemption (Sec 10(13A)):</strong> Claim lowest of actual HRA, rent minus 10% basic, or 50%/40% basic.</li>
-            <li>• <strong>Chapter VI-A Deductions:</strong> Section 80C (₹1.5L), 80D Mediclaim (up to ₹75k/₹1L), 80CCD(1B) NPS (₹50k).</li>
-            <li>• <strong>Home Loan (Sec 24(b)):</strong> Up to ₹2,00,000 deduction on housing loan interest.</li>
-          </ul>
+
+          <div class="p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] space-y-1.5 shadow-stacked-sm">
+            <span class="text-[11px] font-mono uppercase text-[#7928ca] font-bold">2. Gross Salary</span>
+            <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1]">
+              CTC minus employer-side contributions (Employer PF and Gratuity). This is the pre-tax salary stated at the top of your monthly payslip before employee deductions.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] space-y-1.5 shadow-stacked-sm">
+            <span class="text-[11px] font-mono uppercase text-[#10b981] font-bold">3. In Hand Salary (Net)</span>
+            <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1]">
+              The exact amount transferred to your bank account after deducting Employee Provident Fund (12%), Professional Tax (PT), and Income Tax TDS.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] font-mono text-[13px] text-[#171717] dark:text-white">
+          <strong>In Hand Salary Formula:</strong><br />
+          <span class="text-[#0070f3]">Net In Hand Pay</span> = Gross Salary &minus; (Employee EPF + Professional Tax + Monthly TDS Income Tax)
         </div>
       </div>
+    </details>
+
+    <!-- Chapter 2: How to Calculate In Hand Salary Step by Step -->
+    <details 
+      class="guide-chapter group p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm hover:border-[#a1a1a1] dark:hover:border-[#525252] transition-all cursor-pointer open:ring-1 open:ring-[#171717]/10 dark:open:ring-white/10"
+      id="guide-chapter-2"
+    >
+      <summary class="flex items-center justify-between gap-4 list-none select-none">
+        <div class="flex items-start sm:items-center gap-3.5 min-w-0">
+          <span class="w-7 h-7 rounded-lg bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center font-mono text-[11px] font-bold text-[#0070f3] shrink-0 mt-0.5 sm:mt-0">
+            02
+          </span>
+          <div class="min-w-0 space-y-0.5">
+            <h3 class="font-bold text-[15px] sm:text-[16px] text-[#171717] dark:text-white tracking-tight leading-snug">
+              How to Calculate In Hand Salary in India: Step-by-Step
+            </h3>
+            <p class="text-[12px] text-[#888888] dark:text-[#737373] line-clamp-1">
+              4 foundational steps: Basic salary split, HRA, 12% uncapped EPF, and state Professional Tax.
+            </p>
+          </div>
+        </div>
+        <span class="w-6 h-6 rounded-full bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#888888] dark:text-[#737373] group-open:rotate-180 group-open:text-[#171717] dark:group-open:text-white transition-transform shrink-0">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </span>
+      </summary>
       
-      <p class="text-[13px] italic text-[#888888] dark:text-[#737373]">
-        *Rule of Thumb: If your total deductions (HRA + 80C + 80D + Home Loan + NPS) exceed ₹3.75 Lakhs to ₹4.25 Lakhs per year, the Old Tax Regime may save you more tax. Otherwise, the New Tax Regime delivers a higher monthly in hand salary.
-      </p>
-    </div>
-
-    <!-- Section 4: Benchmark LPA In Hand Salary Table -->
-    <div class="space-y-4">
-      <h3 class="text-xl sm:text-2xl font-bold text-[#171717] dark:text-white tracking-tight">
-        4. Benchmark LPA In Hand Salary Table (FY 2025-26 &amp; 2026-27)
-      </h3>
-      <p>
-        Here is a breakdown of estimated monthly take-home pay and annual income tax across popular <strong>lpa in hand salary</strong> brackets calculated using our <strong>paycheck tax calculator</strong>:
-      </p>
-
-      <div class="overflow-x-auto not-prose my-4">
-        <table class="w-full text-[13px] text-left border border-[#ebebeb] dark:border-[#262626] rounded-xl overflow-hidden">
-          <thead class="bg-[#fafafa] dark:bg-[#181818] text-[#888888] dark:text-[#737373] font-mono text-[11px] uppercase border-b border-[#ebebeb] dark:border-[#262626]">
-            <tr>
-              <th class="py-3 px-4">Annual CTC Package</th>
-              <th class="py-3 px-4">Approx. Gross / Mo</th>
-              <th class="py-3 px-4">Est. In Hand / Mo</th>
-              <th class="py-3 px-4">Annual Tax (New Regime)</th>
-              <th class="py-3 px-4">Zero-Tax Eligibility</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-[#ebebeb] dark:divide-[#262626] bg-white dark:bg-[#121212] text-[#4d4d4d] dark:text-[#a1a1a1]">
-            <tr class="hover:bg-[#fafafa] dark:hover:bg-[#181818] transition-colors">
-              <td class="py-3 px-4 font-semibold text-[#171717] dark:text-white"><a href="/salary/4-lpa" class="hover:underline text-[#0070f3]">4 LPA In Hand Salary</a></td>
-              <td class="py-3 px-4 font-mono">₹31,000</td>
-              <td class="py-3 px-4 font-mono font-bold text-[#10b981]">₹30,800</td>
-              <td class="py-3 px-4 font-mono text-[#10b981]">₹0</td>
-              <td class="py-3 px-4 text-[#10b981] font-semibold">100% Tax-Free (87A)</td>
-            </tr>
-            <tr class="hover:bg-[#fafafa] dark:hover:bg-[#181818] transition-colors">
-              <td class="py-3 px-4 font-semibold text-[#171717] dark:text-white"><a href="/salary/4-5-lpa" class="hover:underline text-[#0070f3]">4.5 LPA In Hand Salary</a></td>
-              <td class="py-3 px-4 font-mono">₹35,000</td>
-              <td class="py-3 px-4 font-mono font-bold text-[#10b981]">₹34,800</td>
-              <td class="py-3 px-4 font-mono text-[#10b981]">₹0</td>
-              <td class="py-3 px-4 text-[#10b981] font-semibold">100% Tax-Free (87A)</td>
-            </tr>
-            <tr class="hover:bg-[#fafafa] dark:hover:bg-[#181818] transition-colors">
-              <td class="py-3 px-4 font-semibold text-[#171717] dark:text-white"><a href="/salary/6-lpa" class="hover:underline text-[#0070f3]">6 LPA In Hand Salary</a></td>
-              <td class="py-3 px-4 font-mono">₹46,800</td>
-              <td class="py-3 px-4 font-mono font-bold text-[#10b981]">₹46,200</td>
-              <td class="py-3 px-4 font-mono text-[#10b981]">₹0</td>
-              <td class="py-3 px-4 text-[#10b981] font-semibold">100% Tax-Free (87A)</td>
-            </tr>
-            <tr class="hover:bg-[#fafafa] dark:hover:bg-[#181818] transition-colors">
-              <td class="py-3 px-4 font-semibold text-[#171717] dark:text-white"><a href="/salary/10-lpa" class="hover:underline text-[#0070f3]">10 LPA In Hand Salary</a></td>
-              <td class="py-3 px-4 font-mono">₹77,500</td>
-              <td class="py-3 px-4 font-mono font-bold text-[#10b981]">₹72,800</td>
-              <td class="py-3 px-4 font-mono text-[#ee0000]">₹46,800</td>
-              <td class="py-3 px-4">Standard Slabs</td>
-            </tr>
-            <tr class="hover:bg-[#fafafa] dark:hover:bg-[#181818] transition-colors">
-              <td class="py-3 px-4 font-semibold text-[#171717] dark:text-white"><a href="/salary/12-lpa" class="hover:underline text-[#0070f3]">12 LPA In Hand Salary</a></td>
-              <td class="py-3 px-4 font-mono">₹93,000</td>
-              <td class="py-3 px-4 font-mono font-bold text-[#10b981]">₹86,400</td>
-              <td class="py-3 px-4 font-mono text-[#ee0000]">₹78,000</td>
-              <td class="py-3 px-4">Standard Slabs</td>
-            </tr>
-            <tr class="hover:bg-[#fafafa] dark:hover:bg-[#181818] transition-colors">
-              <td class="py-3 px-4 font-semibold text-[#171717] dark:text-white"><a href="/salary/18-lpa" class="hover:underline text-[#0070f3]">18 LPA In Hand Salary</a></td>
-              <td class="py-3 px-4 font-mono">₹1,39,000</td>
-              <td class="py-3 px-4 font-mono font-bold text-[#10b981]">₹1,24,500</td>
-              <td class="py-3 px-4 font-mono text-[#ee0000]">₹1,95,000</td>
-              <td class="py-3 px-4">Standard Slabs</td>
-            </tr>
-            <tr class="hover:bg-[#fafafa] dark:hover:bg-[#181818] transition-colors">
-              <td class="py-3 px-4 font-semibold text-[#171717] dark:text-white"><a href="/salary/25-lpa" class="hover:underline text-[#0070f3]">25 LPA In Hand Salary</a></td>
-              <td class="py-3 px-4 font-mono">₹1,93,000</td>
-              <td class="py-3 px-4 font-mono font-bold text-[#10b981]">₹1,68,000</td>
-              <td class="py-3 px-4 font-mono text-[#ee0000]">₹4,16,000</td>
-              <td class="py-3 px-4">Standard Slabs</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="mt-4 pt-4 border-t border-[#ebebeb] dark:border-[#262626] space-y-4 text-[14px] leading-relaxed text-[#4d4d4d] dark:text-[#a1a1a1] animate-in fade-in duration-200">
+        <p>
+          To <strong>calculate in hand salary</strong> accurately using an <strong>india in hand salary calculator</strong>, follow these four foundational payroll calculations:
+        </p>
+        
+        <ol class="list-decimal pl-5 space-y-3">
+          <li>
+            <strong>Step 1: Compute Basic Salary &amp; HRA:</strong> In most Indian IT and corporate salary structures, Basic Salary constitutes 40% to 50% of your total CTC. House Rent Allowance (HRA) is structured at 50% of Basic Salary for metro cities (Delhi, Mumbai, Kolkata, Chennai) or 40% for non-metro cities. The remaining amount is assigned to Special Allowance.
+          </li>
+          <li>
+            <strong>Step 2: Calculate Employee Provident Fund (EPF):</strong> Under the Employees' Provident Funds and Miscellaneous Provisions Act, 1952, employees contribute 12% of their Basic Salary towards EPF. Some organizations offer a statutory wage ceiling cap of ₹1,800/month (12% of ₹15,000 ceiling), while tech companies deduct the full uncapped 12% to accelerate long-term retirement savings.
+          </li>
+          <li>
+            <strong>Step 3: Deduct State Professional Tax (PT):</strong> Under Article 276(2) of the Constitution of India, state governments levy Professional Tax capped at ₹2,500 annually. For instance, Karnataka levies ₹200/month (₹2,400/year), Maharashtra levies ₹200/month with ₹300 in February (₹2,500/year), and Telangana/Andhra Pradesh levy ₹200/month for earnings above ₹20,000/month.
+          </li>
+          <li>
+            <strong>Step 4: Compute Income Tax (TDS) using a Tax Calculator:</strong> Your employer computes your annual tax liability under the New or Old Tax Regime, divides it across the remaining months of the financial year, and withholds Tax Deducted at Source (TDS) each pay cycle.
+          </li>
+        </ol>
       </div>
-      <p class="text-[12px] text-[#888888] dark:text-[#737373]">
-        *Calculations assume 50% Basic Salary structure, uncapped EPF (12%), Bengaluru/Mumbai professional tax (₹200/mo), and New Tax Regime with ₹75,000 standard deduction.
-      </p>
-    </div>
+    </details>
 
-    <!-- Section 5: Why inHander is India's Best Salary Calculator -->
-    <div class="space-y-4">
-      <h3 class="text-xl sm:text-2xl font-bold text-[#171717] dark:text-white tracking-tight">
-        5. Why inHander is the Most Trusted In Hand Salary Calculator in India
-      </h3>
-      <p>
-        Unlike outdated tools that fail to incorporate recent Union Budget changes, <strong>inHander.com</strong> was built from the ground up for modern Indian tech professionals, developers, managers, and remote consultants.
-      </p>
+    <!-- Chapter 3: Dual Tax Regime Comparison (Budget 2024 Amendments) -->
+    <details 
+      class="guide-chapter group p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm hover:border-[#a1a1a1] dark:hover:border-[#525252] transition-all cursor-pointer open:ring-1 open:ring-[#171717]/10 dark:open:ring-white/10"
+      id="guide-chapter-3"
+    >
+      <summary class="flex items-center justify-between gap-4 list-none select-none">
+        <div class="flex items-start sm:items-center gap-3.5 min-w-0">
+          <span class="w-7 h-7 rounded-lg bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center font-mono text-[11px] font-bold text-[#0070f3] shrink-0 mt-0.5 sm:mt-0">
+            03
+          </span>
+          <div class="min-w-0 space-y-0.5">
+            <h3 class="font-bold text-[15px] sm:text-[16px] text-[#171717] dark:text-white tracking-tight leading-snug">
+              New Tax Regime vs Old Tax Regime: Budget 2024 &amp; FY 2025-26 &amp; 2026-27
+            </h3>
+            <p class="text-[12px] text-[#888888] dark:text-[#737373] line-clamp-1">
+              ₹75,000 standard deduction, Section 87A ₹7.75L zero-tax rebate, and deduction trade-offs.
+            </p>
+          </div>
+        </div>
+        <span class="w-6 h-6 rounded-full bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#888888] dark:text-[#737373] group-open:rotate-180 group-open:text-[#171717] dark:group-open:text-white transition-transform shrink-0">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </span>
+      </summary>
       
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4 not-prose">
-        <div class="p-4 rounded-xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] space-y-1 shadow-stacked-sm">
-          <span class="font-semibold text-[#171717] dark:text-white text-[13px]">1. 100% Client-Side Privacy Guarantee</span>
-          <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1]">
-            All tax math runs locally in your browser memory. We never log your salary numbers, employer name, or compensation data on any server.
-          </p>
-        </div>
+      <div class="mt-4 pt-4 border-t border-[#ebebeb] dark:border-[#262626] space-y-4 text-[14px] leading-relaxed text-[#4d4d4d] dark:text-[#a1a1a1] animate-in fade-in duration-200">
+        <p>
+          The Finance Act, 2024 revised the New Tax Regime (Section 115BAC) slabs and increased the <strong>Standard Deduction for salaried employees to ₹75,000</strong> (compared to ₹50,000 in the Old Regime). Choosing between regimes using an advanced <strong>income tax calculator</strong> depends on the total exemptions and deductions you can claim.
+        </p>
 
-        <div class="p-4 rounded-xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] space-y-1 shadow-stacked-sm">
-          <span class="font-semibold text-[#171717] dark:text-white text-[13px]">2. 1-Click Maximize In-Hand Optimizer</span>
-          <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1]">
-            Simulate maxed Section 80C, 80D, NPS, and optimal HRA rent declarations with a single click to see your maximum possible bank credit.
-          </p>
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-4 not-prose">
+          <div class="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#181818] border border-[#0070f3]/30 shadow-stacked-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="font-bold text-[15px] text-[#171717] dark:text-white">New Tax Regime (Section 115BAC)</h4>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#0070f3]/10 text-[#0070f3] font-semibold">Default</span>
+            </div>
+            <ul class="text-[13px] space-y-2 text-[#4d4d4d] dark:text-[#a1a1a1]">
+              <li>• <strong>Standard Deduction:</strong> ₹75,000 flat deduction for all salaried individuals.</li>
+              <li>• <strong>Section 87A Tax Rebate:</strong> Taxable income up to ₹7,00,000 pays <strong>₹0 tax</strong>. Therefore, a gross salary up to <strong>₹7.75 Lakhs is 100% tax-free</strong>.</li>
+              <li>• <strong>Marginal Relief:</strong> Protects taxpayers earning slightly above ₹7 Lakhs from abrupt tax spikes.</li>
+              <li>• <strong>Zero Paperwork:</strong> No need to collect rent receipts, investment proofs, or insurance certificates.</li>
+            </ul>
+          </div>
 
-        <div class="p-4 rounded-xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] space-y-1 shadow-stacked-sm">
-          <span class="font-semibold text-[#171717] dark:text-white text-[13px]">3. Side-by-Side Offer Comparator</span>
-          <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1]">
-            Compare up to 4 competing job offer letters side-by-side to evaluate variable bonuses, stock grants (RSUs/ESOPs), joining bonuses, and net monthly take-home.
-          </p>
+          <div class="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="font-bold text-[15px] text-[#171717] dark:text-white">Old Tax Regime (With Exemptions)</h4>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold">Optional</span>
+            </div>
+            <ul class="text-[13px] space-y-2 text-[#4d4d4d] dark:text-[#a1a1a1]">
+              <li>• <strong>Standard Deduction:</strong> ₹50,000.</li>
+              <li>• <strong>HRA Exemption (Sec 10(13A)):</strong> Claim lowest of actual HRA, rent minus 10% basic, or 50%/40% basic.</li>
+              <li>• <strong>Chapter VI-A Deductions:</strong> Section 80C (₹1.5L), 80D Mediclaim (up to ₹75k/₹1L), 80CCD(1B) NPS (₹50k).</li>
+              <li>• <strong>Home Loan (Sec 24(b)):</strong> Up to ₹2,00,000 deduction on housing loan interest.</li>
+            </ul>
+          </div>
         </div>
-
-        <div class="p-4 rounded-xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] space-y-1 shadow-stacked-sm">
-          <span class="font-semibold text-[#171717] dark:text-white text-[13px]">4. Executive Payslip &amp; PDF Export</span>
-          <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1]">
-            Generate clean, printable salary slips formatted for HR salary negotiations, bank loan applications, and visa documentation.
-          </p>
-        </div>
+        
+        <p class="text-[13px] italic text-[#888888] dark:text-[#737373]">
+          *Rule of Thumb: If your total deductions (HRA + 80C + 80D + Home Loan + NPS) exceed ₹3.75 Lakhs to ₹4.25 Lakhs per year, the Old Tax Regime may save you more tax. Otherwise, the New Tax Regime delivers a higher monthly in hand salary.
+        </p>
       </div>
+    </details>
 
-      <p>
-        Whether you are evaluating a new job offer in Bengaluru, Hyderabad, Pune, Mumbai, Delhi NCR, or Chennai, or planning your annual tax savings, use our free <strong>in hand salary calculator india</strong> at <strong>inHander.com</strong> to make confident, data-driven financial decisions.
-      </p>
-    </div>
+    <!-- Chapter 4: Benchmark LPA In Hand Salary Table -->
+    <details 
+      class="guide-chapter group p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm hover:border-[#a1a1a1] dark:hover:border-[#525252] transition-all cursor-pointer open:ring-1 open:ring-[#171717]/10 dark:open:ring-white/10"
+      id="guide-chapter-4"
+    >
+      <summary class="flex items-center justify-between gap-4 list-none select-none">
+        <div class="flex items-start sm:items-center gap-3.5 min-w-0">
+          <span class="w-7 h-7 rounded-lg bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center font-mono text-[11px] font-bold text-[#0070f3] shrink-0 mt-0.5 sm:mt-0">
+            04
+          </span>
+          <div class="min-w-0 space-y-0.5">
+            <h3 class="font-bold text-[15px] sm:text-[16px] text-[#171717] dark:text-white tracking-tight leading-snug">
+              Benchmark LPA In Hand Salary Table (FY 2025-26 &amp; 2026-27)
+            </h3>
+            <p class="text-[12px] text-[#888888] dark:text-[#737373] line-clamp-1">
+              Estimated monthly take-home, gross salary, and annual TDS across 4, 4.5, 6, 10, 12, 18 &amp; 25 LPA.
+            </p>
+          </div>
+        </div>
+        <span class="w-6 h-6 rounded-full bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#888888] dark:text-[#737373] group-open:rotate-180 group-open:text-[#171717] dark:group-open:text-white transition-transform shrink-0">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </span>
+      </summary>
+      
+      <div class="mt-4 pt-4 border-t border-[#ebebeb] dark:border-[#262626] space-y-4 text-[14px] leading-relaxed text-[#4d4d4d] dark:text-[#a1a1a1] animate-in fade-in duration-200">
+        <p>
+          Here is a breakdown of estimated monthly take-home pay and annual income tax across popular <strong>lpa in hand salary</strong> brackets calculated using our <strong>paycheck tax calculator</strong>:
+        </p>
+
+        <div class="overflow-x-auto not-prose my-4">
+          <table class="w-full text-[13px] text-left border border-[#ebebeb] dark:border-[#262626] rounded-xl overflow-hidden">
+            <thead class="bg-[#fafafa] dark:bg-[#181818] text-[#888888] dark:text-[#737373] font-mono text-[11px] uppercase border-b border-[#ebebeb] dark:border-[#262626]">
+              <tr>
+                <th class="py-3 px-4">Annual CTC Package</th>
+                <th class="py-3 px-4">Approx. Gross / Mo</th>
+                <th class="py-3 px-4">Est. In Hand / Mo</th>
+                <th class="py-3 px-4">Annual Tax (New Regime)</th>
+                <th class="py-3 px-4">Zero-Tax Eligibility</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#ebebeb] dark:divide-[#262626] bg-white dark:bg-[#121212] text-[#4d4d4d] dark:text-[#a1a1a1]">
+              <tr class="hover:bg-[#fafafa] dark:hover:bg-[#181818] transition-colors">
+                <td class="py-3 px-4 font-semibold text-[#171717] dark:text-white"><a href="/salary/4-lpa" class="hover:underline text-[#0070f3]">4 LPA In Hand Salary</a></td>
+                <td class="py-3 px-4 font-mono">₹31,000</td>
+                <td class="py-3 px-4 font-mono font-bold text-[#10b981]">₹30,800</td>
+                <td class="py-3 px-4 font-mono text-[#10b981]">₹0</td>
+                <td class="py-3 px-4 text-[#10b981] font-semibold">100% Tax-Free (87A)</td>
+              </tr>
+              <tr class="hover:bg-[#fafafa] dark:hover:bg-[#181818] transition-colors">
+                <td class="py-3 px-4 font-semibold text-[#171717] dark:text-white"><a href="/salary/4-5-lpa" class="hover:underline text-[#0070f3]">4.5 LPA In Hand Salary</a></td>
+                <td class="py-3 px-4 font-mono">₹35,000</td>
+                <td class="py-3 px-4 font-mono font-bold text-[#10b981]">₹34,800</td>
+                <td class="py-3 px-4 font-mono text-[#10b981]">₹0</td>
+                <td class="py-3 px-4 text-[#10b981] font-semibold">100% Tax-Free (87A)</td>
+              </tr>
+              <tr class="hover:bg-[#fafafa] dark:hover:bg-[#181818] transition-colors">
+                <td class="py-3 px-4 font-semibold text-[#171717] dark:text-white"><a href="/salary/6-lpa" class="hover:underline text-[#0070f3]">6 LPA In Hand Salary</a></td>
+                <td class="py-3 px-4 font-mono">₹46,800</td>
+                <td class="py-3 px-4 font-mono font-bold text-[#10b981]">₹46,200</td>
+                <td class="py-3 px-4 font-mono text-[#10b981]">₹0</td>
+                <td class="py-3 px-4 text-[#10b981] font-semibold">100% Tax-Free (87A)</td>
+              </tr>
+              <tr class="hover:bg-[#fafafa] dark:hover:bg-[#181818] transition-colors">
+                <td class="py-3 px-4 font-semibold text-[#171717] dark:text-white"><a href="/salary/10-lpa" class="hover:underline text-[#0070f3]">10 LPA In Hand Salary</a></td>
+                <td class="py-3 px-4 font-mono">₹77,500</td>
+                <td class="py-3 px-4 font-mono font-bold text-[#10b981]">₹72,800</td>
+                <td class="py-3 px-4 font-mono text-[#ee0000]">₹46,800</td>
+                <td class="py-3 px-4">Standard Slabs</td>
+              </tr>
+              <tr class="hover:bg-[#fafafa] dark:hover:bg-[#181818] transition-colors">
+                <td class="py-3 px-4 font-semibold text-[#171717] dark:text-white"><a href="/salary/12-lpa" class="hover:underline text-[#0070f3]">12 LPA In Hand Salary</a></td>
+                <td class="py-3 px-4 font-mono">₹93,000</td>
+                <td class="py-3 px-4 font-mono font-bold text-[#10b981]">₹86,400</td>
+                <td class="py-3 px-4 font-mono text-[#ee0000]">₹78,000</td>
+                <td class="py-3 px-4">Standard Slabs</td>
+              </tr>
+              <tr class="hover:bg-[#fafafa] dark:hover:bg-[#181818] transition-colors">
+                <td class="py-3 px-4 font-semibold text-[#171717] dark:text-white"><a href="/salary/18-lpa" class="hover:underline text-[#0070f3]">18 LPA In Hand Salary</a></td>
+                <td class="py-3 px-4 font-mono">₹1,39,000</td>
+                <td class="py-3 px-4 font-mono font-bold text-[#10b981]">₹1,24,500</td>
+                <td class="py-3 px-4 font-mono text-[#ee0000]">₹1,95,000</td>
+                <td class="py-3 px-4">Standard Slabs</td>
+              </tr>
+              <tr class="hover:bg-[#fafafa] dark:hover:bg-[#181818] transition-colors">
+                <td class="py-3 px-4 font-semibold text-[#171717] dark:text-white"><a href="/salary/25-lpa" class="hover:underline text-[#0070f3]">25 LPA In Hand Salary</a></td>
+                <td class="py-3 px-4 font-mono">₹1,93,000</td>
+                <td class="py-3 px-4 font-mono font-bold text-[#10b981]">₹1,68,000</td>
+                <td class="py-3 px-4 font-mono text-[#ee0000]">₹4,16,000</td>
+                <td class="py-3 px-4">Standard Slabs</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[12px] text-[#888888] dark:text-[#737373]">
+          *Calculations assume 50% Basic Salary structure, uncapped EPF (12%), Bengaluru/Mumbai professional tax (₹200/mo), and New Tax Regime with ₹75,000 standard deduction.
+        </p>
+      </div>
+    </details>
+
+    <!-- Chapter 5: Why inHander is India's Best Salary Calculator -->
+    <details 
+      class="guide-chapter group p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm hover:border-[#a1a1a1] dark:hover:border-[#525252] transition-all cursor-pointer open:ring-1 open:ring-[#171717]/10 dark:open:ring-white/10"
+      id="guide-chapter-5"
+    >
+      <summary class="flex items-center justify-between gap-4 list-none select-none">
+        <div class="flex items-start sm:items-center gap-3.5 min-w-0">
+          <span class="w-7 h-7 rounded-lg bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center font-mono text-[11px] font-bold text-[#0070f3] shrink-0 mt-0.5 sm:mt-0">
+            05
+          </span>
+          <div class="min-w-0 space-y-0.5">
+            <h3 class="font-bold text-[15px] sm:text-[16px] text-[#171717] dark:text-white tracking-tight leading-snug">
+              Why inHander is the Most Trusted In Hand Salary Calculator in India
+            </h3>
+            <p class="text-[12px] text-[#888888] dark:text-[#737373] line-clamp-1">
+              100% client-side privacy guarantee, 1-click tax optimizer, and offer comparator.
+            </p>
+          </div>
+        </div>
+        <span class="w-6 h-6 rounded-full bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#888888] dark:text-[#737373] group-open:rotate-180 group-open:text-[#171717] dark:group-open:text-white transition-transform shrink-0">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </span>
+      </summary>
+      
+      <div class="mt-4 pt-4 border-t border-[#ebebeb] dark:border-[#262626] space-y-4 text-[14px] leading-relaxed text-[#4d4d4d] dark:text-[#a1a1a1] animate-in fade-in duration-200">
+        <p>
+          Unlike outdated tools that fail to incorporate recent Union Budget changes, <strong>inHander.com</strong> was built from the ground up for modern Indian tech professionals, developers, managers, and remote consultants.
+        </p>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4 not-prose">
+          <div class="p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] space-y-1 shadow-stacked-sm">
+            <span class="font-semibold text-[#171717] dark:text-white text-[13px]">1. 100% Client-Side Privacy Guarantee</span>
+            <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1]">
+              All tax math runs locally in your browser memory. We never log your salary numbers, employer name, or compensation data on any server.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] space-y-1 shadow-stacked-sm">
+            <span class="font-semibold text-[#171717] dark:text-white text-[13px]">2. 1-Click Maximize In-Hand Optimizer</span>
+            <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1]">
+              Simulate maxed Section 80C, 80D, NPS, and optimal HRA rent declarations with a single click to see your maximum possible bank credit.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] space-y-1 shadow-stacked-sm">
+            <span class="font-semibold text-[#171717] dark:text-white text-[13px]">3. Side-by-Side Offer Comparator</span>
+            <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1]">
+              Compare up to 4 competing job offer letters side-by-side to evaluate variable bonuses, stock grants (RSUs/ESOPs), joining bonuses, and net monthly take-home.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] space-y-1 shadow-stacked-sm">
+            <span class="font-semibold text-[#171717] dark:text-white text-[13px]">4. Executive Payslip &amp; PDF Export</span>
+            <p class="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1]">
+              Generate clean, printable salary slips formatted for HR salary negotiations, bank loan applications, and visa documentation.
+            </p>
+          </div>
+        </div>
+
+        <p>
+          Whether you are evaluating a new job offer in Bengaluru, Hyderabad, Pune, Mumbai, Delhi NCR, or Chennai, or planning your annual tax savings, use our free <strong>in hand salary calculator india</strong> at <strong>inHander.com</strong> to make confident, data-driven financial decisions.
+        </p>
+      </div>
+    </details>
+
   </div>
 </section>
+
+<script>
+  function setupGuideToggle() {
+    const toggleBtn = document.getElementById('guide-toggle-all-btn');
+    const toggleText = document.getElementById('guide-toggle-text');
+    const toggleIcon = document.getElementById('guide-toggle-icon');
+    const chapters = document.querySelectorAll<HTMLDetailsElement>('.guide-chapter');
+
+    if (!toggleBtn || !chapters.length) return;
+
+    function updateButtonState() {
+      const allOpen = Array.from(chapters).every(c => c.open);
+      if (toggleText) {
+        toggleText.textContent = allOpen ? 'Collapse All Chapters' : 'Expand All Chapters';
+      }
+      if (toggleIcon) {
+        toggleIcon.style.transform = allOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+      }
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      const allOpen = Array.from(chapters).every(c => c.open);
+      chapters.forEach(c => {
+        c.open = !allOpen;
+      });
+      updateButtonState();
+    });
+
+    chapters.forEach(c => {
+      c.addEventListener('toggle', updateButtonState);
+    });
+
+    function checkHash() {
+      if (window.location.hash) {
+        const targetElement = document.querySelector<HTMLDetailsElement>(window.location.hash);
+        if (targetElement && targetElement.tagName === 'DETAILS') {
+          targetElement.open = true;
+          updateButtonState();
+        }
+      }
+    }
+
+    // Check URL hash on load and when hash changes
+    checkHash();
+    window.addEventListener('hashchange', checkHash);
+  }
+
+  // Run on page load and view transitions
+  setupGuideToggle();
+  document.addEventListener('astro:page-load', setupGuideToggle);
+</script>

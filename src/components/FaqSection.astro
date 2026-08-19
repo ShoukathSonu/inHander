@@ -70,7 +70,8 @@ export const FAQ_ITEMS: FAQItem[] = [
 const {
   items = FAQ_ITEMS,
   title = "Frequently Asked Questions about Indian In-Hand Salary.",
-  subtitle = "Clear answers to common questions on CTC structure, take-home calculations, Budget 2024 tax slabs, and Section 87A rebate rules."
+  subtitle = "Clear answers to common questions on CTC structure, take-home calculations, Budget 2024 tax slabs, and Section 87A rebate rules.",
+  initialCount = 5,
 } = Astro.props;
 
 // Schema.org FAQPage JSON-LD
@@ -86,6 +87,9 @@ const faqSchema = {
     }
   }))
 };
+
+const initialItems = items.slice(0, initialCount);
+const extraItems = items.slice(initialCount);
 ---
 
 <section class="w-full max-w-5xl mx-auto space-y-8 pt-16 scroll-mt-24" id="faq">
@@ -107,9 +111,9 @@ const faqSchema = {
 
   <!-- Interactive Accordion / Dropdown List -->
   <div class="space-y-3">
-    {items.map((item, index) => (
+    {initialItems.map((item, index) => (
       <details 
-        class="group p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm hover:border-[#a1a1a1] dark:hover:border-[#525252] transition-all cursor-pointer open:ring-1 open:ring-[#171717]/10 dark:open:ring-white/10"
+        class="faq-item group p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm hover:border-[#a1a1a1] dark:hover:border-[#525252] transition-all cursor-pointer open:ring-1 open:ring-[#171717]/10 dark:open:ring-white/10"
         open={index === 0}
       >
         <summary class="flex items-center justify-between font-semibold text-[15px] text-[#171717] dark:text-white list-none select-none">
@@ -127,5 +131,85 @@ const faqSchema = {
         />
       </details>
     ))}
+
+    {extraItems.length > 0 && (
+      <div id="faq-more-container" class="hidden space-y-3 pt-0">
+        {extraItems.map((item) => (
+          <details 
+            class="faq-item group p-5 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm hover:border-[#a1a1a1] dark:hover:border-[#525252] transition-all cursor-pointer open:ring-1 open:ring-[#171717]/10 dark:open:ring-white/10"
+          >
+            <summary class="flex items-center justify-between font-semibold text-[15px] text-[#171717] dark:text-white list-none select-none">
+              <span class="pr-4">{item.question}</span>
+              <span class="w-6 h-6 rounded-full bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#888888] dark:text-[#737373] group-open:rotate-180 group-open:text-[#171717] dark:group-open:text-white transition-transform shrink-0">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </span>
+            </summary>
+            
+            <div 
+              class="mt-3 pt-3 border-t border-[#ebebeb] dark:border-[#262626] text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed animate-in fade-in duration-200"
+              set:html={item.answer}
+            />
+          </details>
+        ))}
+      </div>
+
+      <div class="flex justify-center pt-2">
+        <button
+          type="button"
+          id="faq-toggle-more-btn"
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] text-[13px] font-mono font-medium text-[#171717] dark:text-white hover:border-[#a1a1a1] dark:hover:border-[#525252] shadow-stacked-sm transition-all cursor-pointer select-none group"
+          data-count={extraItems.length}
+        >
+          <span id="faq-toggle-btn-text">Show More FAQs ({extraItems.length} more)</span>
+          <span class="w-5 h-5 rounded-full bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#888888] dark:text-[#737373] group-hover:text-[#171717] dark:group-hover:text-white transition-all shrink-0">
+            <svg id="faq-toggle-btn-icon" class="w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </span>
+        </button>
+      </div>
+    )}
   </div>
 </section>
+
+<script>
+  function setupFaqMoreToggle() {
+    const toggleBtn = document.getElementById('faq-toggle-more-btn');
+    const container = document.getElementById('faq-more-container');
+    const btnText = document.getElementById('faq-toggle-btn-text');
+    const btnIcon = document.getElementById('faq-toggle-btn-icon');
+
+    if (!toggleBtn || !container) return;
+
+    // Remove any existing listener by replacing or checking flag
+    if (toggleBtn.dataset.hasListener === 'true') return;
+    toggleBtn.dataset.hasListener = 'true';
+
+    toggleBtn.addEventListener('click', () => {
+      const isHidden = container.classList.contains('hidden');
+      const count = toggleBtn.getAttribute('data-count') || '';
+
+      if (isHidden) {
+        container.classList.remove('hidden');
+        if (btnText) btnText.textContent = 'Show Fewer FAQs';
+        if (btnIcon) btnIcon.classList.add('rotate-180');
+      } else {
+        container.classList.add('hidden');
+        if (btnText) btnText.textContent = `Show More FAQs (${count} more)`;
+        if (btnIcon) btnIcon.classList.remove('rotate-180');
+        
+        // Scroll back smoothly to the FAQ section header
+        const faqSection = document.getElementById('faq');
+        if (faqSection) {
+          faqSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    });
+  }
+
+  // Run on initial load and view transitions
+  setupFaqMoreToggle();
+  document.addEventListener('astro:page-load', setupFaqMoreToggle);
+</script>
