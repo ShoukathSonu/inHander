@@ -357,7 +357,7 @@ export function calculateSalary(inputs: SalaryInputs): FullSalaryAnalysis {
 
   // 3. Gratuity Calculation (15/26 formula: ~4.81% of basic salary)
   const gratuityAnnual = includeGratuity 
-    ? Math.round((15 / 26) * (basicAnnual / 12) * 12 * (1 / 12) * 12 * 0.0480769 * (basicAnnual / (basicAnnual * 0.0480769 || 1))) || Math.round(basicAnnual * 0.0481)
+    ? Math.round((15 / 26) * (basicAnnual / 12))
     : 0;
 
   // 4. Gross Annual Salary

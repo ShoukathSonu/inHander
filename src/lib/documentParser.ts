@@ -353,9 +353,15 @@ export function analyzeDocumentText(rawText: string, previewUrl?: string): Parse
   // If it's a monthly payslip (no explicit annual CTC), compute Annual CTC from Gross Monthly
   if (!ctcFound && (detectedMonthlyGross || detectedMonthlyNet)) {
     if (detectedMonthlyGross) {
-      // Annual CTC is roughly (Monthly Gross + Employer PF) * 12
-      const employerPfMonthly = detectedMonthlyPf ? Math.min(detectedMonthlyPf, 1800) : Math.round(detectedMonthlyGross * 0.05);
-      const computedAnnualCtc = Math.round((detectedMonthlyGross + employerPfMonthly) * 12);
+      // Annual CTC = (Monthly Gross + Employer PF + Gratuity Provision) * 12
+      const employerPfMonthly = detectedMonthlyPf 
+        ? detectedMonthlyPf 
+        : (detectedMonthlyBasic ? Math.round(detectedMonthlyBasic * 0.12) : Math.round(detectedMonthlyGross * 0.05));
+      const gratuityMonthly = detectedMonthlyBasic 
+        ? Math.round((15 / 26) * (detectedMonthlyBasic / 12)) 
+        : Math.round(detectedMonthlyGross * 0.45 * 0.0481 / 12);
+      
+      const computedAnnualCtc = Math.round((detectedMonthlyGross + employerPfMonthly + gratuityMonthly) * 12);
       ctcFound = computedAnnualCtc;
 
       fields.push({
@@ -364,7 +370,7 @@ export function analyzeDocumentText(rawText: string, previewUrl?: string): Parse
         value: computedAnnualCtc,
         formattedValue: `₹${computedAnnualCtc.toLocaleString('en-IN')} (₹${(computedAnnualCtc / 100000).toFixed(2)} LPA)`,
         confidence: 'HIGH',
-        sourceSnippet: `Computed from Monthly Gross ₹${detectedMonthlyGross.toLocaleString('en-IN')} × 12`
+        sourceSnippet: `Computed from Monthly Gross ₹${detectedMonthlyGross.toLocaleString('en-IN')} + Employer PF ₹${employerPfMonthly.toLocaleString('en-IN')} + Gratuity ₹${gratuityMonthly.toLocaleString('en-IN')}`
       });
     } else if (detectedMonthlyNet) {
       // Rough annual gross-up from Net Pay
