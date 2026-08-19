@@ -7,11 +7,70 @@ import { calculateSalary, DEFAULT_SALARY_INPUTS } from '../../lib/taxEngine';
 import { formatINR } from '../../lib/formatters';
 
 const sections: ProximitySection[] = [
-  { id: "salary-inputs", label: "Salary Inputs", level: 1 },
-  { id: "take-home-summary", label: "Monthly Take-Home", level: 2 },
-  { id: "regime-comparison", label: "Regime Comparison", level: 2 },
-  { id: "tax-deductions", label: "Deductions & HRA", level: 3 },
-  { id: "faq", label: "FAQs & Guide", level: 3 },
+  {
+    id: "salary-inputs",
+    label: "Salary Inputs & CTC",
+    level: 1,
+    subItems: [
+      { label: "Annual Cost to Company (CTC)" },
+      { label: "Upload & Scan Payslip (PDF/Image)" },
+      { label: "Maximize In-Hand Tax Optimizer" },
+      { label: "State Professional Tax (PT)" },
+      { label: "CTC Range Slider & Preset Chips" },
+      { label: "Cash vs Bonus & ESOP Split" },
+    ],
+  },
+  {
+    id: "take-home-summary",
+    label: "Monthly Take-Home",
+    level: 2,
+    subItems: [
+      { label: "Optimal Regime Recommendation" },
+      { label: "Net Monthly In-Hand (Credited)" },
+      { label: "Annual Net Pay & Effective Tax" },
+      { label: "Visual Salary Distribution Chart" },
+      { label: "Real Cash vs Paper Money Breakdown" },
+      { label: "Salary Percentile Rank & Benchmark" },
+    ],
+  },
+  {
+    id: "regime-comparison",
+    label: "Regime Comparison",
+    level: 2,
+    subItems: [
+      { label: "Budget 2024 New Regime Slabs" },
+      { label: "Standard Deduction (₹75,000)" },
+      { label: "Section 87A Rebate & Marginal Relief" },
+      { label: "Old Tax Regime Deductions" },
+      { label: "Side-by-Side Dual Matrix" },
+    ],
+  },
+  {
+    id: "tax-deductions",
+    label: "Deductions & HRA",
+    level: 3,
+    subItems: [
+      { label: "Basic Salary & HRA Exemption (10(13A))" },
+      { label: "Section 80C Deductions (EPF, PPF, ELSS)" },
+      { label: "Section 80D Health Insurance" },
+      { label: "NPS Tier-1 & Employer NPS (80CCD)" },
+      { label: "EPF Statutory Cap (₹1,800/mo) vs 12%" },
+      { label: "Gratuity & Terminal Benefits" },
+    ],
+  },
+  {
+    id: "faq",
+    label: "FAQs & Guide",
+    level: 3,
+    subItems: [
+      { label: "In-Hand Salary Calculation Formula" },
+      { label: "₹7.75L Tax-Free Threshold in New Regime" },
+      { label: "Take-Home Slabs (4 LPA - 50 LPA)" },
+      { label: "Section 87A Marginal Relief Protection" },
+      { label: "HRA Exemption Calculation Rules" },
+      { label: "State-wise Professional Tax Rules" },
+    ],
+  },
 ];
 
 export function getStaticPaths() {

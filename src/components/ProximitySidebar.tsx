@@ -20,11 +20,18 @@ type Side = "left" | "right";
 type SectionKind = "title" | "subtitle" | "section" | "body";
 type SectionLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
+export type ProximitySubItem = {
+  id?: string;
+  label: string;
+};
+
 export type ProximitySection = {
   id: string;
   label: string;
   kind?: SectionKind;
   level?: SectionLevel;
+  bodyCount?: number;
+  subItems?: (string | ProximitySubItem)[];
 };
 
 type DashPreset = {
@@ -34,13 +41,20 @@ type DashPreset = {
   className: string;
 };
 
+type FlattenedDash = {
+  dashId: string;
+  targetId: string;
+  label: string;
+  sectionKind: SectionKind;
+  isMain: boolean;
+};
+
 type DashProps = {
   active: boolean;
   mouseY: MotionValue<number>;
   onSelect: (id: string) => void;
   registerDash: (id: string, node: HTMLButtonElement | null) => void;
-  section: ProximitySection;
-  sectionKind: SectionKind;
+  dash: FlattenedDash;
   side: Side;
 };
 
@@ -51,34 +65,34 @@ type ProximitySidebarProps = {
   side?: Side;
 };
 
-const RADIUS = 40;
+const RADIUS = 45;
 const MAX_DASH_WIDTH = 110;
 const SCROLL_IDLE_RESET_DELAY = 80;
 
 const DASH_PRESETS: Record<SectionKind, DashPreset> = {
   title: {
-    base: 40,
-    bump: 70,
+    base: 44,
+    bump: 66,
     thickness: 1.5,
-    className: "bg-foreground",
+    className: "bg-[#171717] dark:bg-white",
   },
   subtitle: {
-    base: 36,
-    bump: 64,
+    base: 38,
+    bump: 58,
     thickness: 1.5,
-    className: "bg-foreground",
+    className: "bg-[#171717] dark:bg-white",
   },
   section: {
-    base: 30,
-    bump: 56,
+    base: 28,
+    bump: 48,
     thickness: 1,
-    className: "bg-muted-foreground/50",
+    className: "bg-[#737373] dark:bg-[#525252]",
   },
   body: {
-    base: 24,
-    bump: 50,
+    base: 20,
+    bump: 42,
     thickness: 1,
-    className: "bg-muted-foreground/40",
+    className: "bg-[#a3a3a3] dark:bg-[#383838]",
   },
 };
 
@@ -91,16 +105,6 @@ const getSectionKind = (section: ProximitySection): SectionKind => {
   if (section.level === 2) return "subtitle";
   if (section.level === 3) return "section";
   return "body";
-};
-
-const getElementSectionKind = (id: string): SectionKind | undefined => {
-  const heading = getSectionElement(id)?.querySelector("h1, h2, h3, h4, h5, h6");
-  const tagName = heading?.tagName.toLowerCase();
-
-  if (tagName === "h1") return "title";
-  if (tagName === "h2") return "subtitle";
-  if (tagName === "h3") return "section";
-  if (tagName) return "body";
 };
 
 const getScrollParent = (element: HTMLElement) => {
@@ -124,18 +128,17 @@ const Dash = ({
   mouseY,
   onSelect,
   registerDash,
-  section,
-  sectionKind,
+  dash,
   side,
 }: DashProps) => {
   const ref = useRef<HTMLButtonElement>(null);
-  const preset = DASH_PRESETS[sectionKind];
+  const preset = DASH_PRESETS[dash.sectionKind];
   const activeWidth = preset.base + preset.bump;
 
   useEffect(() => {
-    registerDash(section.id, ref.current);
-    return () => registerDash(section.id, null);
-  }, [registerDash, section.id]);
+    registerDash(dash.dashId, ref.current);
+    return () => registerDash(dash.dashId, null);
+  }, [registerDash, dash.dashId]);
 
   const distance = useTransform(mouseY, (y) => {
     const rect = ref.current?.getBoundingClientRect();
@@ -155,27 +158,31 @@ const Dash = ({
   );
 
   const scaleX = useSpring(targetScaleX, {
-    stiffness: 320,
-    damping: 34,
-    mass: 0.7,
+    stiffness: 340,
+    damping: 32,
+    mass: 0.6,
   });
 
   return (
     <button
       ref={ref}
       type="button"
-      aria-current={active ? "location" : undefined}
-      aria-label={`Go to ${section.label}`}
-      title={section.label}
-      className="group flex h-3 w-[110px] items-center justify-end border-0 bg-transparent p-0 outline-none cursor-pointer"
-      onClick={() => onSelect(section.id)}
+      aria-current={active && dash.isMain ? "location" : undefined}
+      aria-label={`Go to ${dash.label}`}
+      title={dash.label}
+      className="group flex h-[7px] w-[110px] items-center justify-end border-0 bg-transparent p-0 outline-none cursor-pointer"
+      onClick={() => onSelect(dash.targetId)}
     >
       <motion.span
-        className={`block transition-colors duration-150 ease-out group-focus-visible:ring-2 group-focus-visible:ring-ring group-focus-visible:ring-offset-2 ${
-          active
-            ? "bg-foreground dark:bg-white"
+        className={`block transition-colors duration-150 ease-out group-focus-visible:ring-2 group-focus-visible:ring-ring ${
+          dash.isMain
+            ? active
+              ? "bg-[#171717] dark:bg-white shadow-[0_0_6px_rgba(255,255,255,0.4)]"
+              : preset.className
+            : active
+            ? "bg-[#666666] dark:bg-[#737373]"
             : preset.className
-        }`}
+        } group-hover:bg-[#171717] group-hover:dark:bg-white`}
         style={{
           height: preset.thickness,
           scaleX,
@@ -199,9 +206,52 @@ export const ProximitySidebar = ({
   const pointerInside = useRef(false);
   const resetTimer = useRef<number | null>(null);
   const [activeId, setActiveId] = useState(sections[0]?.id);
-  const [detectedKinds, setDetectedKinds] = useState<Record<string, SectionKind>>(
-    {}
-  );
+
+  // Flatten sections into main title dashes and subordinate body dashes
+  const flattenedDashes = useMemo<FlattenedDash[]>(() => {
+    const list: FlattenedDash[] = [];
+
+    sections.forEach((section) => {
+      // 1. Main section header dash
+      list.push({
+        dashId: section.id,
+        targetId: section.id,
+        label: section.label,
+        sectionKind: getSectionKind(section),
+        isMain: true,
+      });
+
+      // 2. Subordinate body dashes
+      if (section.subItems && section.subItems.length > 0) {
+        section.subItems.forEach((sub, subIdx) => {
+          const isObj = typeof sub === "object" && sub !== null;
+          const subLabel = isObj ? sub.label : String(sub);
+          const subTargetId = isObj && sub.id ? sub.id : section.id;
+          list.push({
+            dashId: `${section.id}-sub-${subIdx}`,
+            targetId: subTargetId,
+            label: subLabel,
+            sectionKind: "body",
+            isMain: false,
+          });
+        });
+      } else {
+        // Default to 5 subordinate lines if not explicitly provided
+        const count = section.bodyCount ?? 5;
+        for (let i = 0; i < count; i++) {
+          list.push({
+            dashId: `${section.id}-body-${i}`,
+            targetId: section.id,
+            label: `${section.label} · Detail ${i + 1}`,
+            sectionKind: "body",
+            isMain: false,
+          });
+        }
+      }
+    });
+
+    return list;
+  }, [sections]);
 
   const sectionIds = useMemo(
     () => sections.map((section) => section.id).join("|"),
@@ -214,7 +264,6 @@ export const ProximitySidebar = ({
         dashRefs.current.set(id, node);
         return;
       }
-
       dashRefs.current.delete(id);
     },
     []
@@ -222,7 +271,6 @@ export const ProximitySidebar = ({
 
   const clearPendingReset = useCallback(() => {
     if (!resetTimer.current) return;
-
     window.clearTimeout(resetTimer.current);
     resetTimer.current = null;
   }, []);
@@ -276,22 +324,6 @@ export const ProximitySidebar = ({
   );
 
   useEffect(() => () => clearPendingReset(), [clearPendingReset]);
-
-  useEffect(() => {
-    const kinds = sections.reduce<Record<string, SectionKind>>(
-      (nextKinds, section) => {
-        nextKinds[section.id] =
-          section.kind || section.level
-            ? getSectionKind(section)
-            : getElementSectionKind(section.id) ?? getSectionKind(section);
-
-        return nextKinds;
-      },
-      {}
-    );
-
-    setDetectedKinds(kinds);
-  }, [sectionIds, sections]);
 
   useEffect(() => {
     if (!sections.length) return;
@@ -368,8 +400,7 @@ export const ProximitySidebar = ({
       className={`flex h-full min-h-0 items-center justify-end ${className}`}
     >
       <div
-        className="mx-4 flex flex-col items-end"
-        style={{ gap: 8 }}
+        className="mx-3 flex flex-col items-end py-2 select-none"
         onPointerMove={(event) => {
           clearPendingReset();
           pointerInside.current = true;
@@ -380,15 +411,14 @@ export const ProximitySidebar = ({
           mouseY.set(Infinity);
         }}
       >
-        {sections.map((section) => (
+        {flattenedDashes.map((dash) => (
           <Dash
-            key={section.id}
-            active={section.id === activeId}
+            key={dash.dashId}
+            active={dash.targetId === activeId}
             mouseY={mouseY}
             onSelect={selectSection}
             registerDash={registerDash}
-            section={section}
-            sectionKind={detectedKinds[section.id] ?? getSectionKind(section)}
+            dash={dash}
             side={side}
           />
         ))}
