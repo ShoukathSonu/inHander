@@ -200,7 +200,7 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({ initialCtc }
   const handleScrollToFineTune = (tab: 'structure' | 'deductions' | 'epf' | 'bonus' | 'exit' = 'deductions') => {
     setActiveTab(tab);
     if (typeof document !== 'undefined') {
-      const element = document.getElementById('fine-tune-section');
+      const element = document.getElementById('tax-deductions') || document.getElementById('fine-tune-section');
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         element.classList.add('ring-2', 'ring-[#0070f3]', 'dark:ring-[#38bdf8]');
@@ -265,7 +265,7 @@ Calculated on inHander: ${shareUrl}`;
         <span className="corner-plus corner-plus--br" aria-hidden="true">+</span>
 
         {/* Card Header & Quick CTC Presets */}
-        <div className="p-6 sm:p-8 border-b border-dashed border-[#e2e4e9] dark:border-[#262626] bg-[#fafafa]/70 dark:bg-[#181818]/70">
+        <div id="salary-inputs" className="p-6 sm:p-8 border-b border-dashed border-[#e2e4e9] dark:border-[#262626] bg-[#fafafa]/70 dark:bg-[#181818]/70 scroll-mt-24">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 lg:gap-14">
             <div className="space-y-1.5 shrink-0">
               <div className="flex items-center gap-2">
@@ -505,7 +505,7 @@ Calculated on inHander: ${shareUrl}`;
         </div>
 
         {/* Big In-Hand Take Home Highlight Box & Annual CTC Distribution Box */}
-        <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch border-b border-dashed border-[#e2e4e9] dark:border-[#262626]">
+        <div id="take-home-summary" className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch border-b border-dashed border-[#e2e4e9] dark:border-[#262626] scroll-mt-24">
           {/* Main In Hand Metric (7 Cols on desktop) */}
           <div className="lg:col-span-7 space-y-5 flex flex-col justify-between">
             <div className="space-y-4">
@@ -706,7 +706,7 @@ Calculated on inHander: ${shareUrl}`;
         />
 
         {/* Detailed Dual Regime Comparison Matrix */}
-        <div className="p-6 sm:p-8 bg-[#fafafa]/50 dark:bg-[#181818]/50 border-b border-dashed border-[#e2e4e9] dark:border-[#262626]">
+        <div id="regime-comparison" className="p-6 sm:p-8 bg-[#fafafa]/50 dark:bg-[#181818]/50 border-b border-dashed border-[#e2e4e9] dark:border-[#262626] scroll-mt-24">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-[16px] font-semibold text-[#171717] dark:text-white">Tax Comparison</h3>
@@ -883,7 +883,7 @@ Calculated on inHander: ${shareUrl}`;
         </div>
 
         {/* Configurable Fine-Tuning Tabs */}
-        <div id="fine-tune-section" className="p-6 sm:p-8 scroll-mt-6 transition-all duration-300">
+        <div id="tax-deductions" className="p-6 sm:p-8 scroll-mt-24 transition-all duration-300">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-[#ebebeb] dark:border-[#262626]">
             <div>
               <h3 className="text-[16px] font-semibold text-[#171717] dark:text-white flex items-center gap-2">

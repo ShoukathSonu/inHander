@@ -3,7 +3,16 @@ import Layout from '../layouts/Layout.astro';
 import { SalaryCalculator } from '../components/SalaryCalculator';
 import SeoContentSection from '../components/SeoContentSection.astro';
 import FaqSection from '../components/FaqSection.astro';
+import ProximitySidebar, { type ProximitySection } from '../components/ProximitySidebar';
 import { Sparkles, ShieldCheck, Zap, Lock, FileText, Split, Scan, Upload, FileSpreadsheet } from 'lucide-react';
+
+const sections: ProximitySection[] = [
+  { id: "salary-inputs", label: "Salary Inputs", level: 1 },
+  { id: "take-home-summary", label: "Monthly Take-Home", level: 2 },
+  { id: "regime-comparison", label: "Regime Comparison", level: 2 },
+  { id: "tax-deductions", label: "Deductions & HRA", level: 3 },
+  { id: "faq", label: "FAQs & Guide", level: 3 },
+];
 ---
 
 <Layout 
@@ -12,6 +21,10 @@ import { Sparkles, ShieldCheck, Zap, Lock, FileText, Split, Scan, Upload, FileSp
   keywords="In Hand Salary, in hand salary calculator, in hand salary calculator india, calculate in hand salary, india in hand salary calculator, lpa in hand salary, tax calculator, income tax calculator, paycheck tax calculator, 4 lpa in hand salary, 4.5 lpa in hand salary, 10 lpa in hand salary, 12 lpa in hand salary, 18 lpa in hand salary, in hand salary calculator after tax"
   activeTab="calculator"
 >
+  <!-- Pinned Proximity Sidebar (Hidden on mobile/tablet, visible on desktop) -->
+  <div class="fixed right-2 top-1/2 -translate-y-1/2 z-40 hidden xl:flex">
+    <ProximitySidebar client:load sections={sections} side="right" />
+  </div>
   <!-- Hero Band -->
   <section class="text-center space-y-6 pt-4 pb-12 sm:pb-16 max-w-4xl mx-auto">
     <!-- Section Eyebrow Badge -->

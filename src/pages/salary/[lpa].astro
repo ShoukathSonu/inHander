@@ -2,8 +2,17 @@
 import Layout from '../../layouts/Layout.astro';
 import { SalaryCalculator } from '../../components/SalaryCalculator';
 import FaqSection from '../../components/FaqSection.astro';
+import ProximitySidebar, { type ProximitySection } from '../../components/ProximitySidebar';
 import { calculateSalary, DEFAULT_SALARY_INPUTS } from '../../lib/taxEngine';
 import { formatINR } from '../../lib/formatters';
+
+const sections: ProximitySection[] = [
+  { id: "salary-inputs", label: "Salary Inputs", level: 1 },
+  { id: "take-home-summary", label: "Monthly Take-Home", level: 2 },
+  { id: "regime-comparison", label: "Regime Comparison", level: 2 },
+  { id: "tax-deductions", label: "Deductions & HRA", level: 3 },
+  { id: "faq", label: "FAQs & Guide", level: 3 },
+];
 
 export function getStaticPaths() {
   const packages = [
@@ -44,6 +53,11 @@ const bestRegime = analysis.betterRegime === 'OLD' ? analysis.oldRegime : analys
   description={`Calculate exact ₹${pkg.label} in-hand salary per month. Monthly take-home is approximately ${formatINR(bestRegime.monthlyTakeHome)}/mo with ${formatINR(bestRegime.totalAnnualTax)} annual income tax under the ${analysis.betterRegime} Tax Regime.`}
   activeTab="calculator"
 >
+  <!-- Pinned Proximity Sidebar (Hidden on mobile/tablet, visible on desktop) -->
+  <div class="fixed right-2 top-1/2 -translate-y-1/2 z-40 hidden xl:flex">
+    <ProximitySidebar client:load sections={sections} side="right" />
+  </div>
+
   <div class="space-y-10">
     <!-- Package Hero Header -->
     <section class="text-center space-y-4 max-w-4xl mx-auto pt-4">
