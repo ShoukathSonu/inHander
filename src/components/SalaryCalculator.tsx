@@ -4,7 +4,7 @@ import {
   DEFAULT_SALARY_INPUTS, 
   type SalaryInputs 
 } from '../lib/taxEngine';
-import { formatINR, formatCompactINR } from '../lib/formatters';
+import { formatINR } from '../lib/formatters';
 import { STATE_PT_RULES, PRIMARY_STATE_OPTIONS } from '../lib/statePtRules';
 import { encodeInputsToQuery, decodeQueryToInputs } from '../lib/shareUrl';
 import { normalizeIndianNumber } from '../lib/documentParser';
@@ -20,25 +20,17 @@ import {
   Share2, 
   Copy, 
   Check, 
-  FileText, 
   Zap, 
   Upload, 
   Pencil,
   MapPin,
-  Briefcase,
   ChevronDown,
-  ChevronUp,
   ShieldCheck,
-  Building,
-  Coins,
   FileSpreadsheet,
-  AlertCircle,
   Printer,
-  Sliders,
   Compass,
   TrendingUp,
-  BarChart3,
-  Calculator
+  BarChart3
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -110,7 +102,7 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({ initialCtc }
       ...extracted
     }));
     setIsOptimized(false);
-    showToast("Payslip data applied to calculator!");
+    showToast("Payslip data applied to calculator");
   };
 
   // Initialize from URL parameters if available on first load
@@ -143,7 +135,7 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({ initialCtc }
   // Master calculation
   const analysis = useMemo(() => calculateSalary(inputs), [inputs]);
 
-  // Auto-align selected regime to the better regime when CTC changes drastically
+  // Auto-align selected regime to the better regime when CTC changes
   useEffect(() => {
     if (analysis.betterRegime === 'NEW' || analysis.betterRegime === 'OLD') {
       setSelectedRegime(analysis.betterRegime);
@@ -187,14 +179,14 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({ initialCtc }
   const handleCalculateClick = () => {
     try {
       confetti({
-        particleCount: 60,
-        spread: 50,
+        particleCount: 50,
+        spread: 45,
         origin: { y: 0.6 }
       });
     } catch {
       // ignore
     }
-    showToast(`Calculated: ${formatINR(analysis.compensationSplit.monthlyGuaranteedInHand)}/month Take-Home!`);
+    showToast(`Calculated: ${formatINR(analysis.compensationSplit.monthlyGuaranteedInHand)}/month take-home`);
   };
 
   // 1-Click Maximize In-Hand Optimizer
@@ -224,14 +216,14 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({ initialCtc }
 
     try {
       confetti({
-        particleCount: 80,
-        spread: 60,
+        particleCount: 60,
+        spread: 50,
         origin: { y: 0.7 }
       });
     } catch {
       // ignore
     }
-    showToast("Deductions maxed! Switched Old Regime tax benefits on.");
+    showToast("Deductions maximized");
   };
 
   const handleShareLink = () => {
@@ -240,7 +232,7 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({ initialCtc }
       const shareUrl = `${window.location.origin}${window.location.pathname}?${query}`;
       navigator.clipboard.writeText(shareUrl);
       setCopiedLink(true);
-      showToast("Calculation link copied to clipboard!");
+      showToast("Calculation link copied");
       setTimeout(() => setCopiedLink(false), 2500);
     }
   };
@@ -252,26 +244,24 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({ initialCtc }
       : 'https://inhander.com';
 
     const text = `Take-Home Salary Breakdown for ${formatINR(inputs.annualCtc)} CTC:
-- In-Hand Monthly (Real Cash): ${formatINR(analysis.compensationSplit.monthlyGuaranteedInHand)}/mo
+- In-Hand Monthly: ${formatINR(analysis.compensationSplit.monthlyGuaranteedInHand)}/mo
 - Guaranteed Base CTC: ${formatINR(analysis.compensationSplit.guaranteedBaseCtc)}
-- Yearly Variable Bonus (Post-Tax): ${formatINR(analysis.compensationSplit.yearlyBonusNet)} (Gross: ${formatINR(analysis.compensationSplit.yearlyBonusGross)})
-- Annual Paper Stock / ESOPs: ${formatINR(analysis.compensationSplit.annualEsopValue)}
-- Income Tax (TDS): ${formatINR(activeRegimeData.totalAnnualTax)} (${selectedRegime} Tax Regime)
-- Professional Tax: ${formatINR(analysis.ptAnnual)}/yr (${STATE_PT_RULES[inputs.stateCode]?.name || inputs.stateCode})
+- Yearly Variable Bonus (Post-Tax): ${formatINR(analysis.compensationSplit.yearlyBonusNet)}
+- Annual Stock / ESOPs: ${formatINR(analysis.compensationSplit.annualEsopValue)}
+- Income Tax: ${formatINR(activeRegimeData.totalAnnualTax)} (${selectedRegime} Tax Regime)
+- Professional Tax: ${formatINR(analysis.ptAnnual)}/yr
 
 Calculated on inHander: ${shareUrl}`;
 
     navigator.clipboard.writeText(text);
     setCopiedSummary(true);
-    showToast("Summary copied to clipboard!");
+    showToast("Summary copied to clipboard");
     setTimeout(() => setCopiedSummary(false), 2500);
   };
 
   const handleCopySlipText = () => {
     const summary = `
-========================================
 SALARY SLIP BREAKDOWN (${selectedRegime} TAX REGIME)
-========================================
 Designation: ${employeeDesignation}
 Company: ${employerCompanyName}
 Annual CTC: ${formatINR(analysis.inputs.annualCtc)}
@@ -288,21 +278,20 @@ Professional Tax (PT): ${formatINR(activeRegimeData.monthlyPt)}
 Income Tax (TDS): ${formatINR(activeRegimeData.monthlyTax)}
 ${activeRegimeData.monthlyVpf > 0 ? `Voluntary PF (VPF): ${formatINR(activeRegimeData.monthlyVpf)}\n` : ''}Total Monthly Deductions: ${formatINR(totalMonthlyDeductions)}
 
-========================================
 NET TAKE-HOME SALARY (Monthly): ${formatINR(activeRegimeData.monthlyTakeHome)}
 ANNUAL TAKE-HOME SALARY: ${formatINR(activeRegimeData.annualTakeHome)}
 TOTAL ANNUAL INCOME TAX: ${formatINR(activeRegimeData.totalAnnualTax)}
-========================================
-Generated via In Hand Salary (inHander.com)
+
+Generated via inHander.com
 `.trim();
 
     navigator.clipboard.writeText(summary);
     setCopiedSlipText(true);
-    showToast("Payslip text copied to clipboard!");
+    showToast("Payslip text copied");
     setTimeout(() => setCopiedSlipText(false), 2500);
   };
 
-  // Count active non-default customizations to show a helpful badge on the accordion
+  // Count active customizations
   const customCount = useMemo(() => {
     let count = 0;
     if (inputs.basicPercent !== 50) count++;
@@ -325,11 +314,11 @@ Generated via In Hand Salary (inHander.com)
   const totalMonthlyDeductions = activeRegimeData.monthlyEmployeePf + activeRegimeData.monthlyVpf + activeRegimeData.monthlyPt + activeRegimeData.monthlyTax;
 
   return (
-    <div id="calculator-section" className="w-full max-w-6xl mx-auto space-y-5 sm:space-y-6 relative">
-      {/* Lightweight Floating Toast */}
+    <div id="calculator-section" className="w-full max-w-5xl mx-auto space-y-10 sm:space-y-14 relative">
+      {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 left-4 sm:left-auto z-50 animate-in fade-in slide-in-from-bottom-5 duration-200">
-          <div className="flex items-center gap-2.5 px-4 py-3 bg-[#171717] dark:bg-white text-white dark:text-[#171717] rounded-xl shadow-2xl border border-white/10 dark:border-black/10 text-[13px] font-medium justify-center sm:justify-start">
+        <div className="fixed bottom-6 right-6 left-6 sm:left-auto z-50 animate-in fade-in slide-in-from-bottom-5 duration-200">
+          <div className="flex items-center gap-2 px-4 py-3 bg-[#171717] dark:bg-white text-white dark:text-[#171717] rounded-xl shadow-xl text-sm font-normal justify-center sm:justify-start">
             <Check className="w-4 h-4 text-[#10b981] shrink-0" />
             <span>{toastMessage}</span>
           </div>
@@ -337,35 +326,24 @@ Generated via In Hand Salary (inHander.com)
       )}
 
       {/* ========================================================================= */}
-      {/* LAYER 1: THE HERO SECTION (Immediate Answer & Dopamine Hit)               */}
+      {/* LAYER 1: THE HERO SECTION (Immediate Answer & Visual Focus)               */}
       {/* ========================================================================= */}
-      <div className="vessa-card vessa-frame rounded-2xl sm:rounded-3xl overflow-hidden shadow-stacked transition-all">
-        {/* Precision Corner Crosshair Nodes */}
-        <span className="corner-plus corner-plus--tl" aria-hidden="true">+</span>
-        <span className="corner-plus corner-plus--tr" aria-hidden="true">+</span>
-        <span className="corner-plus corner-plus--bl" aria-hidden="true">+</span>
-        <span className="corner-plus corner-plus--br" aria-hidden="true">+</span>
-
-        {/* Hero Calculation Input & Action Area */}
-        <div className="p-4 sm:p-8 lg:p-10 border-b border-dashed border-[#e2e4e9] dark:border-[#262626] bg-gradient-to-b from-[#fafafa]/90 via-white to-white dark:from-[#161616] dark:via-[#121212] dark:to-[#121212]">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 sm:gap-6 lg:gap-10">
+      <div className="bg-white dark:bg-[#121212] rounded-3xl overflow-hidden shadow-sm transition-all">
+        
+        {/* Top Input Area with Generous Whitespace */}
+        <div className="p-8 sm:p-12 lg:p-14 bg-[#fafafa]/60 dark:bg-[#161616]/60">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 lg:gap-12">
             
             {/* Input Zone */}
-            <div className="space-y-2.5 sm:space-y-3 w-full lg:w-auto">
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] sm:text-[12px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] font-semibold flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#10b981]"></span>
-                  Annual Cost to Company (CTC)
-                </span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/20 shrink-0">
-                  Budget 2024
-                </span>
-              </div>
+            <div className="space-y-4 w-full lg:w-auto">
+              <label className="text-sm font-normal text-[#666666] dark:text-[#999999] block">
+                Annual Cost to Company (CTC)
+              </label>
               
-              {/* Typeable & Editable CTC Display with /year */}
-              <div className="flex items-center gap-2 sm:gap-3 w-full">
-                <div className="flex-1 sm:flex-initial inline-flex items-center gap-1.5 sm:gap-2 bg-white dark:bg-[#181818] px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl border-2 border-[#ebebeb] dark:border-[#262626] shadow-sm focus-within:border-[#0070f3] dark:focus-within:border-[#38bdf8] focus-within:ring-4 focus-within:ring-[#0070f3]/15 transition-all group min-w-0">
-                  <span className="text-2xl sm:text-4xl lg:text-5xl font-bold font-mono text-[#888888] dark:text-[#737373] select-none shrink-0">
+              {/* Typeable CTC Display */}
+              <div className="flex items-baseline gap-3 w-full">
+                <div className="flex-1 sm:flex-initial inline-flex items-baseline gap-2 bg-white dark:bg-[#1a1a1a] px-5 py-3 rounded-2xl shadow-xs focus-within:ring-2 focus-within:ring-[#0070f3]/20 transition-all min-w-0">
+                  <span className="text-2xl sm:text-3xl font-medium text-[#888888] dark:text-[#777777] select-none shrink-0">
                     ₹
                   </span>
                   <input
@@ -380,82 +358,64 @@ Generated via In Hand Salary (inHander.com)
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         (e.target as HTMLInputElement).blur();
-                        handleCalculateClick();
                       }
                     }}
-                    className="text-2xl sm:text-4xl lg:text-5xl font-bold text-[#171717] dark:text-white font-mono tracking-tight bg-transparent border-0 focus:outline-hidden w-full sm:w-56 lg:w-72 min-w-0"
-                    placeholder="e.g. 12,00,000"
-                    title="Click to type your exact CTC (e.g. 12,00,000, 15 LPA, or 1.2 Cr)"
+                    className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#171717] dark:text-white tracking-tight bg-transparent border-0 focus:outline-hidden w-full sm:w-56 lg:w-64 min-w-0"
+                    placeholder="12,00,000"
                     aria-label="Annual Cost to Company (CTC)"
                   />
-                  <Pencil className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-[#888888] dark:text-[#737373] opacity-40 group-hover:opacity-100 transition-opacity shrink-0" />
+                  <Pencil className="w-3.5 h-3.5 text-[#aaaaaa] opacity-50 shrink-0 self-center" />
                 </div>
                 
-                <span className="text-base sm:text-2xl font-mono text-[#888888] dark:text-[#737373] select-none font-medium shrink-0">
-                  / yr
+                <span className="text-base sm:text-lg text-[#888888] dark:text-[#777777] font-normal shrink-0">
+                  / year
                 </span>
               </div>
             </div>
 
-            {/* Calculate Button & Primary Action Group */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full lg:w-auto lg:shrink-0">
-              {/* Prominent Dopamine "Calculate" Trigger Button */}
+            {/* Quick Actions (Ghost Utilities) */}
+            <div className="grid grid-cols-3 sm:flex items-center gap-2 sm:gap-2.5 w-full lg:w-auto lg:shrink-0">
               <button
                 type="button"
-                onClick={handleCalculateClick}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 h-11 sm:h-12 rounded-xl sm:rounded-2xl bg-[#0070f3] hover:bg-[#0060df] text-white text-[14px] font-bold shadow-[0_4px_14px_rgba(0,112,243,0.39)] hover:shadow-[0_6px_20px_rgba(0,112,243,0.45)] hover:scale-102 active:scale-98 transition-all cursor-pointer touch-manipulation"
+                onClick={() => setIsImportModalOpen(true)}
+                className="inline-flex items-center justify-center gap-1.5 px-3.5 h-11 sm:h-12 rounded-xl bg-white dark:bg-[#1a1a1a] hover:bg-[#f0f0f0] dark:hover:bg-[#242424] text-[#555555] dark:text-[#aaaaaa] hover:text-[#171717] dark:hover:text-white text-xs sm:text-sm font-medium transition-all cursor-pointer touch-manipulation text-center shadow-2xs"
+                title="Upload & Scan Payslip (PDF / Image)"
               >
-                <Calculator className="w-4 h-4" />
-                <span>Calculate In-Hand</span>
+                <Upload className="w-3.5 h-3.5 text-[#0070f3] shrink-0" />
+                <span>Upload</span>
               </button>
 
-              {/* Quick Actions Strip (Grid on Mobile, Flex on Desktop) */}
-              <div className="grid grid-cols-3 gap-2 w-full sm:w-auto sm:flex sm:items-center">
-                {/* Upload Payslip */}
-                <button
-                  type="button"
-                  onClick={() => setIsImportModalOpen(true)}
-                  className="inline-flex items-center justify-center gap-1.5 px-2.5 sm:px-3.5 h-10 sm:h-12 rounded-xl sm:rounded-2xl bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] text-[#171717] dark:text-white text-[12px] sm:text-[13px] font-medium hover:bg-[#fafafa] dark:hover:bg-[#202020] transition-all shadow-2xs cursor-pointer touch-manipulation text-center"
-                  title="Upload & Scan Payslip (PDF / PNG / JPG)"
-                >
-                  <Upload className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-[#0070f3] dark:text-[#38bdf8] shrink-0" />
-                  <span className="truncate">Upload</span>
-                </button>
+              <button
+                type="button"
+                onClick={handleOptimizeTax}
+                className="inline-flex items-center justify-center gap-1.5 px-3.5 h-11 sm:h-12 rounded-xl bg-white dark:bg-[#1a1a1a] hover:bg-[#f0f0f0] dark:hover:bg-[#242424] text-[#555555] dark:text-[#aaaaaa] hover:text-[#171717] dark:hover:text-white text-xs sm:text-sm font-medium transition-all cursor-pointer touch-manipulation text-center shadow-2xs"
+                title="Maximize Tax Deductions"
+              >
+                <Zap className="w-3.5 h-3.5 text-[#f5a623] shrink-0" />
+                <span>{isOptimized ? 'Optimized' : 'Optimize'}</span>
+              </button>
 
-                {/* 1-Click Maximize */}
-                <button
-                  type="button"
-                  onClick={handleOptimizeTax}
-                  className="inline-flex items-center justify-center gap-1.5 px-2.5 sm:px-3.5 h-10 sm:h-12 rounded-xl sm:rounded-2xl bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#f9cb28] text-[#171717] dark:text-white text-[12px] sm:text-[13px] font-medium hover:bg-[#fafafa] dark:hover:bg-[#202020] transition-all shadow-2xs cursor-pointer touch-manipulation text-center"
-                  title="1-Click Maximize In-Hand Tax Optimizer"
+              <div className="inline-flex items-center justify-center gap-1 px-3 h-11 sm:h-12 rounded-xl bg-white dark:bg-[#1a1a1a] text-[#555555] dark:text-[#aaaaaa] hover:text-[#171717] dark:hover:text-white shadow-2xs transition-colors">
+                <MapPin className="w-3.5 h-3.5 shrink-0 text-[#888888]" />
+                <select
+                  value={inputs.stateCode}
+                  onChange={(e) => setInputs(prev => ({ ...prev, stateCode: e.target.value }))}
+                  className="bg-transparent text-xs sm:text-sm font-medium text-[#555555] dark:text-[#aaaaaa] hover:text-[#171717] dark:hover:text-white border-0 focus:outline-hidden cursor-pointer w-full text-center"
+                  title="Select work location for professional tax"
+                  aria-label="Work State"
                 >
-                  <Zap className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-[#f9cb28] dark:text-[#d97706] shrink-0" />
-                  <span className="truncate">{isOptimized ? 'Maxed' : 'Optimize'}</span>
-                </button>
-
-                {/* State Location Picker */}
-                <div className="inline-flex items-center justify-center gap-1 px-2 sm:px-3 h-10 sm:h-12 rounded-xl sm:rounded-2xl border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[#171717] dark:text-white shadow-2xs hover:border-[#0070f3] transition-colors">
-                  <MapPin className="w-3.5 h-3.5 text-[#0070f3] shrink-0" />
-                  <select
-                    value={inputs.stateCode}
-                    onChange={(e) => setInputs(prev => ({ ...prev, stateCode: e.target.value }))}
-                    className="bg-transparent text-[12px] font-medium text-[#171717] dark:text-white border-0 focus:outline-hidden cursor-pointer w-full text-center"
-                    title="Select work location for professional tax"
-                    aria-label="Work State for Professional Tax"
-                  >
-                    {PRIMARY_STATE_OPTIONS.map(st => (
-                      <option key={st.code} value={st.code} className="bg-white dark:bg-[#181818] text-[#171717] dark:text-white">
-                        {st.code}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                  {PRIMARY_STATE_OPTIONS.map(st => (
+                    <option key={st.code} value={st.code} className="bg-white dark:bg-[#181818] text-[#171717] dark:text-white">
+                      {st.code}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
 
-          {/* Range Slider & Quick Preset Chips */}
-          <div className="mt-5 sm:mt-6 space-y-3">
+          {/* Slider & Presets */}
+          <div className="mt-8 space-y-4">
             <input
               type="range"
               min={100000}
@@ -463,20 +423,19 @@ Generated via In Hand Salary (inHander.com)
               step={25000}
               value={inputs.annualCtc}
               onChange={(e) => handleCtcChange(Number(e.target.value))}
-              className="w-full h-2 bg-[#ebebeb] dark:bg-[#262626] rounded-lg appearance-none cursor-pointer"
+              className="w-full h-1.5 bg-[#e5e7eb] dark:bg-[#262626] rounded-lg appearance-none cursor-pointer"
             />
             
-            {/* Quick Preset Pills */}
-            <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 scrollbar-none snap-x">
-              <span className="text-[11px] font-mono text-[#888888] dark:text-[#737373] uppercase shrink-0 mr-0.5">Presets:</span>
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none snap-x">
+              <span className="text-xs text-[#888888] dark:text-[#777777] font-normal shrink-0 mr-1">Presets:</span>
               {CTC_PRESETS.map((preset) => (
                 <button
                   key={preset.value}
                   onClick={() => handleCtcChange(preset.value)}
-                  className={`px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-[12px] font-mono font-medium transition-all shrink-0 cursor-pointer snap-start ${
+                  className={`px-3 py-1 rounded-full text-xs transition-all shrink-0 cursor-pointer snap-start ${
                     inputs.annualCtc === preset.value
-                      ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] shadow-xs'
-                      : 'bg-white dark:bg-[#181818] text-[#4d4d4d] dark:text-[#a1a1a1] border border-[#ebebeb] dark:border-[#262626] hover:border-[#a1a1a1] dark:hover:border-[#525252] hover:text-[#171717] dark:hover:text-white'
+                      ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] font-medium shadow-2xs'
+                      : 'bg-black/5 dark:bg-white/5 text-[#555555] dark:text-[#999999] hover:bg-black/10 dark:hover:bg-white/10'
                   }`}
                 >
                   {preset.label}
@@ -486,103 +445,113 @@ Generated via In Hand Salary (inHander.com)
           </div>
         </div>
 
-        {/* Immediate Result Card (The Dopamine Centerpiece) */}
-        <div ref={resultsRef} className="p-4 sm:p-8 lg:p-10 bg-white dark:bg-[#121212]">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+        {/* Level 1 Hero Take-Home Pay Result */}
+        <div ref={resultsRef} className="p-8 sm:p-12 lg:p-14 bg-white dark:bg-[#121212]">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             
-            {/* Left Result Block (7 Cols) */}
-            <div className="lg:col-span-7 space-y-5 sm:space-y-6">
+            {/* Left Result Block */}
+            <div className="lg:col-span-7 space-y-8">
               
-              {/* Regime Toggle Strip & Recommendation (Aligned Side-by-Side) */}
-              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
-                {/* Switch Tabs */}
-                <div className="inline-flex p-1 rounded-full bg-[#f5f5f5] dark:bg-[#1c1c1c] border border-[#ebebeb] dark:border-[#262626]">
+              {/* Regime Selector & Savings Pill */}
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="inline-flex p-1 rounded-full bg-[#f3f4f6] dark:bg-[#1a1a1a]">
                   <button
                     onClick={() => setSelectedRegime('NEW')}
-                    className={`px-3 sm:px-4 py-1.5 rounded-full text-[12px] sm:text-[13px] font-medium transition-all cursor-pointer text-center ${
+                    className={`px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all cursor-pointer ${
                       selectedRegime === 'NEW'
-                        ? 'bg-white dark:bg-[#121212] text-[#171717] dark:text-white shadow-xs font-semibold'
-                        : 'text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white'
+                        ? 'bg-white dark:bg-[#262626] text-[#171717] dark:text-white shadow-2xs'
+                        : 'text-[#666666] dark:text-[#888888] hover:text-[#171717] dark:hover:text-white'
                     }`}
                   >
                     New Tax Regime
                     {analysis.betterRegime === 'NEW' && (
-                      <span className="ml-1 inline-block w-2 h-2 rounded-full bg-[#0070f3]"></span>
+                      <span className="ml-1.5 inline-block w-1.5 h-1.5 rounded-full bg-[#0070f3]"></span>
                     )}
                   </button>
                   <button
                     onClick={() => setSelectedRegime('OLD')}
-                    className={`px-3 sm:px-4 py-1.5 rounded-full text-[12px] sm:text-[13px] font-medium transition-all cursor-pointer text-center ${
+                    className={`px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all cursor-pointer ${
                       selectedRegime === 'OLD'
-                        ? 'bg-white dark:bg-[#121212] text-[#171717] dark:text-white shadow-xs font-semibold'
-                        : 'text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white'
+                        ? 'bg-white dark:bg-[#262626] text-[#171717] dark:text-white shadow-2xs'
+                        : 'text-[#666666] dark:text-[#888888] hover:text-[#171717] dark:hover:text-white'
                     }`}
                   >
                     Old Tax Regime
                     {analysis.betterRegime === 'OLD' && (
-                      <span className="ml-1 inline-block w-2 h-2 rounded-full bg-[#7928ca]"></span>
+                      <span className="ml-1.5 inline-block w-1.5 h-1.5 rounded-full bg-[#7928ca]"></span>
                     )}
                   </button>
                 </div>
 
-                {/* Savings Pill (Positioned right beside the switch tabs) */}
+                {/* Savings Pill */}
                 {analysis.annualTaxSavings > 0 && (
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#10b981]/10 border border-[#10b981]/25 text-[#10b981] text-[11px] sm:text-[12px] font-mono font-bold shrink-0">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ecfdf5] dark:bg-[#064e3b]/30 text-[#059669] dark:text-[#34d399] text-xs font-medium shrink-0">
                     <Sparkles className="w-3.5 h-3.5 shrink-0" />
                     <span>+{formatINR(analysis.annualTaxSavings)}/yr in {analysis.betterRegime}</span>
                   </div>
                 )}
               </div>
 
-              {/* Big Monthly Credited Amount */}
-              <div className="space-y-1">
-                <span className="text-[11px] sm:text-[12px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] block font-semibold">
-                  Net Monthly In-Hand Salary (Credited to Bank)
+              {/* LEVEL 1: Large, Bold Final Take-Home Pay Number */}
+              <div className="space-y-2">
+                <span className="text-sm font-normal text-[#666666] dark:text-[#999999] block">
+                  Net monthly in-hand salary
                 </span>
-                <div className="flex flex-wrap items-baseline gap-2 sm:gap-3">
-                  <span className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-[#10b981] font-mono tracking-tight break-all sm:break-normal">
+                <div className="flex flex-wrap items-baseline gap-3">
+                  <span className="text-4xl sm:text-6xl lg:text-7xl font-bold text-[#10b981] tracking-tight">
                     {formatINR(analysis.compensationSplit.monthlyGuaranteedInHand)}
                   </span>
-                  <span className="text-lg sm:text-2xl font-mono text-[#888888] dark:text-[#737373] font-normal shrink-0">
+                  <span className="text-xl sm:text-2xl text-[#888888] dark:text-[#777777] font-normal shrink-0">
                     / month
                   </span>
                 </div>
-                <p className="text-[12px] sm:text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] pt-0.5">
-                  Guaranteed monthly cash transfer under the <strong>{selectedRegime} Tax Regime</strong> (FY 2025-26).
+                <p className="text-sm text-[#666666] dark:text-[#888888] pt-1 font-normal">
+                  Estimated monthly credit in bank under {selectedRegime} Tax Regime (FY 2025-26).
                 </p>
               </div>
 
-              {/* 4 Quick Stat Tiles */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 pt-1">
-                <div className="p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626]">
-                  <span className="text-[9.5px] sm:text-[10px] font-mono text-[#888888] dark:text-[#737373] uppercase block font-semibold truncate">Annual Take-Home</span>
-                  <span className="text-[14px] sm:text-[15px] font-bold font-mono text-[#171717] dark:text-white block truncate">
+              {/* 4 Stat Tiles (Clean Background Blocks Perfectly Aligned) */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                <div className="p-4 rounded-2xl bg-[#f9fafb] dark:bg-[#171717] flex flex-col justify-between gap-2">
+                  <span className="text-xs text-[#777777] dark:text-[#888888] font-normal leading-snug min-h-[2rem] flex items-start">
+                    Annual take-home
+                  </span>
+                  <span className="text-base sm:text-lg font-medium text-[#171717] dark:text-white truncate block">
                     {formatINR(activeRegimeData.annualTakeHome)}
                   </span>
                 </div>
-                <div className="p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626]">
-                  <span className="text-[9.5px] sm:text-[10px] font-mono text-[#888888] dark:text-[#737373] uppercase block font-semibold truncate">Annual Tax (TDS)</span>
-                  <span className="text-[14px] sm:text-[15px] font-bold font-mono text-[#ee0000] block truncate">
+
+                <div className="p-4 rounded-2xl bg-[#f9fafb] dark:bg-[#171717] flex flex-col justify-between gap-2">
+                  <span className="text-xs text-[#777777] dark:text-[#888888] font-normal leading-snug min-h-[2rem] flex items-start">
+                    Annual tax (TDS)
+                  </span>
+                  <span className="text-base sm:text-lg font-medium text-[#ee0000] truncate block">
                     {formatINR(activeRegimeData.totalAnnualTax)}
                   </span>
                 </div>
-                <div className="p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626]">
-                  <span className="text-[9.5px] sm:text-[10px] font-mono text-[#888888] dark:text-[#737373] uppercase block font-semibold truncate">Monthly EPF</span>
-                  <span className="text-[14px] sm:text-[15px] font-bold font-mono text-[#0070f3] block truncate">
+
+                <div className="p-4 rounded-2xl bg-[#f9fafb] dark:bg-[#171717] flex flex-col justify-between gap-2">
+                  <span className="text-xs text-[#777777] dark:text-[#888888] font-normal leading-snug min-h-[2rem] flex items-start">
+                    Monthly EPF
+                  </span>
+                  <span className="text-base sm:text-lg font-medium text-[#0070f3] truncate block">
                     {formatINR(activeRegimeData.monthlyEmployeePf)}
                   </span>
                 </div>
-                <div className="p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626]">
-                  <span className="text-[9.5px] sm:text-[10px] font-mono text-[#888888] dark:text-[#737373] uppercase block font-semibold truncate">Effective Tax</span>
-                  <span className="text-[14px] sm:text-[15px] font-bold font-mono text-[#171717] dark:text-white block truncate">
+
+                <div className="p-4 rounded-2xl bg-[#f9fafb] dark:bg-[#171717] flex flex-col justify-between gap-2">
+                  <span className="text-xs text-[#777777] dark:text-[#888888] font-normal leading-snug min-h-[2rem] flex items-start">
+                    Effective tax rate
+                  </span>
+                  <span className="text-base sm:text-lg font-medium text-[#171717] dark:text-white truncate block">
                     {activeRegimeData.effectiveTaxRate.toFixed(1)}%
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Right Donut Chart Tile (5 Cols) */}
-            <div className="lg:col-span-5 flex flex-col justify-center pt-2 lg:pt-0">
+            {/* Right Donut Chart Tile */}
+            <div className="lg:col-span-5 flex flex-col justify-center">
               <BreakdownChart
                 grossAnnual={activeRegimeData.grossAnnualSalary}
                 takeHomeAnnual={activeRegimeData.annualTakeHome}
@@ -597,60 +566,58 @@ Generated via In Hand Salary (inHander.com)
       </div>
 
       {/* ========================================================================= */}
-      {/* LAYER 2: INPUT ARCHITECTURE (ACCORDION FOR GRANULAR ADJUSTMENTS)           */}
+      {/* LAYER 2: INPUT ACCORDION (ADVANCED SETTINGS)                               */}
       {/* ========================================================================= */}
-      <div className="vessa-card rounded-2xl overflow-hidden border border-[#ebebeb] dark:border-[#262626] transition-all">
+      <div className="bg-white dark:bg-[#121212] rounded-3xl overflow-hidden shadow-sm transition-all">
         {/* Accordion Trigger Header */}
         <button
           type="button"
           onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
-          className="w-full p-3.5 sm:p-5 flex items-center justify-between bg-[#fafafa] dark:bg-[#161616] hover:bg-[#f5f5f5] dark:hover:bg-[#1a1a1a] transition-colors cursor-pointer text-left select-none touch-manipulation"
+          className="w-full p-6 sm:p-8 flex items-center justify-between bg-[#fafafa]/80 dark:bg-[#161616]/80 hover:bg-[#f3f4f6] dark:hover:bg-[#1a1a1a] transition-colors cursor-pointer text-left select-none"
           aria-expanded={isAdvancedOpen}
         >
-          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                <span className="text-[14px] sm:text-[15px] font-bold text-[#171717] dark:text-white">
-                  Advanced Settings
+          <div className="min-w-0 space-y-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-base sm:text-lg font-semibold text-[#171717] dark:text-white tracking-tight">
+                Advanced Settings
+              </h2>
+              <span className="text-xs text-[#888888] dark:text-[#777777] font-normal hidden sm:inline">
+                (Deductions &amp; Allowances)
+              </span>
+              {customCount > 0 && (
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#0070f3]/10 text-[#0070f3] shrink-0">
+                  {customCount} customized
                 </span>
-                <span className="text-[12px] text-[#888888] dark:text-[#737373] font-normal hidden sm:inline">
-                  (Deductions &amp; Allowances)
-                </span>
-                {customCount > 0 && (
-                  <span className="px-2 py-0.5 rounded-full text-[9.5px] sm:text-[10px] font-mono font-bold bg-[#0070f3]/10 text-[#0070f3] border border-[#0070f3]/25 shrink-0">
-                    {customCount} customized
-                  </span>
-                )}
-              </div>
-              <p className="text-[11px] sm:text-[12px] text-[#888888] dark:text-[#737373] mt-0.5 line-clamp-1 sm:line-clamp-none">
-                HRA, 80C/80D, EPF statutory cap, bonuses, and corporate NPS
-              </p>
+              )}
             </div>
+            <p className="text-xs sm:text-sm text-[#777777] dark:text-[#888888] font-normal">
+              Customize HRA, Section 80C, 80D, EPF statutory cap, and corporate NPS
+            </p>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0 ml-2">
-            <span className="text-[11px] sm:text-[12px] font-mono text-[#888888] dark:text-[#737373] hidden sm:inline">
+          <div className="flex items-center gap-2 shrink-0 ml-4">
+            <span className="text-xs text-[#888888] dark:text-[#777777] font-normal hidden sm:inline">
               {isAdvancedOpen ? 'Hide' : 'Expand'}
             </span>
-            <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white dark:bg-[#222222] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#171717] dark:text-white transition-transform duration-200 ${isAdvancedOpen ? 'rotate-180' : ''}`}>
-              <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <div className={`w-7 h-7 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center text-[#555555] dark:text-[#aaaaaa] transition-transform duration-200 ${isAdvancedOpen ? 'rotate-180' : ''}`}>
+              <ChevronDown className="w-4 h-4" />
             </div>
           </div>
         </button>
 
         {/* Collapsible Accordion Content */}
         {isAdvancedOpen && (
-          <div className="p-4 sm:p-8 border-t border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#121212] space-y-5 sm:space-y-6 animate-in fade-in duration-200">
+          <div className="p-8 sm:p-12 space-y-8 animate-in fade-in duration-200">
             
             {/* Category Segmented Controls */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-[#ebebeb] dark:border-[#262626] scrollbar-none snap-x">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none snap-x">
               <button
                 type="button"
                 onClick={() => setSettingsSubTab('structure')}
-                className={`px-3 sm:px-3.5 py-1.5 rounded-lg sm:rounded-xl text-[12px] sm:text-[13px] font-medium transition-all cursor-pointer shrink-0 snap-start ${
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm transition-all cursor-pointer shrink-0 snap-start ${
                   settingsSubTab === 'structure'
-                    ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] font-semibold shadow-xs'
-                    : 'text-[#4d4d4d] dark:text-[#a1a1a1] hover:bg-[#f5f5f5] dark:hover:bg-[#1e1e1e]'
+                    ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] font-medium shadow-2xs'
+                    : 'bg-black/5 dark:bg-white/5 text-[#666666] dark:text-[#999999] hover:bg-black/10 dark:hover:bg-white/10'
                 }`}
               >
                 1. Salary Structure
@@ -658,10 +625,10 @@ Generated via In Hand Salary (inHander.com)
               <button
                 type="button"
                 onClick={() => setSettingsSubTab('deductions')}
-                className={`px-3 sm:px-3.5 py-1.5 rounded-lg sm:rounded-xl text-[12px] sm:text-[13px] font-medium transition-all cursor-pointer shrink-0 snap-start ${
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm transition-all cursor-pointer shrink-0 snap-start ${
                   settingsSubTab === 'deductions'
-                    ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] font-semibold shadow-xs'
-                    : 'text-[#4d4d4d] dark:text-[#a1a1a1] hover:bg-[#f5f5f5] dark:hover:bg-[#1e1e1e]'
+                    ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] font-medium shadow-2xs'
+                    : 'bg-black/5 dark:bg-white/5 text-[#666666] dark:text-[#999999] hover:bg-black/10 dark:hover:bg-white/10'
                 }`}
               >
                 2. Tax Deductions
@@ -669,10 +636,10 @@ Generated via In Hand Salary (inHander.com)
               <button
                 type="button"
                 onClick={() => setSettingsSubTab('epf')}
-                className={`px-3 sm:px-3.5 py-1.5 rounded-lg sm:rounded-xl text-[12px] sm:text-[13px] font-medium transition-all cursor-pointer shrink-0 snap-start ${
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm transition-all cursor-pointer shrink-0 snap-start ${
                   settingsSubTab === 'epf'
-                    ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] font-semibold shadow-xs'
-                    : 'text-[#4d4d4d] dark:text-[#a1a1a1] hover:bg-[#f5f5f5] dark:hover:bg-[#1e1e1e]'
+                    ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] font-medium shadow-2xs'
+                    : 'bg-black/5 dark:bg-white/5 text-[#666666] dark:text-[#999999] hover:bg-black/10 dark:hover:bg-white/10'
                 }`}
               >
                 3. EPF &amp; Gratuity
@@ -680,21 +647,21 @@ Generated via In Hand Salary (inHander.com)
               <button
                 type="button"
                 onClick={() => setSettingsSubTab('bonus')}
-                className={`px-3 sm:px-3.5 py-1.5 rounded-lg sm:rounded-xl text-[12px] sm:text-[13px] font-medium transition-all cursor-pointer shrink-0 snap-start ${
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm transition-all cursor-pointer shrink-0 snap-start ${
                   settingsSubTab === 'bonus'
-                    ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] font-semibold shadow-xs'
-                    : 'text-[#4d4d4d] dark:text-[#a1a1a1] hover:bg-[#f5f5f5] dark:hover:bg-[#1e1e1e]'
+                    ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] font-medium shadow-2xs'
+                    : 'bg-black/5 dark:bg-white/5 text-[#666666] dark:text-[#999999] hover:bg-black/10 dark:hover:bg-white/10'
                 }`}
               >
-                4. Bonus &amp; RSUs
+                4. Bonus &amp; Stocks
               </button>
               <button
                 type="button"
                 onClick={() => setSettingsSubTab('exit')}
-                className={`px-3 sm:px-3.5 py-1.5 rounded-lg sm:rounded-xl text-[12px] sm:text-[13px] font-medium transition-all cursor-pointer shrink-0 snap-start ${
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm transition-all cursor-pointer shrink-0 snap-start ${
                   settingsSubTab === 'exit'
-                    ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] font-semibold shadow-xs'
-                    : 'text-[#4d4d4d] dark:text-[#a1a1a1] hover:bg-[#f5f5f5] dark:hover:bg-[#1e1e1e]'
+                    ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] font-medium shadow-2xs'
+                    : 'bg-black/5 dark:bg-white/5 text-[#666666] dark:text-[#999999] hover:bg-black/10 dark:hover:bg-white/10'
                 }`}
               >
                 5. Exit &amp; Gratuity
@@ -703,13 +670,13 @@ Generated via In Hand Salary (inHander.com)
 
             {/* SUBTAB 1: SALARY STRUCTURE */}
             {settingsSubTab === 'structure' && (
-              <div className="space-y-5 sm:space-y-6 animate-in fade-in duration-200">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* Basic Salary % */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-[12px] sm:text-[13px]">
-                      <label className="font-medium text-[#171717] dark:text-white">Basic Salary (% of CTC)</label>
-                      <span className="font-mono font-semibold text-[#171717] dark:text-white">{inputs.basicPercent}% ({formatINR(analysis.basicAnnual)}/yr)</span>
+                  <div className="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-3">
+                    <div className="flex justify-between items-center text-sm">
+                      <label className="font-normal text-[#171717] dark:text-white">Basic Salary (% of CTC)</label>
+                      <span className="font-medium text-[#171717] dark:text-white">{inputs.basicPercent}%</span>
                     </div>
                     <input
                       type="range"
@@ -718,45 +685,47 @@ Generated via In Hand Salary (inHander.com)
                       step={5}
                       value={inputs.basicPercent}
                       onChange={(e) => setInputs(prev => ({ ...prev, basicPercent: Number(e.target.value) }))}
-                      className="w-full h-1.5 bg-[#ebebeb] dark:bg-[#262626] rounded-lg appearance-none cursor-pointer"
+                      className="w-full h-1.5 bg-[#e5e7eb] dark:bg-[#262626] rounded-lg appearance-none cursor-pointer"
                     />
-                    <p className="text-[11px] text-[#888888] dark:text-[#737373]">Standard is 40% to 50% for most Indian companies.</p>
+                    <p className="text-xs text-[#777777] dark:text-[#888888] font-normal">
+                      {formatINR(analysis.basicAnnual)}/year. Typically 40%–50% for IT roles.
+                    </p>
                   </div>
 
                   {/* State for Professional Tax */}
-                  <div className="space-y-2">
-                    <label className="font-medium text-[#171717] dark:text-white text-[12px] sm:text-[13px] flex items-center">
-                      <span>Work Location (PT)</span>
+                  <div className="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-3">
+                    <label className="font-normal text-[#171717] dark:text-white text-sm flex items-center">
+                      <span>Work location (PT)</span>
                       <Tooltip content={TaxGlossary.pt.text} title={TaxGlossary.pt.title} badgeText={TaxGlossary.pt.badge} />
                     </label>
                     <select
                       value={inputs.stateCode}
                       onChange={(e) => setInputs(prev => ({ ...prev, stateCode: e.target.value }))}
-                      className="w-full h-10 px-3 rounded-lg border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[13px] text-[#171717] dark:text-white focus:outline-hidden"
+                      className="w-full h-10 px-3 rounded-xl bg-white dark:bg-[#1f1f1f] text-sm text-[#171717] dark:text-white focus:outline-hidden shadow-2xs"
                     >
                       {PRIMARY_STATE_OPTIONS.map(st => (
                         <option key={st.code} value={st.code}>{st.name}</option>
                       ))}
                     </select>
-                    <p className="text-[11px] text-[#888888] dark:text-[#737373]">
-                      {STATE_PT_RULES[inputs.stateCode]?.monthlyNote || 'Standard PT rules'}
+                    <p className="text-xs text-[#777777] dark:text-[#888888] font-normal">
+                      {STATE_PT_RULES[inputs.stateCode]?.monthlyNote || 'Standard PT deduction'}
                     </p>
                   </div>
 
                   {/* City Metro / Non-Metro */}
-                  <div className="space-y-2">
-                    <label className="font-medium text-[#171717] dark:text-white text-[12px] sm:text-[13px] flex items-center">
-                      <span>City Type for HRA</span>
+                  <div className="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-3">
+                    <label className="font-normal text-[#171717] dark:text-white text-sm flex items-center">
+                      <span>City type for HRA</span>
                       <Tooltip content={TaxGlossary.sec1013a.text} title={TaxGlossary.sec1013a.title} badgeText={TaxGlossary.sec1013a.badge} />
                     </label>
                     <div className="grid grid-cols-2 gap-2">
                       <button
                         type="button"
                         onClick={() => setInputs(prev => ({ ...prev, isMetroCity: true, hraPercent: 50 }))}
-                        className={`h-10 px-3 rounded-lg text-[12px] sm:text-[13px] font-medium border transition-colors cursor-pointer ${
+                        className={`h-10 px-3 rounded-xl text-xs sm:text-sm font-medium transition-colors cursor-pointer ${
                           inputs.isMetroCity
-                            ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] border-[#171717] dark:border-white'
-                            : 'bg-white dark:bg-[#181818] text-[#4d4d4d] dark:text-[#a1a1a1] border-[#ebebeb] dark:border-[#262626] hover:bg-[#f5f5f5]'
+                            ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] shadow-2xs'
+                            : 'bg-white dark:bg-[#1f1f1f] text-[#666666] dark:text-[#aaaaaa] hover:bg-[#f0f0f0]'
                         }`}
                       >
                         Metro (50%)
@@ -764,51 +733,45 @@ Generated via In Hand Salary (inHander.com)
                       <button
                         type="button"
                         onClick={() => setInputs(prev => ({ ...prev, isMetroCity: false, hraPercent: 40 }))}
-                        className={`h-10 px-3 rounded-lg text-[12px] sm:text-[13px] font-medium border transition-colors cursor-pointer ${
+                        className={`h-10 px-3 rounded-xl text-xs sm:text-sm font-medium transition-colors cursor-pointer ${
                           !inputs.isMetroCity
-                            ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] border-[#171717] dark:border-white'
-                            : 'bg-white dark:bg-[#181818] text-[#4d4d4d] dark:text-[#a1a1a1] border-[#ebebeb] dark:border-[#262626] hover:bg-[#f5f5f5]'
+                            ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] shadow-2xs'
+                            : 'bg-white dark:bg-[#1f1f1f] text-[#666666] dark:text-[#aaaaaa] hover:bg-[#f0f0f0]'
                         }`}
                       >
                         Non-Metro (40%)
                       </button>
                     </div>
-                    <p className="text-[11px] text-[#888888] dark:text-[#737373]">Metros: Mumbai, Delhi, Kolkata, Chennai.</p>
+                    <p className="text-xs text-[#777777] dark:text-[#888888] font-normal">Metros: Delhi, Mumbai, Kolkata, Chennai.</p>
                   </div>
                 </div>
 
-                {/* Section 80CCD(2) Employer NPS Restructuring */}
-                <div className="p-3.5 sm:p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="space-y-0.5">
-                      <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                {/* Section 80CCD(2) Corporate NPS */}
+                <div className="p-6 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <ShieldCheck className="w-4 h-4 text-[#10b981] shrink-0" />
-                        <span className="text-[12.5px] sm:text-[13px] font-semibold text-[#171717] dark:text-white">
+                        <h3 className="text-sm font-semibold text-[#171717] dark:text-white">
                           Corporate NPS Restructuring (Section 80CCD(2))
-                        </span>
+                        </h3>
                         <Tooltip content={TaxGlossary.sec80ccd2.text} title={TaxGlossary.sec80ccd2.title} badgeText={TaxGlossary.sec80ccd2.badge} />
-                        {analysis.npsTaxSavingsAnnual > 0 && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/20">
-                            Saves {formatINR(analysis.npsTaxSavingsAnnual)}/yr
-                          </span>
-                        )}
                       </div>
-                      <p className="text-[11.5px] sm:text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1]">
-                        Employer contribution to NPS is 100% tax-deductible in <strong>both New &amp; Old Regimes</strong>.
+                      <p className="text-xs text-[#777777] dark:text-[#888888] font-normal">
+                        Employer contribution to NPS is tax-exempt in both New &amp; Old Regimes.
                       </p>
                     </div>
 
-                    {/* 0% / 10% / 14% Buttons (Responsive Grid) */}
-                    <div className="grid grid-cols-3 sm:flex items-center gap-1.5 w-full sm:w-auto shrink-0">
+                    <div className="grid grid-cols-3 sm:flex items-center gap-2 w-full sm:w-auto shrink-0">
                       {[0, 10, 14].map((pct) => (
                         <button
                           key={pct}
                           type="button"
                           onClick={() => setInputs(prev => ({ ...prev, employerNpsPercent: pct }))}
-                          className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-[12px] font-mono font-medium transition-all cursor-pointer text-center ${
+                          className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer text-center ${
                             inputs.employerNpsPercent === pct
-                              ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] shadow-xs'
-                              : 'bg-white dark:bg-[#121212] text-[#4d4d4d] dark:text-[#a1a1a1] border border-[#ebebeb] dark:border-[#262626] hover:text-[#171717] dark:hover:text-white'
+                              ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] shadow-2xs'
+                              : 'bg-white dark:bg-[#1f1f1f] text-[#666666] dark:text-[#aaaaaa] hover:bg-[#f0f0f0]'
                           }`}
                         >
                           {pct === 0 ? '0% (Off)' : `${pct}% Basic`}
@@ -818,13 +781,9 @@ Generated via In Hand Salary (inHander.com)
                   </div>
 
                   {inputs.employerNpsPercent > 0 && (
-                    <div className="flex justify-between items-center text-[11px] sm:text-[12px] font-mono pt-1 border-t border-[#ebebeb] dark:border-[#262626]">
-                      <span className="text-[#888888] dark:text-[#737373]">
-                        Annual Employer NPS ({inputs.employerNpsPercent}% of {formatINR(analysis.basicAnnual)} Basic):
-                      </span>
-                      <span className="text-[#10b981] font-bold">
-                        {formatINR(analysis.employerNpsAmount)}/yr
-                      </span>
+                    <div className="flex justify-between items-center text-xs pt-2 text-[#777777] dark:text-[#888888]">
+                      <span>Annual Employer NPS ({inputs.employerNpsPercent}% of Basic):</span>
+                      <span className="text-[#10b981] font-medium">{formatINR(analysis.employerNpsAmount)}/yr</span>
                     </div>
                   )}
                 </div>
@@ -833,59 +792,57 @@ Generated via In Hand Salary (inHander.com)
 
             {/* SUBTAB 2: TAX DEDUCTIONS */}
             {settingsSubTab === 'deductions' && (
-              <div className="space-y-5 sm:space-y-6 animate-in fade-in duration-200">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-                  {/* Annual Rent Paid (HRA) */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-[12px] sm:text-[13px]">
-                      <label className="font-medium text-[#171717] dark:text-white flex items-center">
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Rent Paid */}
+                  <div className="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-3">
+                    <div className="flex justify-between items-center text-sm">
+                      <label className="font-normal text-[#171717] dark:text-white flex items-center">
                         <span>Annual Rent Paid (HRA)</span>
                         <Tooltip content={TaxGlossary.sec1013a.text} title={TaxGlossary.sec1013a.title} badgeText={TaxGlossary.sec1013a.badge} />
                       </label>
-                      <span className="font-mono font-semibold text-[#171717] dark:text-white">{formatINR(inputs.annualRentPaid)}</span>
+                      <span className="font-medium text-[#171717] dark:text-white">{formatINR(inputs.annualRentPaid)}</span>
                     </div>
                     <input
                       type="number"
                       value={inputs.annualRentPaid || ''}
                       onChange={(e) => setInputs(prev => ({ ...prev, annualRentPaid: Number(e.target.value) || 0 }))}
-                      placeholder="e.g. 240000 (₹20k/mo)"
-                      className="w-full h-10 px-3 rounded-lg border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[13px] text-[#171717] dark:text-white focus:outline-hidden"
+                      placeholder="e.g. 240000"
+                      className="w-full h-10 px-3 rounded-xl bg-white dark:bg-[#1f1f1f] text-sm text-[#171717] dark:text-white focus:outline-hidden shadow-2xs"
                     />
-                    <p className="text-[11px] text-[#888888] dark:text-[#737373]">
-                      Eligible HRA Exemption: {formatINR(analysis.oldRegime.hraExemption)} in Old Regime.
+                    <p className="text-xs text-[#777777] dark:text-[#888888] font-normal">
+                      Exemption: {formatINR(analysis.oldRegime.hraExemption)} (Old Regime).
                     </p>
                   </div>
 
-                  {/* Section 80C Investments */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-[12px] sm:text-[13px]">
-                      <label className="font-medium text-[#171717] dark:text-white flex items-center">
+                  {/* Section 80C */}
+                  <div className="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-3">
+                    <div className="flex justify-between items-center text-sm">
+                      <label className="font-normal text-[#171717] dark:text-white flex items-center">
                         <span>Section 80C Investments</span>
                         <Tooltip content={TaxGlossary.sec80c.text} title={TaxGlossary.sec80c.title} badgeText={TaxGlossary.sec80c.badge} />
                       </label>
-                      <span className="font-mono font-semibold text-[#171717] dark:text-white">{formatINR(inputs.sec80C_Investments)}</span>
+                      <span className="font-medium text-[#171717] dark:text-white">{formatINR(inputs.sec80C_Investments)}</span>
                     </div>
                     <input
                       type="number"
                       max={150000}
                       value={inputs.sec80C_Investments || ''}
                       onChange={(e) => setInputs(prev => ({ ...prev, sec80C_Investments: Math.min(150000, Number(e.target.value) || 0) }))}
-                      placeholder="PPF, ELSS, LIC, Home Principal"
-                      className="w-full h-10 px-3 rounded-lg border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[13px] text-[#171717] dark:text-white focus:outline-hidden"
+                      placeholder="Max ₹1,50,000"
+                      className="w-full h-10 px-3 rounded-xl bg-white dark:bg-[#1f1f1f] text-sm text-[#171717] dark:text-white focus:outline-hidden shadow-2xs"
                     />
-                    <p className="text-[11px] text-[#888888] dark:text-[#737373]">
-                      Max ₹1.5L (EPF {formatINR(analysis.employeePfAnnual)} is auto-included).
-                    </p>
+                    <p className="text-xs text-[#777777] dark:text-[#888888] font-normal">EPF is automatically included.</p>
                   </div>
 
-                  {/* Section 80D Health Insurance */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-[12px] sm:text-[13px]">
-                      <label className="font-medium text-[#171717] dark:text-white flex items-center">
-                        <span>Section 80D (Self &amp; Family)</span>
+                  {/* Section 80D Self */}
+                  <div className="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-3">
+                    <div className="flex justify-between items-center text-sm">
+                      <label className="font-normal text-[#171717] dark:text-white flex items-center">
+                        <span>Section 80D (Self/Family)</span>
                         <Tooltip content={TaxGlossary.sec80d.text} title={TaxGlossary.sec80d.title} badgeText={TaxGlossary.sec80d.badge} />
                       </label>
-                      <span className="font-mono font-semibold text-[#171717] dark:text-white">{formatINR(inputs.sec80D_SelfFamily)}</span>
+                      <span className="font-medium text-[#171717] dark:text-white">{formatINR(inputs.sec80D_SelfFamily)}</span>
                     </div>
                     <input
                       type="number"
@@ -893,43 +850,43 @@ Generated via In Hand Salary (inHander.com)
                       value={inputs.sec80D_SelfFamily || ''}
                       onChange={(e) => setInputs(prev => ({ ...prev, sec80D_SelfFamily: Math.min(25000, Number(e.target.value) || 0) }))}
                       placeholder="Max ₹25,000"
-                      className="w-full h-10 px-3 rounded-lg border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[13px] text-[#171717] dark:text-white focus:outline-hidden"
+                      className="w-full h-10 px-3 rounded-xl bg-white dark:bg-[#1f1f1f] text-sm text-[#171717] dark:text-white focus:outline-hidden shadow-2xs"
                     />
-                    <p className="text-[11px] text-[#888888] dark:text-[#737373]">Mediclaim premiums for self, spouse &amp; kids.</p>
+                    <p className="text-xs text-[#777777] dark:text-[#888888] font-normal">Mediclaim premiums.</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 pt-1">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* Section 80D Parents */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-[12px] sm:text-[13px]">
-                      <label className="font-medium text-[#171717] dark:text-white">Section 80D (Parents)</label>
-                      <span className="font-mono font-semibold text-[#171717] dark:text-white">{formatINR(inputs.sec80D_Parents)}</span>
+                  <div className="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-3">
+                    <div className="flex justify-between items-center text-sm">
+                      <label className="font-normal text-[#171717] dark:text-white">Section 80D (Parents)</label>
+                      <span className="font-medium text-[#171717] dark:text-white">{formatINR(inputs.sec80D_Parents)}</span>
                     </div>
                     <input
                       type="number"
                       max={inputs.sec80D_ParentsSenior ? 50000 : 25000}
                       value={inputs.sec80D_Parents || ''}
                       onChange={(e) => setInputs(prev => ({ ...prev, sec80D_Parents: Number(e.target.value) || 0 }))}
-                      placeholder="₹25k (₹50k for Senior)"
-                      className="w-full h-10 px-3 rounded-lg border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[13px] text-[#171717] dark:text-white focus:outline-hidden"
+                      placeholder="₹25,000 or ₹50,000"
+                      className="w-full h-10 px-3 rounded-xl bg-white dark:bg-[#1f1f1f] text-sm text-[#171717] dark:text-white focus:outline-hidden shadow-2xs"
                     />
-                    <label className="flex items-center gap-2 text-[11.5px] sm:text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1] cursor-pointer pt-1">
+                    <label className="flex items-center gap-2 text-xs text-[#666666] dark:text-[#999999] cursor-pointer">
                       <input
                         type="checkbox"
                         checked={inputs.sec80D_ParentsSenior}
                         onChange={(e) => setInputs(prev => ({ ...prev, sec80D_ParentsSenior: e.target.checked }))}
                         className="rounded text-[#171717]"
                       />
-                      <span>Parents are Senior Citizens (&gt; 60 yrs)</span>
+                      <span>Parents are senior citizens</span>
                     </label>
                   </div>
 
-                  {/* Section 80CCD(1B) NPS */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-[12px] sm:text-[13px]">
-                      <label className="font-medium text-[#171717] dark:text-white">Section 80CCD(1B) Self NPS</label>
-                      <span className="font-mono font-semibold text-[#171717] dark:text-white">{formatINR(inputs.sec80CCD1B_NPS)}</span>
+                  {/* Section 80CCD(1B) Self NPS */}
+                  <div className="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-3">
+                    <div className="flex justify-between items-center text-sm">
+                      <label className="font-normal text-[#171717] dark:text-white">Section 80CCD(1B) NPS</label>
+                      <span className="font-medium text-[#171717] dark:text-white">{formatINR(inputs.sec80CCD1B_NPS)}</span>
                     </div>
                     <input
                       type="number"
@@ -937,16 +894,16 @@ Generated via In Hand Salary (inHander.com)
                       value={inputs.sec80CCD1B_NPS || ''}
                       onChange={(e) => setInputs(prev => ({ ...prev, sec80CCD1B_NPS: Math.min(50000, Number(e.target.value) || 0) }))}
                       placeholder="Max ₹50,000"
-                      className="w-full h-10 px-3 rounded-lg border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[13px] text-[#171717] dark:text-white focus:outline-hidden"
+                      className="w-full h-10 px-3 rounded-xl bg-white dark:bg-[#1f1f1f] text-sm text-[#171717] dark:text-white focus:outline-hidden shadow-2xs"
                     />
-                    <p className="text-[11px] text-[#888888] dark:text-[#737373]">Self voluntary NPS over &amp; above ₹1.5L 80C.</p>
+                    <p className="text-xs text-[#777777] dark:text-[#888888] font-normal">Self voluntary contribution.</p>
                   </div>
 
-                  {/* Section 24 Home Loan Interest */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-[12px] sm:text-[13px]">
-                      <label className="font-medium text-[#171717] dark:text-white">Home Loan Interest (Sec 24)</label>
-                      <span className="font-mono font-semibold text-[#171717] dark:text-white">{formatINR(inputs.sec24_HomeLoanInterest)}</span>
+                  {/* Section 24 Home Loan */}
+                  <div className="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-3">
+                    <div className="flex justify-between items-center text-sm">
+                      <label className="font-normal text-[#171717] dark:text-white">Home Loan Interest (Sec 24)</label>
+                      <span className="font-medium text-[#171717] dark:text-white">{formatINR(inputs.sec24_HomeLoanInterest)}</span>
                     </div>
                     <input
                       type="number"
@@ -954,9 +911,9 @@ Generated via In Hand Salary (inHander.com)
                       value={inputs.sec24_HomeLoanInterest || ''}
                       onChange={(e) => setInputs(prev => ({ ...prev, sec24_HomeLoanInterest: Math.min(200000, Number(e.target.value) || 0) }))}
                       placeholder="Max ₹2,00,000"
-                      className="w-full h-10 px-3 rounded-lg border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[13px] text-[#171717] dark:text-white focus:outline-hidden"
+                      className="w-full h-10 px-3 rounded-xl bg-white dark:bg-[#1f1f1f] text-sm text-[#171717] dark:text-white focus:outline-hidden shadow-2xs"
                     />
-                    <p className="text-[11px] text-[#888888] dark:text-[#737373]">Interest on self-occupied home loan.</p>
+                    <p className="text-xs text-[#777777] dark:text-[#888888] font-normal">Interest on self-occupied home.</p>
                   </div>
                 </div>
               </div>
@@ -964,12 +921,11 @@ Generated via In Hand Salary (inHander.com)
 
             {/* SUBTAB 3: EPF & GRATUITY */}
             {settingsSubTab === 'epf' && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 animate-in fade-in duration-200">
-                {/* EPF Capping */}
-                <div className="p-3.5 sm:p-4 rounded-xl border border-[#ebebeb] dark:border-[#262626] bg-[#fafafa] dark:bg-[#181818] space-y-2.5">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in duration-200">
+                <div className="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <label className="font-semibold text-[#171717] dark:text-white text-[12.5px] sm:text-[13px]">EPF Statutory Cap Mode</label>
+                      <label className="font-normal text-[#171717] dark:text-white text-sm">EPF statutory cap mode</label>
                       <Tooltip content={TaxGlossary.epfCap.text} title={TaxGlossary.epfCap.title} badgeText={TaxGlossary.epfCap.badge} />
                     </div>
                     <input
@@ -979,20 +935,19 @@ Generated via In Hand Salary (inHander.com)
                       className="w-4 h-4 rounded text-[#171717]"
                     />
                   </div>
-                  <p className="text-[11.5px] sm:text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+                  <p className="text-xs text-[#777777] dark:text-[#888888] font-normal leading-relaxed">
                     {inputs.epfCapped 
-                      ? 'Capped at statutory ₹1,800/month (₹21,600/year). Maximizes immediate monthly bank credit.'
-                      : '12% of actual basic salary (uncapped). Standard for most tech companies.'}
+                      ? 'Capped at statutory ₹1,800/month to maximize take-home cash.' 
+                      : '12% of actual basic salary (uncapped).'}
                   </p>
-                  <div className="text-[11.5px] sm:text-[12px] font-mono text-[#171717] dark:text-white font-semibold">
+                  <div className="text-xs text-[#171717] dark:text-white font-medium">
                     Employee PF: {formatINR(analysis.newRegime.monthlyEmployeePf)}/mo
                   </div>
                 </div>
 
-                {/* Employer PF inside CTC */}
-                <div className="p-3.5 sm:p-4 rounded-xl border border-[#ebebeb] dark:border-[#262626] bg-[#fafafa] dark:bg-[#181818] space-y-2.5">
+                <div className="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="font-semibold text-[#171717] dark:text-white text-[12.5px] sm:text-[13px]">Employer PF inside CTC</label>
+                    <label className="font-normal text-[#171717] dark:text-white text-sm">Employer PF inside CTC</label>
                     <input
                       type="checkbox"
                       checked={inputs.employerPfInCtc}
@@ -1000,21 +955,18 @@ Generated via In Hand Salary (inHander.com)
                       className="w-4 h-4 rounded text-[#171717]"
                     />
                   </div>
-                  <p className="text-[11.5px] sm:text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
-                    {inputs.employerPfInCtc
-                      ? 'Employer 12% contribution is subtracted from CTC to compute gross pay (standard practice).'
-                      : 'Employer PF is paid on-top of your stated CTC.'}
+                  <p className="text-xs text-[#777777] dark:text-[#888888] font-normal leading-relaxed">
+                    Employer 12% is part of total cost to company.
                   </p>
-                  <div className="text-[11.5px] sm:text-[12px] font-mono text-[#171717] dark:text-white font-semibold">
+                  <div className="text-xs text-[#171717] dark:text-white font-medium">
                     Employer PF: {formatINR(analysis.employerPfAnnual)}/yr
                   </div>
                 </div>
 
-                {/* Gratuity */}
-                <div className="p-3.5 sm:p-4 rounded-xl border border-[#ebebeb] dark:border-[#262626] bg-[#fafafa] dark:bg-[#181818] space-y-2.5">
+                <div className="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <label className="font-semibold text-[#171717] dark:text-white text-[12.5px] sm:text-[13px]">Gratuity inside CTC</label>
+                      <label className="font-normal text-[#171717] dark:text-white text-sm">Gratuity inside CTC</label>
                       <Tooltip content={TaxGlossary.rule1526.text} title={TaxGlossary.rule1526.title} badgeText={TaxGlossary.rule1526.badge} />
                     </div>
                     <input
@@ -1024,58 +976,53 @@ Generated via In Hand Salary (inHander.com)
                       className="w-4 h-4 rounded text-[#171717]"
                     />
                   </div>
-                  <p className="text-[11.5px] sm:text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
-                    {inputs.includeGratuity
-                      ? 'Company deducts ~4.81% of basic salary as statutory gratuity provision inside CTC.'
-                      : 'No gratuity deduction included in CTC.'}
+                  <p className="text-xs text-[#777777] dark:text-[#888888] font-normal leading-relaxed">
+                    15/26 rule gratuity allocation inside CTC.
                   </p>
-                  <div className="text-[11.5px] sm:text-[12px] font-mono text-[#171717] dark:text-white font-semibold">
-                    Gratuity Provision: {formatINR(analysis.gratuityAnnual)}/yr
+                  <div className="text-xs text-[#171717] dark:text-white font-medium">
+                    Gratuity: {formatINR(analysis.gratuityAnnual)}/yr
                   </div>
                 </div>
               </div>
             )}
 
-            {/* SUBTAB 4: BONUS & RSUS */}
+            {/* SUBTAB 4: BONUS & STOCKS */}
             {settingsSubTab === 'bonus' && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 animate-in fade-in duration-200">
-                {/* Annual Variable Bonus */}
-                <div className="space-y-2">
-                  <label className="font-medium text-[#171717] dark:text-white text-[12px] sm:text-[13px] block">Annual Variable Bonus</label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in duration-200">
+                <div className="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-3">
+                  <label className="font-normal text-[#171717] dark:text-white text-sm block">Annual variable bonus</label>
                   <input
                     type="number"
                     value={inputs.variableBonusAnnual || ''}
                     onChange={(e) => setInputs(prev => ({ ...prev, variableBonusAnnual: Number(e.target.value) || 0 }))}
                     placeholder="e.g. 150000"
-                    className="w-full h-10 px-3 rounded-lg border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[13px] text-[#171717] dark:text-white focus:outline-hidden"
+                    className="w-full h-10 px-3 rounded-xl bg-white dark:bg-[#1f1f1f] text-sm text-[#171717] dark:text-white focus:outline-hidden shadow-2xs"
                   />
-                  <p className="text-[11px] text-[#888888] dark:text-[#737373]">Performance-linked variable pay paid annually.</p>
+                  <p className="text-xs text-[#777777] dark:text-[#888888] font-normal">Performance-linked annual payout.</p>
                 </div>
 
-                {/* Joining / Sign-on Bonus */}
-                <div className="space-y-2">
-                  <label className="font-medium text-[#171717] dark:text-white text-[12px] sm:text-[13px] block">Joining / Relocation Bonus</label>
+                <div className="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-3">
+                  <label className="font-normal text-[#171717] dark:text-white text-sm block">Joining / sign-on bonus</label>
                   <input
                     type="number"
                     value={inputs.joiningBonusAnnual || ''}
                     onChange={(e) => setInputs(prev => ({ ...prev, joiningBonusAnnual: Number(e.target.value) || 0 }))}
                     placeholder="e.g. 200000"
-                    className="w-full h-10 px-3 rounded-lg border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[13px] text-[#171717] dark:text-white focus:outline-hidden"
+                    className="w-full h-10 px-3 rounded-xl bg-white dark:bg-[#1f1f1f] text-sm text-[#171717] dark:text-white focus:outline-hidden shadow-2xs"
                   />
-                  <p className="text-[11px] text-[#888888] dark:text-[#737373]">One-time sign-on bonus subject to slab TDS.</p>
+                  <p className="text-xs text-[#777777] dark:text-[#888888] font-normal">One-time initial sign-on.</p>
                 </div>
 
-                {/* RSU / ESOP Vested */}
-                <div className="space-y-2">
-                  <label className="font-medium text-[#171717] dark:text-white text-[12px] sm:text-[13px] block">Annual ESOP / Stock Grants</label>
+                <div className="p-5 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-3">
+                  <label className="font-normal text-[#171717] dark:text-white text-sm block">Annual ESOP / stock grants</label>
                   <input
                     type="number"
                     value={inputs.rsuVestedAnnual || ''}
                     onChange={(e) => setInputs(prev => ({ ...prev, rsuVestedAnnual: Number(e.target.value) || 0 }))}
                     placeholder="e.g. 500000"
-                    className="w-full h-10 px-3 rounded-lg border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[13px] text-[#171717] dark:text-white focus:outline-hidden"
+                    className="w-full h-10 px-3 rounded-xl bg-white dark:bg-[#1f1f1f] text-sm text-[#171717] dark:text-white focus:outline-hidden shadow-2xs"
                   />
-                  <p className="text-[11px] text-[#888888] dark:text-[#737373]">Annualized stock grant value.</p>
+                  <p className="text-xs text-[#777777] dark:text-[#888888] font-normal">Annualized vesting equity.</p>
                 </div>
               </div>
             )}
@@ -1097,75 +1044,70 @@ Generated via In Hand Salary (inHander.com)
       </div>
 
       {/* ========================================================================= */}
-      {/* LAYER 3: OUTPUT ARCHITECTURE (HORIZONTAL TABBED NAVIGATION)                */}
+      {/* LAYER 3: OUTPUT ARCHITECTURE (HORIZONTAL TABS & SUBTLE CARDS)             */}
       {/* ========================================================================= */}
-      <div className="space-y-4">
-        {/* Horizontal Navigation Tab Bar situated right below primary result */}
-        <div className="flex items-center justify-between gap-1.5 overflow-x-auto p-1.5 rounded-2xl bg-white dark:bg-[#141414] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm scrollbar-none snap-x">
-          <div className="flex items-center gap-1 sm:gap-1.5 w-full sm:w-auto">
-            {/* Tab 1: Tax Comparison */}
+      <div className="space-y-6">
+        {/* Minimalist Horizontal Tab Bar */}
+        <div className="flex items-center justify-between gap-2 overflow-x-auto p-1.5 rounded-2xl bg-black/5 dark:bg-white/5 scrollbar-none snap-x">
+          <div className="flex items-center gap-1.5 w-full sm:w-auto">
             <button
               type="button"
               onClick={() => setOutputTab('tax-comparison')}
-              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[12px] sm:text-[13px] font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 snap-start ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all cursor-pointer whitespace-nowrap shrink-0 snap-start ${
                 outputTab === 'tax-comparison'
-                  ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] shadow-xs'
-                  : 'text-[#4d4d4d] dark:text-[#a1a1a1] hover:bg-[#fafafa] dark:hover:bg-[#1e1e1e] hover:text-[#171717] dark:hover:text-white'
+                  ? 'bg-white dark:bg-[#1e1e1e] text-[#171717] dark:text-white shadow-2xs'
+                  : 'text-[#666666] dark:text-[#999999] hover:text-[#171717] dark:hover:text-white'
               }`}
             >
-              <BarChart3 className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-[#0070f3] dark:text-[#38bdf8] shrink-0" />
+              <BarChart3 className="w-4 h-4 text-[#0070f3] shrink-0" />
               <span>Tax Comparison</span>
             </button>
 
-            {/* Tab 2: Salary Slip */}
             <button
               type="button"
               onClick={() => setOutputTab('salary-slip')}
-              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[12px] sm:text-[13px] font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 snap-start ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all cursor-pointer whitespace-nowrap shrink-0 snap-start ${
                 outputTab === 'salary-slip'
-                  ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] shadow-xs'
-                  : 'text-[#4d4d4d] dark:text-[#a1a1a1] hover:bg-[#fafafa] dark:hover:bg-[#1e1e1e] hover:text-[#171717] dark:hover:text-white'
+                  ? 'bg-white dark:bg-[#1e1e1e] text-[#171717] dark:text-white shadow-2xs'
+                  : 'text-[#666666] dark:text-[#999999] hover:text-[#171717] dark:hover:text-white'
               }`}
             >
-              <FileSpreadsheet className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-[#10b981] shrink-0" />
-              <span>Corporate Salary Slip</span>
+              <FileSpreadsheet className="w-4 h-4 text-[#10b981] shrink-0" />
+              <span>Salary Slip</span>
             </button>
 
-            {/* Tab 3: Wealth Blueprint */}
             <button
               type="button"
               onClick={() => setOutputTab('wealth-blueprint')}
-              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[12px] sm:text-[13px] font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 snap-start ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all cursor-pointer whitespace-nowrap shrink-0 snap-start ${
                 outputTab === 'wealth-blueprint'
-                  ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] shadow-xs'
-                  : 'text-[#4d4d4d] dark:text-[#a1a1a1] hover:bg-[#fafafa] dark:hover:bg-[#1e1e1e] hover:text-[#171717] dark:hover:text-white'
+                  ? 'bg-white dark:bg-[#1e1e1e] text-[#171717] dark:text-white shadow-2xs'
+                  : 'text-[#666666] dark:text-[#999999] hover:text-[#171717] dark:hover:text-white'
               }`}
             >
-              <Compass className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-[#7928ca] dark:text-[#a855f7] shrink-0" />
+              <Compass className="w-4 h-4 text-[#7928ca] shrink-0" />
               <span>Wealth Blueprint</span>
             </button>
 
-            {/* Tab 4: Peer Benchmark */}
             <button
               type="button"
               onClick={() => setOutputTab('peer-benchmark')}
-              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[12px] sm:text-[13px] font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 snap-start ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all cursor-pointer whitespace-nowrap shrink-0 snap-start ${
                 outputTab === 'peer-benchmark'
-                  ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] shadow-xs'
-                  : 'text-[#4d4d4d] dark:text-[#a1a1a1] hover:bg-[#fafafa] dark:hover:bg-[#1e1e1e] hover:text-[#171717] dark:hover:text-white'
+                  ? 'bg-white dark:bg-[#1e1e1e] text-[#171717] dark:text-white shadow-2xs'
+                  : 'text-[#666666] dark:text-[#999999] hover:text-[#171717] dark:hover:text-white'
               }`}
             >
-              <TrendingUp className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-[#f5a623] shrink-0" />
+              <TrendingUp className="w-4 h-4 text-[#f5a623] shrink-0" />
               <span>Percentile Rank</span>
             </button>
           </div>
 
-          {/* Quick Share Link Action (Desktop) */}
-          <div className="hidden sm:flex items-center gap-1.5 pr-2 shrink-0">
+          <div className="hidden sm:flex items-center pr-2 shrink-0">
             <button
               type="button"
               onClick={handleShareLink}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[12px] font-mono text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white cursor-pointer transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs text-[#666666] dark:text-[#999999] hover:text-[#171717] dark:hover:text-white cursor-pointer transition-colors"
             >
               {copiedLink ? <Check className="w-3.5 h-3.5 text-[#10b981]" /> : <Share2 className="w-3.5 h-3.5" />}
               <span>{copiedLink ? 'Copied' : 'Share'}</span>
@@ -1173,279 +1115,183 @@ Generated via In Hand Salary (inHander.com)
           </div>
         </div>
 
-        {/* TAB 1 CONTENT: DUAL REGIME TAX COMPARISON & REAL CASH BREAKDOWN */}
+        {/* TAB 1: TAX COMPARISON */}
         {outputTab === 'tax-comparison' && (
-          <div className="space-y-5 sm:space-y-6 animate-in fade-in duration-200">
-            {/* Side by Side Dual Regime Matrix */}
-            <div className="vessa-card p-4 sm:p-8 rounded-2xl border border-[#ebebeb] dark:border-[#262626] space-y-5 sm:space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 sm:pb-4 border-b border-[#ebebeb] dark:border-[#262626]">
-                <div>
-                  <h3 className="text-[15.5px] sm:text-[17px] font-bold text-[#171717] dark:text-white">
-                    Side-by-Side Dual Tax Regime Matrix
-                  </h3>
-                  <p className="text-[11.5px] sm:text-[12px] text-[#888888] dark:text-[#737373] font-mono mt-0.5">
+          <div className="space-y-8 animate-in fade-in duration-200">
+            {/* Side-by-Side Dual Matrix Cards (Border-free 2-4% grey blocks) */}
+            <div className="bg-white dark:bg-[#121212] p-8 sm:p-12 rounded-3xl shadow-sm space-y-8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <h2 className="text-base sm:text-lg font-semibold text-[#171717] dark:text-white tracking-tight">
+                    Tax Comparison (New vs. Old Regime)
+                  </h2>
+                  <p className="text-xs sm:text-sm text-[#777777] dark:text-[#888888] font-normal">
                     Budget 2024 revised slabs vs. Old Regime deductions for ₹{formatINR(inputs.annualCtc)} CTC
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={handleCopySummary}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg sm:rounded-xl border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#181818] text-[12px] font-medium text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#f5f5f5] cursor-pointer transition-all self-start sm:self-center shrink-0"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-black/5 dark:bg-white/5 text-xs text-[#555555] dark:text-[#aaaaaa] hover:text-[#171717] dark:hover:text-white transition-all self-start sm:self-center"
                 >
                   {copiedSummary ? <Check className="w-3.5 h-3.5 text-[#10b981]" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copiedSummary ? 'Copied' : 'Copy Summary'}</span>
+                  <span>{copiedSummary ? 'Copied' : 'Copy breakdown'}</span>
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-stretch">
                 {/* New Regime Card */}
-                <div className={`p-4 sm:p-6 rounded-2xl border transition-all ${
-                  selectedRegime === 'NEW' 
-                    ? 'bg-white dark:bg-[#121212] border-[#0070f3] shadow-stacked ring-2 ring-[#0070f3]/25' 
-                    : 'bg-[#fafafa]/80 dark:bg-[#161616]/80 border-[#ebebeb] dark:border-[#262626]'
+                <div className={`p-6 sm:p-8 rounded-2xl flex flex-col justify-between transition-all ${
+                  selectedRegime === 'NEW'
+                    ? 'bg-[#f4f5f7] dark:bg-[#181818] ring-1 ring-black/10 dark:ring-white/15 shadow-xs'
+                    : 'bg-[#fafafa] dark:bg-[#141414]'
                 }`}>
-                  <div className="flex items-center justify-between pb-3 sm:pb-4 border-b border-[#ebebeb] dark:border-[#262626]">
-                    <div>
-                      <div className="flex items-center gap-1.5 sm:gap-2">
-                        <h4 className="text-[14.5px] sm:text-[15px] font-bold text-[#171717] dark:text-white">New Tax Regime</h4>
-                        <span className="px-2 py-0.5 rounded text-[9.5px] sm:text-[10px] font-mono font-bold bg-[#0070f3]/10 text-[#0070f3]">FY 25-26</span>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between pb-3 border-b border-black/5 dark:border-white/5">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-base font-semibold text-[#171717] dark:text-white">New Tax Regime</h3>
+                          <span className="px-2 py-0.5 rounded-full text-xs font-normal bg-black/5 dark:bg-white/10 text-[#666666] dark:text-[#aaaaaa]">FY 25-26</span>
+                        </div>
+                        <span className="text-xs text-[#777777] dark:text-[#888888] font-normal">₹75k standard deduction</span>
                       </div>
-                      <span className="text-[11px] font-mono text-[#888888] dark:text-[#737373]">Flat slabs + ₹75k standard deduction</span>
+                      {analysis.betterRegime === 'NEW' && (
+                        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-[#10b981]/10 text-[#10b981] shrink-0">
+                          Recommended
+                        </span>
+                      )}
                     </div>
-                    {analysis.betterRegime === 'NEW' && (
-                      <span className="px-2.5 py-1 rounded-full text-[10.5px] sm:text-[11px] font-mono font-bold bg-[#0070f3]/10 text-[#0070f3] border border-[#0070f3]/20 shrink-0">
-                        Recommended
-                      </span>
-                    )}
+
+                    <div className="space-y-3 text-sm">
+                      <div className="flex justify-between items-center text-[#555555] dark:text-[#aaaaaa]">
+                        <span>Gross annual salary</span>
+                        <span className="font-medium text-[#171717] dark:text-white">{formatINR(analysis.newRegime.grossAnnualSalary)}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[#555555] dark:text-[#aaaaaa]">
+                        <span className="flex items-center">
+                          Standard deduction
+                          <Tooltip content={TaxGlossary.standardDeduction.text} title={TaxGlossary.standardDeduction.title} />
+                        </span>
+                        <span className="text-[#10b981] font-medium">- {formatINR(analysis.newRegime.standardDeduction)}</span>
+                      </div>
+                      {analysis.employerNpsAmount > 0 && (
+                        <div className="flex justify-between items-center text-[#555555] dark:text-[#aaaaaa]">
+                          <span>Employer NPS (80CCD(2))</span>
+                          <span className="text-[#10b981] font-medium">- {formatINR(analysis.employerNpsAmount)}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between items-center text-[#555555] dark:text-[#aaaaaa]">
+                        <span>Net taxable income</span>
+                        <span className="text-[#171717] dark:text-white font-medium">{formatINR(analysis.newRegime.netTaxableIncome)}</span>
+                      </div>
+                      {analysis.newRegime.sec87aRebate > 0 && (
+                        <div className="flex justify-between items-center text-[#555555] dark:text-[#aaaaaa]">
+                          <span>Section 87A rebate</span>
+                          <span className="text-[#10b981] font-medium">- {formatINR(analysis.newRegime.sec87aRebate)} (Tax free)</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between items-center text-[#555555] dark:text-[#aaaaaa] pt-1">
+                        <span>Total annual tax</span>
+                        <span className="text-[#ee0000] font-medium">{formatINR(analysis.newRegime.totalAnnualTax)}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="mt-3.5 space-y-2.5 text-[12px] sm:text-[13px]">
-                    <div className="flex justify-between items-center text-[#4d4d4d] dark:text-[#a1a1a1]">
-                      <span>Gross Annual Salary</span>
-                      <span className="font-mono font-medium text-[#171717] dark:text-white">{formatINR(analysis.newRegime.grossAnnualSalary)}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-[#4d4d4d] dark:text-[#a1a1a1]">
-                      <span className="flex items-center">
-                        Standard Deduction
-                        <Tooltip content={TaxGlossary.standardDeduction.text} title={TaxGlossary.standardDeduction.title} badgeText={TaxGlossary.standardDeduction.badge} />
-                      </span>
-                      <span className="font-mono text-[#10b981]">- {formatINR(analysis.newRegime.standardDeduction)}</span>
-                    </div>
-                    {analysis.employerNpsAmount > 0 && (
-                      <div className="flex justify-between items-center text-[#4d4d4d] dark:text-[#a1a1a1]">
-                        <span className="flex items-center">
-                          Employer NPS (80CCD(2))
-                          <Tooltip content={TaxGlossary.sec80ccd2.text} title={TaxGlossary.sec80ccd2.title} badgeText={TaxGlossary.sec80ccd2.badge} />
-                        </span>
-                        <span className="font-mono text-[#10b981]">- {formatINR(analysis.employerNpsAmount)}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between items-center text-[#4d4d4d] dark:text-[#a1a1a1]">
-                      <span>Net Taxable Income</span>
-                      <span className="font-mono text-[#171717] dark:text-white">{formatINR(analysis.newRegime.netTaxableIncome)}</span>
-                    </div>
-                    {analysis.newRegime.sec87aRebate > 0 && (
-                      <div className="flex justify-between items-center text-[#4d4d4d] dark:text-[#a1a1a1]">
-                        <span className="flex items-center">
-                          Section 87A Rebate
-                          <Tooltip content={TaxGlossary.sec87a.text} title={TaxGlossary.sec87a.title} badgeText={TaxGlossary.sec87a.badge} />
-                        </span>
-                        <span className="font-mono text-[#10b981]">- {formatINR(analysis.newRegime.sec87aRebate)} (100% Tax Free)</span>
-                      </div>
-                    )}
-                    {analysis.newRegime.marginalRelief > 0 && (
-                      <div className="flex justify-between items-center text-[#4d4d4d] dark:text-[#a1a1a1]">
-                        <span className="flex items-center">
-                          87A Marginal Relief
-                          <Tooltip content={TaxGlossary.sec87a.text} title="Marginal Relief on 87A" badgeText="Relief" />
-                        </span>
-                        <span className="font-mono text-[#10b981]">- {formatINR(analysis.newRegime.marginalRelief)}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between items-center text-[#4d4d4d] dark:text-[#a1a1a1] pt-1 border-t border-[#ebebeb] dark:border-[#262626]">
-                      <span className="font-medium">Total Annual Income Tax</span>
-                      <span className="font-mono font-bold text-[#ee0000]">{formatINR(analysis.newRegime.totalAnnualTax)}</span>
-                    </div>
-                    <div className="pt-3 border-t border-[#ebebeb] dark:border-[#262626] flex justify-between items-center bg-[#fafafa] dark:bg-[#181818] -mx-4 -mb-4 sm:-mx-6 sm:-mb-6 p-3.5 sm:p-4 rounded-b-2xl">
-                      <span className="font-bold text-[#171717] dark:text-white text-[13px] sm:text-[14px]">Monthly Take-Home</span>
-                      <span className="text-lg sm:text-xl font-bold font-mono text-[#10b981]">{formatINR(analysis.newRegime.monthlyTakeHome)}</span>
-                    </div>
+                  {/* Monthly Take-Home Row */}
+                  <div className="mt-6 pt-4 border-t border-black/5 dark:border-white/5 flex justify-between items-center">
+                    <span className="font-medium text-[#171717] dark:text-white text-sm">Monthly take-home</span>
+                    <span className="text-2xl sm:text-3xl font-bold text-[#10b981]">{formatINR(analysis.newRegime.monthlyTakeHome)}</span>
                   </div>
                 </div>
 
                 {/* Old Regime Card */}
-                <div className={`p-4 sm:p-6 rounded-2xl border transition-all ${
-                  selectedRegime === 'OLD' 
-                    ? 'bg-white dark:bg-[#121212] border-[#7928ca] shadow-stacked ring-2 ring-[#7928ca]/25' 
-                    : 'bg-[#fafafa]/80 dark:bg-[#161616]/80 border-[#ebebeb] dark:border-[#262626]'
+                <div className={`p-6 sm:p-8 rounded-2xl flex flex-col justify-between transition-all ${
+                  selectedRegime === 'OLD'
+                    ? 'bg-[#f4f5f7] dark:bg-[#181818] ring-1 ring-black/10 dark:ring-white/15 shadow-xs'
+                    : 'bg-[#fafafa] dark:bg-[#141414]'
                 }`}>
-                  <div className="flex items-center justify-between pb-3 sm:pb-4 border-b border-[#ebebeb] dark:border-[#262626]">
-                    <div>
-                      <div className="flex items-center gap-1.5 sm:gap-2">
-                        <h4 className="text-[14.5px] sm:text-[15px] font-bold text-[#171717] dark:text-white">Old Tax Regime</h4>
-                        <span className="px-2 py-0.5 rounded text-[9.5px] sm:text-[10px] font-mono font-bold bg-[#7928ca]/10 text-[#7928ca]">Traditional</span>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between pb-3 border-b border-black/5 dark:border-white/5">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-base font-semibold text-[#171717] dark:text-white">Old Tax Regime</h3>
+                          <span className="px-2 py-0.5 rounded-full text-xs font-normal bg-black/5 dark:bg-white/10 text-[#666666] dark:text-[#aaaaaa]">Traditional</span>
+                        </div>
+                        <span className="text-xs text-[#777777] dark:text-[#888888] font-normal">With 80C, 80D &amp; HRA</span>
                       </div>
-                      <span className="text-[11px] font-mono text-[#888888] dark:text-[#737373]">With 80C, 80D, HRA &amp; Home Loan</span>
+                      {analysis.betterRegime === 'OLD' && (
+                        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-[#10b981]/10 text-[#10b981] shrink-0">
+                          Recommended
+                        </span>
+                      )}
                     </div>
-                    {analysis.betterRegime === 'OLD' && (
-                      <span className="px-2.5 py-1 rounded-full text-[10.5px] sm:text-[11px] font-mono font-bold bg-[#7928ca]/10 text-[#7928ca] border border-[#7928ca]/20 shrink-0">
-                        Recommended
-                      </span>
-                    )}
+
+                    <div className="space-y-3 text-sm">
+                      <div className="flex justify-between items-center text-[#555555] dark:text-[#aaaaaa]">
+                        <span>Gross annual salary</span>
+                        <span className="font-medium text-[#171717] dark:text-white">{formatINR(analysis.oldRegime.grossAnnualSalary)}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[#555555] dark:text-[#aaaaaa]">
+                        <span>Standard deduction &amp; PT</span>
+                        <span className="text-[#10b981] font-medium">- {formatINR(analysis.oldRegime.standardDeduction + analysis.oldRegime.professionalTaxDeduction)}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[#555555] dark:text-[#aaaaaa]">
+                        <span>HRA exemption</span>
+                        <span className="text-[#10b981] font-medium">- {formatINR(analysis.oldRegime.hraExemption)}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[#555555] dark:text-[#aaaaaa]">
+                        <span>Chapter VI-A (80C/80D)</span>
+                        <span className="text-[#10b981] font-medium">- {formatINR(analysis.oldRegime.chapter6ADeductions)}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[#555555] dark:text-[#aaaaaa]">
+                        <span>Net taxable income</span>
+                        <span className="text-[#171717] dark:text-white font-medium">{formatINR(analysis.oldRegime.netTaxableIncome)}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[#555555] dark:text-[#aaaaaa] pt-1">
+                        <span>Total annual tax</span>
+                        <span className="text-[#ee0000] font-medium">{formatINR(analysis.oldRegime.totalAnnualTax)}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="mt-3.5 space-y-2.5 text-[12px] sm:text-[13px]">
-                    <div className="flex justify-between items-center text-[#4d4d4d] dark:text-[#a1a1a1]">
-                      <span>Gross Annual Salary</span>
-                      <span className="font-mono font-medium text-[#171717] dark:text-white">{formatINR(analysis.oldRegime.grossAnnualSalary)}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-[#4d4d4d] dark:text-[#a1a1a1]">
-                      <span>Standard Deduction &amp; PT</span>
-                      <span className="font-mono text-[#10b981]">- {formatINR(analysis.oldRegime.standardDeduction + analysis.oldRegime.professionalTaxDeduction)}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-[#4d4d4d] dark:text-[#a1a1a1]">
-                      <span className="flex items-center">
-                        HRA Exemption (10(13A))
-                        <Tooltip content={TaxGlossary.sec1013a.text} title={TaxGlossary.sec1013a.title} badgeText={TaxGlossary.sec1013a.badge} />
-                      </span>
-                      <span className="font-mono text-[#10b981]">- {formatINR(analysis.oldRegime.hraExemption)}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-[#4d4d4d] dark:text-[#a1a1a1]">
-                      <span className="flex items-center">
-                        Chapter VI-A Deductions
-                        <Tooltip content={TaxGlossary.sec80c.text} title={TaxGlossary.sec80c.title} badgeText={TaxGlossary.sec80c.badge} />
-                      </span>
-                      <span className="font-mono text-[#10b981]">- {formatINR(analysis.oldRegime.chapter6ADeductions)}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-[#4d4d4d] dark:text-[#a1a1a1]">
-                      <span>Net Taxable Income</span>
-                      <span className="font-mono text-[#171717] dark:text-white">{formatINR(analysis.oldRegime.netTaxableIncome)}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-[#4d4d4d] dark:text-[#a1a1a1] pt-1 border-t border-[#ebebeb] dark:border-[#262626]">
-                      <span className="font-medium">Total Annual Income Tax</span>
-                      <span className="font-mono font-bold text-[#ee0000]">{formatINR(analysis.oldRegime.totalAnnualTax)}</span>
-                    </div>
-                    <div className="pt-3 border-t border-[#ebebeb] dark:border-[#262626] flex justify-between items-center bg-[#fafafa] dark:bg-[#181818] -mx-4 -mb-4 sm:-mx-6 sm:-mb-6 p-3.5 sm:p-4 rounded-b-2xl">
-                      <span className="font-bold text-[#171717] dark:text-white text-[13px] sm:text-[14px]">Monthly Take-Home</span>
-                      <span className="text-lg sm:text-xl font-bold font-mono text-[#10b981]">{formatINR(analysis.oldRegime.monthlyTakeHome)}</span>
-                    </div>
+                  {/* Monthly Take-Home Row */}
+                  <div className="mt-6 pt-4 border-t border-black/5 dark:border-white/5 flex justify-between items-center">
+                    <span className="font-medium text-[#171717] dark:text-white text-sm">Monthly take-home</span>
+                    <span className="text-2xl sm:text-3xl font-bold text-[#10b981]">{formatINR(analysis.oldRegime.monthlyTakeHome)}</span>
                   </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Compensation Reality Check (Real Cash vs Paper Money) */}
-            <div className="vessa-card p-4 sm:p-8 rounded-2xl border border-[#ebebeb] dark:border-[#262626] space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div>
-                  <span className="text-[11px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] font-semibold block">
-                    Compensation Reality Check
-                  </span>
-                  <h3 className="text-[15.5px] sm:text-[16px] font-bold text-[#171717] dark:text-white">
-                    Real Cash vs. Paper Money Breakdown
-                  </h3>
-                </div>
-                <span className="text-[11px] font-mono px-3 py-1 rounded-full bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] text-[#4d4d4d] dark:text-[#a1a1a1] self-start sm:self-center">
-                  Base CTC: <strong className="text-[#10b981]">{formatINR(analysis.compensationSplit.guaranteedBaseCtc)}</strong>
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-                {/* Card 1: Monthly In-Hand (Real Cash) */}
-                <div className="p-3.5 sm:p-4 rounded-xl bg-[#fafafa] dark:bg-[#161616] border border-[#10b981]/30 shadow-2xs space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-semibold text-[#171717] dark:text-white flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-[#10b981]"></span>
-                      Monthly In-Hand (Real Cash)
-                    </span>
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#10b981]/10 text-[#10b981] font-bold">
-                      Guaranteed
-                    </span>
-                  </div>
-                  <div className="text-xl sm:text-2xl font-bold font-mono text-[#10b981]">
-                    {formatINR(analysis.compensationSplit.monthlyGuaranteedInHand)}
-                    <span className="text-xs font-normal text-[#888888] dark:text-[#737373]"> /mo</span>
-                  </div>
-                  <p className="text-[11px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
-                    Guaranteed cash credited to your bank every single month without relying on performance bonuses.
-                  </p>
-                </div>
-
-                {/* Card 2: Yearly Bonus (Post-Tax Lump Sum) */}
-                <div className="p-3.5 sm:p-4 rounded-xl bg-[#fafafa] dark:bg-[#161616] border border-[#0070f3]/30 shadow-2xs space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-semibold text-[#171717] dark:text-white flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-[#0070f3]"></span>
-                      Yearly Bonus (Post-Tax)
-                    </span>
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#0070f3]/10 text-[#0070f3] font-bold">
-                      Lump Sum
-                    </span>
-                  </div>
-                  <div className="text-xl sm:text-2xl font-bold font-mono text-[#0070f3] dark:text-[#38bdf8]">
-                    {formatINR(analysis.compensationSplit.yearlyBonusNet)}
-                    <span className="text-xs font-normal text-[#888888] dark:text-[#737373]"> net</span>
-                  </div>
-                  <p className="text-[11px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
-                    Estimated post-tax annual payout from ₹{formatINR(analysis.compensationSplit.yearlyBonusGross)} gross variable bonus.
-                  </p>
-                </div>
-
-                {/* Card 3: Paper Equity (Annual ESOPs) */}
-                <div className="p-3.5 sm:p-4 rounded-xl bg-[#fafafa] dark:bg-[#161616] border border-[#7928ca]/30 shadow-2xs space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-semibold text-[#171717] dark:text-white flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-[#7928ca]"></span>
-                      Paper Equity (ESOPs/RSUs)
-                    </span>
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#7928ca]/10 text-[#7928ca] font-bold">
-                      Illiquid
-                    </span>
-                  </div>
-                  <div className="text-xl sm:text-2xl font-bold font-mono text-[#7928ca] dark:text-[#a855f7]">
-                    {formatINR(analysis.compensationSplit.annualEsopValue)}
-                    <span className="text-xs font-normal text-[#888888] dark:text-[#737373]"> /yr</span>
-                  </div>
-                  <p className="text-[11px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
-                    Annualized stock grant value subject to 4-year vesting schedule and company liquidity.
-                  </p>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* TAB 2 CONTENT: CORPORATE SALARY SLIP VIEW */}
+        {/* TAB 2: SALARY SLIP VIEW */}
         {outputTab === 'salary-slip' && (
-          <div className="space-y-5 sm:space-y-6 animate-in fade-in duration-200">
-            <div className="vessa-card rounded-2xl border border-[#ebebeb] dark:border-[#262626] overflow-hidden shadow-stacked-sm">
-              {/* Slip Toolbar */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-6 bg-[#fafafa] dark:bg-[#181818] border-b border-[#ebebeb] dark:border-[#262626] no-print">
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#10b981]"></span>
-                    <h3 className="text-[14.5px] sm:text-[15px] font-bold text-[#171717] dark:text-white">
-                      Official Monthly Salary Statement
-                    </h3>
-                  </div>
-                  <p className="text-[11.5px] sm:text-[12px] text-[#888888] dark:text-[#737373]">
-                    Ready for appraisal negotiation, landlord verification, and loan proofs.
+          <div className="space-y-6 animate-in fade-in duration-200">
+            <div className="bg-white dark:bg-[#121212] rounded-3xl overflow-hidden shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-8 bg-[#fafafa] dark:bg-[#161616]">
+                <div className="space-y-1">
+                  <h2 className="text-base sm:text-lg font-semibold text-[#171717] dark:text-white tracking-tight">
+                    Monthly Salary Statement
+                  </h2>
+                  <p className="text-xs sm:text-sm text-[#777777] dark:text-[#888888] font-normal">
+                    Formatted for appraisals, landlord verification, and loan proofs
                   </p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={handleCopySlipText}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg sm:rounded-xl border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#121212] text-[12px] font-medium text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:bg-[#f5f5f5] cursor-pointer transition-colors shadow-2xs"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-black/5 dark:bg-white/5 text-xs sm:text-sm font-normal text-[#555555] dark:text-[#aaaaaa] hover:text-[#171717] dark:hover:text-white transition-colors"
                   >
                     {copiedSlipText ? <Check className="w-3.5 h-3.5 text-[#10b981]" /> : <Copy className="w-3.5 h-3.5" />}
-                    <span>{copiedSlipText ? 'Copied' : 'Copy Text'}</span>
+                    <span>{copiedSlipText ? 'Copied' : 'Copy text'}</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setIsSlipOpen(true)}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg sm:rounded-xl bg-[#171717] dark:bg-white text-white dark:text-[#171717] text-[12px] font-semibold hover:bg-[#333333] dark:hover:bg-[#e0e0e0] cursor-pointer transition-colors shadow-sm"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#171717] dark:bg-white text-white dark:text-[#171717] text-xs sm:text-sm font-medium transition-colors"
                   >
                     <Printer className="w-3.5 h-3.5" />
                     <span>Print &amp; PDF</span>
@@ -1453,140 +1299,109 @@ Generated via In Hand Salary (inHander.com)
                 </div>
               </div>
 
-              {/* Printable Payslip Body */}
-              <div id="printable-payslip" className="p-4 sm:p-8 space-y-5 sm:space-y-6 text-[#171717] dark:text-[#ededed] bg-white dark:bg-[#121212]">
-                {/* Header of Payslip */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 sm:pb-6 border-b border-[#ebebeb] dark:border-[#262626] gap-3 sm:gap-4">
-                  <div className="space-y-1 w-full max-w-md">
+              {/* Payslip Content Area */}
+              <div className="p-8 sm:p-12 space-y-8 text-[#171717] dark:text-[#ededed]">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 gap-4">
+                  <div className="space-y-1 max-w-md w-full">
                     <input
                       type="text"
                       value={employerCompanyName}
                       onChange={(e) => setEmployerCompanyName(e.target.value)}
-                      className="text-base sm:text-xl font-bold text-[#171717] dark:text-white bg-transparent border-b border-dashed border-transparent hover:border-[#a1a1a1] focus:border-[#0070f3] focus:outline-hidden w-full"
-                      title="Click to edit employer company name"
+                      className="text-base sm:text-xl font-semibold text-[#171717] dark:text-white bg-transparent border-0 focus:outline-hidden w-full"
                     />
-                    <p className="text-[11.5px] sm:text-[12px] text-[#888888] dark:text-[#737373] font-mono">
+                    <p className="text-xs text-[#777777] dark:text-[#888888] font-normal">
                       Monthly Payslip &amp; Compensation Breakdown
                     </p>
                   </div>
-                  <div className="text-left sm:text-right space-y-0.5">
-                    <span className="text-[10.5px] sm:text-[11px] font-mono uppercase text-[#888888] dark:text-[#737373] block">Pay Period</span>
-                    <span className="text-[13px] sm:text-[14px] font-mono font-semibold text-[#171717] dark:text-white">Current Calendar Month</span>
-                    <span className="text-[11px] font-mono text-[#0070f3] block font-medium">{selectedRegime} Tax Regime</span>
+                  <div className="text-left sm:text-right space-y-0.5 text-xs text-[#777777] dark:text-[#888888]">
+                    <span>Current Calendar Month</span>
+                    <span className="block font-medium text-[#171717] dark:text-white">{selectedRegime} Tax Regime</span>
                   </div>
                 </div>
 
-                {/* Employee Info Grid (Mobile Responsive) */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] text-[12px]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-6 rounded-2xl bg-[#fafafa] dark:bg-[#161616] text-xs">
                   <div>
-                    <span className="text-[#888888] dark:text-[#737373] block font-mono">Designation:</span>
+                    <span className="text-[#888888] block">Designation:</span>
                     <input
                       type="text"
                       value={employeeDesignation}
                       onChange={(e) => setEmployeeDesignation(e.target.value)}
-                      className="font-semibold text-[#171717] dark:text-white bg-transparent border-b border-dashed border-transparent hover:border-[#a1a1a1] focus:border-[#0070f3] focus:outline-hidden w-full"
-                      title="Click to edit employee designation"
+                      className="font-medium text-[#171717] dark:text-white bg-transparent border-0 focus:outline-hidden w-full mt-0.5"
                     />
                   </div>
                   <div>
-                    <span className="text-[#888888] dark:text-[#737373] block font-mono">Annual CTC:</span>
-                    <span className="font-semibold text-[#171717] dark:text-white font-mono">{formatINR(analysis.inputs.annualCtc)}</span>
+                    <span className="text-[#888888] block">Annual CTC:</span>
+                    <span className="font-medium text-[#171717] dark:text-white block mt-0.5">{formatINR(analysis.inputs.annualCtc)}</span>
                   </div>
                   <div>
-                    <span className="text-[#888888] dark:text-[#737373] block font-mono">Work State (PT):</span>
-                    <span className="font-semibold text-[#171717] dark:text-white">{analysis.inputs.stateCode}</span>
+                    <span className="text-[#888888] block">Work State:</span>
+                    <span className="font-medium text-[#171717] dark:text-white block mt-0.5">{analysis.inputs.stateCode}</span>
                   </div>
                   <div>
-                    <span className="text-[#888888] dark:text-[#737373] block font-mono">Working Days:</span>
-                    <span className="font-semibold text-[#171717] dark:text-white font-mono">30 / 31</span>
+                    <span className="text-[#888888] block">Pay Cycle:</span>
+                    <span className="font-medium text-[#171717] dark:text-white block mt-0.5">30 Days</span>
                   </div>
                 </div>
 
-                {/* Dual Table: Earnings & Deductions */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                  {/* Earnings */}
-                  <div className="border border-[#ebebeb] dark:border-[#262626] rounded-xl overflow-hidden">
-                    <div className="bg-[#fafafa] dark:bg-[#181818] px-3.5 sm:px-4 py-2.5 border-b border-[#ebebeb] dark:border-[#262626] flex justify-between items-center text-[12.5px] sm:text-[13px] font-semibold text-[#171717] dark:text-white">
-                      <span>Earnings (Monthly)</span>
-                      <span>Amount</span>
-                    </div>
-                    <div className="p-3 sm:p-4 space-y-2 text-[12px] sm:text-[13px]">
-                      <div className="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="p-6 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-3">
+                    <h3 className="text-sm font-semibold text-[#171717] dark:text-white pb-1">Earnings (Monthly)</h3>
+                    <div className="space-y-2 text-sm text-[#555555] dark:text-[#aaaaaa]">
+                      <div className="flex justify-between">
                         <span>Basic Salary</span>
-                        <span className="font-mono font-medium text-[#171717] dark:text-white">{formatINR(monthlyBasic)}</span>
+                        <span className="font-medium text-[#171717] dark:text-white">{formatINR(monthlyBasic)}</span>
                       </div>
-                      <div className="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+                      <div className="flex justify-between">
                         <span>House Rent Allowance (HRA)</span>
-                        <span className="font-mono font-medium text-[#171717] dark:text-white">{formatINR(monthlyHra)}</span>
+                        <span className="font-medium text-[#171717] dark:text-white">{formatINR(monthlyHra)}</span>
                       </div>
-                      <div className="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+                      <div className="flex justify-between">
                         <span>Special Allowance</span>
-                        <span className="font-mono font-medium text-[#171717] dark:text-white">{formatINR(monthlySpecial)}</span>
+                        <span className="font-medium text-[#171717] dark:text-white">{formatINR(monthlySpecial)}</span>
                       </div>
-                    </div>
-                    <div className="bg-[#fafafa] dark:bg-[#181818] px-3.5 sm:px-4 py-2.5 sm:py-3 border-t border-[#ebebeb] dark:border-[#262626] flex justify-between items-center text-[12.5px] sm:text-[13px] font-semibold text-[#171717] dark:text-white">
-                      <span>Gross Monthly Earnings (A)</span>
-                      <span className="font-mono font-bold text-[#171717] dark:text-white">{formatINR(totalMonthlyEarnings)}</span>
+                      <div className="flex justify-between pt-3 font-semibold text-[#171717] dark:text-white">
+                        <span>Gross Monthly Earnings</span>
+                        <span>{formatINR(totalMonthlyEarnings)}</span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Deductions */}
-                  <div className="border border-[#ebebeb] dark:border-[#262626] rounded-xl overflow-hidden">
-                    <div className="bg-[#fafafa] dark:bg-[#181818] px-3.5 sm:px-4 py-2.5 border-b border-[#ebebeb] dark:border-[#262626] flex justify-between items-center text-[12.5px] sm:text-[13px] font-semibold text-[#171717] dark:text-white">
-                      <span>Deductions (Monthly)</span>
-                      <span>Amount</span>
-                    </div>
-                    <div className="p-3 sm:p-4 space-y-2 text-[12px] sm:text-[13px]">
-                      <div className="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+                  <div className="p-6 rounded-2xl bg-[#fafafa] dark:bg-[#161616] space-y-3">
+                    <h3 className="text-sm font-semibold text-[#171717] dark:text-white pb-1">Deductions (Monthly)</h3>
+                    <div className="space-y-2 text-sm text-[#555555] dark:text-[#aaaaaa]">
+                      <div className="flex justify-between">
                         <span>Employee PF (EPF)</span>
-                        <span className="font-mono font-medium text-[#171717] dark:text-white">{formatINR(activeRegimeData.monthlyEmployeePf)}</span>
+                        <span className="font-medium text-[#171717] dark:text-white">{formatINR(activeRegimeData.monthlyEmployeePf)}</span>
                       </div>
-                      <div className="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+                      <div className="flex justify-between">
                         <span>Professional Tax (PT)</span>
-                        <span className="font-mono font-medium text-[#171717] dark:text-white">{formatINR(activeRegimeData.monthlyPt)}</span>
+                        <span className="font-medium text-[#171717] dark:text-white">{formatINR(activeRegimeData.monthlyPt)}</span>
                       </div>
-                      <div className="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+                      <div className="flex justify-between">
                         <span>Income Tax (TDS)</span>
-                        <span className="font-mono font-medium text-[#ee0000]">{formatINR(activeRegimeData.monthlyTax)}</span>
+                        <span className="font-medium text-[#ee0000]">{formatINR(activeRegimeData.monthlyTax)}</span>
                       </div>
-                      {activeRegimeData.monthlyVpf > 0 && (
-                        <div className="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
-                          <span>Voluntary PF (VPF)</span>
-                          <span className="font-mono font-medium text-[#171717] dark:text-white">{formatINR(activeRegimeData.monthlyVpf)}</span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="bg-[#fafafa] dark:bg-[#181818] px-3.5 sm:px-4 py-2.5 sm:py-3 border-t border-[#ebebeb] dark:border-[#262626] flex justify-between items-center text-[12.5px] sm:text-[13px] font-semibold text-[#171717] dark:text-white">
-                      <span>Total Deductions (B)</span>
-                      <span className="font-mono font-bold text-[#ee0000]">{formatINR(totalMonthlyDeductions)}</span>
+                      <div className="flex justify-between pt-3 font-semibold text-[#171717] dark:text-white">
+                        <span>Total Monthly Deductions</span>
+                        <span className="text-[#ee0000]">{formatINR(totalMonthlyDeductions)}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Net Pay Final Summary Callout */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+                <div className="p-6 rounded-2xl bg-[#f9fafb] dark:bg-[#161616] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
-                    <span className="text-[11px] sm:text-[12px] font-mono uppercase text-[#888888] dark:text-[#737373] block">
-                      Net Take-Home Pay (A - B)
-                    </span>
-                    <span className="text-2xl sm:text-4xl font-bold font-mono text-[#10b981]">
-                      {formatINR(activeRegimeData.monthlyTakeHome)}
-                    </span>
-                    <span className="text-[11px] sm:text-[12px] text-[#888888] dark:text-[#737373] block mt-0.5">
-                      Transferred to bank account on salary credit date
-                    </span>
+                    <span className="text-xs text-[#777777] dark:text-[#888888] font-normal block">Net take-home pay</span>
+                    <span className="text-3xl sm:text-4xl font-bold text-[#10b981]">{formatINR(activeRegimeData.monthlyTakeHome)}</span>
                   </div>
-                  <div className="text-left sm:text-right text-[11px] sm:text-[12px] font-mono text-[#888888] dark:text-[#737373]">
-                    <span>Standard 30-Day Pay Cycle</span>
-                    <span className="block text-[#10b981] font-semibold">100% Tax Compliant</span>
-                  </div>
+                  <span className="text-xs text-[#888888] font-normal">100% Tax Compliant</span>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* TAB 3 CONTENT: FINANCIAL WEALTH BLUEPRINT */}
+        {/* TAB 3: WEALTH BLUEPRINT */}
         {outputTab === 'wealth-blueprint' && (
           <div className="animate-in fade-in duration-200">
             <FinancialBlueprint
@@ -1597,10 +1412,10 @@ Generated via In Hand Salary (inHander.com)
           </div>
         )}
 
-        {/* TAB 4 CONTENT: SALARY PERCENTILE & PEER BENCHMARK */}
+        {/* TAB 4: PEER BENCHMARK */}
         {outputTab === 'peer-benchmark' && (
-          <div className="space-y-5 sm:space-y-6 animate-in fade-in duration-200">
-            <div className="vessa-card rounded-2xl border border-[#ebebeb] dark:border-[#262626] overflow-hidden">
+          <div className="space-y-6 animate-in fade-in duration-200">
+            <div className="bg-white dark:bg-[#121212] rounded-3xl overflow-hidden shadow-sm">
               <PercentileMeter
                 annualCtc={inputs.annualCtc}
                 salaryInputs={inputs}
