@@ -420,6 +420,37 @@ export const DocumentImportModal: React.FC<DocumentImportModalProps> = ({
                   </div>
 
                   <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
+                    {/* Payslip Monthly Breakdown Banner if detected */}
+                    {(parseResult.detectedMonthlyNet || parseResult.detectedMonthlyGross) && (
+                      <div className="p-3.5 rounded-xl bg-linear-to-r from-[#0070f3]/10 via-[#10b981]/10 to-transparent border border-[#0070f3]/25 space-y-2">
+                        <div className="flex items-center gap-1.5 text-[12px] font-semibold text-[#0070f3]">
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>Detected Payslip Take-Home:</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-[12px]">
+                          {parseResult.detectedMonthlyNet ? (
+                            <div className="p-2 rounded-lg bg-white/90 dark:bg-[#1f1f1f]/90 border border-[#ebebeb] dark:border-[#333]">
+                              <span className="text-[10px] uppercase font-mono text-[#888888] block">Net In-Hand (From Slip)</span>
+                              <span className="font-mono font-bold text-[#10b981] text-[13px]">
+                                ₹{parseResult.detectedMonthlyNet.toLocaleString('en-IN')}/mo
+                              </span>
+                            </div>
+                          ) : null}
+                          {parseResult.detectedMonthlyGross ? (
+                            <div className="p-2 rounded-lg bg-white/90 dark:bg-[#1f1f1f]/90 border border-[#ebebeb] dark:border-[#333]">
+                              <span className="text-[10px] uppercase font-mono text-[#888888] block">Gross Earnings</span>
+                              <span className="font-mono font-bold text-[#171717] dark:text-white text-[13px]">
+                                ₹{parseResult.detectedMonthlyGross.toLocaleString('en-IN')}/mo
+                              </span>
+                            </div>
+                          ) : null}
+                        </div>
+                        <div className="text-[11px] font-mono text-[#4d4d4d] dark:text-[#a1a1a1]">
+                          ✨ Auto-annualized to Annual CTC: <strong className="text-[#171717] dark:text-white font-semibold">₹{(editedInputs.annualCtc || 0).toLocaleString('en-IN')}</strong> (₹{(((editedInputs.annualCtc || 0) / 100000)).toFixed(2)} LPA)
+                        </div>
+                      </div>
+                    )}
+
                     {/* Annual CTC */}
                     <div className="p-3 rounded-xl bg-white dark:bg-[#181818] border border-[#0070f3]/40 shadow-xs space-y-1.5">
                       <div className="flex justify-between items-center text-[12px]">
