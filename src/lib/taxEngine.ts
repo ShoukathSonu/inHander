@@ -1,4 +1,4 @@
-import { STATE_PT_RULES } from './statePtRules';
+import { STATE_PT_RULES } from './statePtRules.ts';
 
 export interface SalaryInputs {
   annualCtc: number;

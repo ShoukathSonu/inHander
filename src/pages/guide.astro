@@ -1,0 +1,63 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SeoContentSection from '../components/SeoContentSection.astro';
+import FaqSection from '../components/FaqSection.astro';
+import { ArrowLeft, BookOpen, Calculator, ShieldCheck, Sparkles } from 'lucide-react';
+---
+
+<Layout 
+  title="Comprehensive Indian Payroll & Tax Guide (FY 2025-26 & 26-27) | inHander.com"
+  description="Master CTC vs Gross vs In-Hand Salary math in India. Detailed guide on New vs Old Tax Regimes, Section 87A rebate, standard deduction ₹75,000, HRA rules, and EPF capping."
+  keywords="indian payroll guide, ctc vs in hand salary, in hand salary calculator india, new tax regime guide, old tax regime vs new tax regime, section 87a marginal relief, 15 26 gratuity rule, hra calculation formula"
+  activeTab="calculator"
+>
+  <div class="max-w-5xl mx-auto space-y-8 pt-4 pb-16">
+    <!-- Breadcrumb & Back Navigation -->
+    <div class="flex items-center justify-between">
+      <a 
+        href="/" 
+        class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] text-[13px] font-medium text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white hover:border-[#a1a1a1] transition-all shadow-xs group"
+      >
+        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+        <span>Back to In-Hand Calculator</span>
+      </a>
+
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-xs text-[12px] font-mono text-[#888888] dark:text-[#737373]">
+        <span class="w-2 h-2 rounded-full bg-[#10b981] animate-pulse"></span>
+        <span>Updated for Budget 2024 &amp; FY 2025-26</span>
+      </div>
+    </div>
+
+    <!-- Header Hero Banner -->
+    <div class="p-8 rounded-3xl bg-gradient-to-br from-white via-white to-[#fafafa] dark:from-[#141414] dark:via-[#121212] dark:to-[#0f0f0f] border border-[#ebebeb] dark:border-[#262626] shadow-stacked space-y-4 text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0070f3]/10 text-[#0070f3] dark:text-[#38bdf8] text-[12px] font-mono font-semibold border border-[#0070f3]/20">
+        <BookOpen className="w-3.5 h-3.5" />
+        Official Payroll Documentation
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#171717] dark:text-white">
+        Comprehensive Indian Payroll &amp; Tax Guide
+      </h1>
+
+      <p class="text-base sm:text-lg text-[#4d4d4d] dark:text-[#a1a1a1] max-w-2xl mx-auto leading-relaxed">
+        Everything you need to know about Indian income tax slabs, CTC components, statutory deductions, HRA exemptions, and maximizing your monthly take-home salary.
+      </p>
+
+      <div class="pt-2 flex flex-wrap justify-center gap-3">
+        <a 
+          href="/" 
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#171717] dark:bg-white text-white dark:text-[#171717] text-[13px] font-semibold hover:scale-102 transition-transform shadow-sm"
+        >
+          <Calculator className="w-4 h-4" />
+          <span>Launch Calculator</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Editorial Guide -->
+    <SeoContentSection />
+
+    <!-- Frequently Asked Questions -->
+    <FaqSection />
+  </div>
+</Layout>

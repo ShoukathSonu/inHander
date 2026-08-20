@@ -1,89 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { SalaryCalculator } from '../components/SalaryCalculator';
-import SeoContentSection from '../components/SeoContentSection.astro';
 import FaqSection from '../components/FaqSection.astro';
-import ProximitySidebar, { type ProximitySection } from '../components/ProximitySidebar';
 import { Sparkles, ShieldCheck, Zap, Lock, FileText, Split, Scan, Upload, FileSpreadsheet } from 'lucide-react';
-
-const sections: ProximitySection[] = [
-  {
-    id: "salary-inputs",
-    label: "Salary Inputs & CTC",
-    level: 1,
-    subItems: [
-      { label: "Annual Cost to Company (CTC)" },
-      { label: "Upload & Scan Payslip (PDF/Image)" },
-      { label: "Maximize In-Hand Tax Optimizer" },
-      { label: "State Professional Tax (PT)" },
-      { label: "CTC Range Slider & Preset Chips" },
-      { label: "Cash vs Bonus & ESOP Split" },
-    ],
-  },
-  {
-    id: "take-home-summary",
-    label: "Monthly Take-Home",
-    level: 2,
-    subItems: [
-      { label: "Optimal Regime Recommendation" },
-      { label: "Net Monthly In-Hand (Credited)" },
-      { label: "Annual Net Pay & Effective Tax" },
-      { label: "Visual Salary Distribution Chart" },
-      { label: "Real Cash vs Paper Money Breakdown" },
-      { label: "Salary Percentile Rank & Benchmark" },
-    ],
-  },
-  {
-    id: "regime-comparison",
-    label: "Regime Comparison",
-    level: 2,
-    subItems: [
-      { label: "Budget 2024 New Regime Slabs" },
-      { label: "Standard Deduction (₹75,000)" },
-      { label: "Section 87A Rebate & Marginal Relief" },
-      { label: "Old Tax Regime Deductions" },
-      { label: "Side-by-Side Dual Matrix" },
-    ],
-  },
-  {
-    id: "tax-deductions",
-    label: "Deductions & HRA",
-    level: 3,
-    subItems: [
-      { label: "Basic Salary & HRA Exemption (10(13A))" },
-      { label: "Section 80C Deductions (EPF, PPF, ELSS)" },
-      { label: "Section 80D Health Insurance" },
-      { label: "NPS Tier-1 & Employer NPS (80CCD)" },
-      { label: "EPF Statutory Cap (₹1,800/mo) vs 12%" },
-      { label: "Gratuity & Terminal Benefits" },
-    ],
-  },
-  {
-    id: "salary-guide",
-    label: "Salary & Tax Guide",
-    level: 3,
-    subItems: [
-      { id: "guide-chapter-1", label: "CTC vs Gross vs In Hand" },
-      { id: "guide-chapter-2", label: "Step-by-Step Take-Home Formula" },
-      { id: "guide-chapter-3", label: "New vs Old Regime Comparison" },
-      { id: "guide-chapter-4", label: "Benchmark LPA Salary Table" },
-      { id: "guide-chapter-5", label: "Trusted Private Calculator" },
-    ],
-  },
-  {
-    id: "faq",
-    label: "FAQs & Answers",
-    level: 3,
-    subItems: [
-      { label: "In-Hand Salary Calculation Formula" },
-      { label: "₹7.75L Tax-Free Threshold in New Regime" },
-      { label: "Take-Home Slabs (4 LPA - 50 LPA)" },
-      { label: "Section 87A Marginal Relief Protection" },
-      { label: "HRA Exemption Calculation Rules" },
-      { label: "State-wise Professional Tax Rules" },
-    ],
-  },
-];
 ---
 
 <Layout 
@@ -92,32 +11,28 @@ const sections: ProximitySection[] = [
   keywords="In Hand Salary, in hand salary calculator, in hand salary calculator india, calculate in hand salary, india in hand salary calculator, lpa in hand salary, tax calculator, income tax calculator, paycheck tax calculator, 4 lpa in hand salary, 4.5 lpa in hand salary, 10 lpa in hand salary, 12 lpa in hand salary, 18 lpa in hand salary, in hand salary calculator after tax"
   activeTab="calculator"
 >
-  <!-- Pinned Proximity Sidebar (Hidden on mobile/tablet, visible on desktop) -->
-  <div class="fixed right-2 top-1/2 -translate-y-1/2 z-40 hidden xl:flex">
-    <ProximitySidebar client:load sections={sections} side="right" />
-  </div>
   <!-- Hero Band -->
-  <section class="text-center space-y-6 pt-4 pb-12 sm:pb-16 max-w-4xl mx-auto">
+  <section class="text-center space-y-4 sm:space-y-6 pt-2 sm:pt-4 pb-8 sm:pb-16 max-w-4xl mx-auto px-1">
     <!-- Section Eyebrow Badge -->
     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm">
       <span class="w-2 h-2 rounded-full bg-[#10b981] animate-pulse"></span>
-      <span class="text-[12px] font-mono font-medium text-[#4d4d4d] dark:text-[#a1a1a1]">
+      <span class="text-[11px] sm:text-[12px] font-mono font-medium text-[#4d4d4d] dark:text-[#a1a1a1]">
         Budget 2024 / FY 2025-26 &amp; 26-27 Slabs Active
       </span>
     </div>
 
     <!-- Sentence-case Hero Headline with negative tracking -->
-    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#171717] dark:text-white tracking-tight leading-[1.08]">
+    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-bold text-[#171717] dark:text-white tracking-tight leading-[1.1]">
       Calculate your in hand salary.
     </h1>
 
     <!-- Subhead -->
-    <p class="text-base sm:text-lg text-[#4d4d4d] dark:text-[#a1a1a1] max-w-2xl mx-auto leading-relaxed">
+    <p class="text-[14px] sm:text-lg text-[#4d4d4d] dark:text-[#a1a1a1] max-w-2xl mx-auto leading-relaxed px-2">
       Convert your CTC to exact monthly take-home pay. Side-by-side Dual Tax Regime comparison, HRA exemption, EPF statutory cap, and instant payslip PDF export.
     </p>
 
     <!-- Quick highlights pill strip -->
-    <div class="flex flex-wrap items-center justify-center gap-3 pt-2 text-[12px] font-mono text-[#888888] dark:text-[#737373]">
+    <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 pt-1 sm:pt-2 text-[11px] sm:text-[12px] font-mono text-[#888888] dark:text-[#737373]">
       <span class="inline-flex items-center gap-1.5 bg-white dark:bg-[#181818] px-2.5 py-1 rounded-full border border-[#ebebeb] dark:border-[#262626]">
         <ShieldCheck className="w-3.5 h-3.5 text-[#10b981]" /> ₹7.75L Tax-Free in New Regime
       </span>
@@ -139,54 +54,167 @@ const sections: ProximitySection[] = [
   </section>
 
   <!-- Value Props / Feature Matrix Cards (Vercel Style) -->
-  <section class="max-w-6xl mx-auto mt-20 space-y-6">
+  <section class="max-w-6xl mx-auto mt-12 sm:mt-20 space-y-6">
     <div class="text-center space-y-2">
-      <span class="text-[12px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] font-semibold">
+      <span class="text-[11px] sm:text-[12px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] font-semibold">
         Engineered for Accuracy
       </span>
-      <h2 class="text-2xl sm:text-3xl font-bold text-[#171717] dark:text-white tracking-tight">
+      <h2 class="text-xl sm:text-3xl font-bold text-[#171717] dark:text-white tracking-tight">
         Why Indian professionals rely on inHander.
       </h2>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mt-6 sm:mt-8">
       {/* Feature 1 */}
-      <div class="p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-3">
-        <div class="w-10 h-10 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#171717] dark:text-white">
-          <Split className="w-5 h-5" />
+      <div class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-3">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#171717] dark:text-white">
+          <Split className="w-4 h-4 sm:w-5 sm:h-5" />
         </div>
-        <h3 class="text-[16px] font-semibold text-[#171717] dark:text-white">Live Dual Regime Matrix</h3>
-        <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
-          Instantly models New Regime (₹75k standard deduction + 87A rebate & marginal relief) against Old Regime (HRA, 80C, 80D, 24b) with direct rupee difference.
+        <h3 class="text-[15px] sm:text-[16px] font-semibold text-[#171717] dark:text-white">Live Dual Regime Matrix</h3>
+        <p class="text-[12.5px] sm:text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+          Instantly models New Regime (₹75k standard deduction + 87A rebate &amp; marginal relief) against Old Regime (HRA, 80C, 80D, 24b) with direct rupee difference.
         </p>
       </div>
 
       {/* Feature 2 */}
-      <div class="p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-3">
-        <div class="w-10 h-10 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#171717] dark:text-white">
-          <FileSpreadsheet className="w-5 h-5" />
+      <div class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-3">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#171717] dark:text-white">
+          <FileSpreadsheet className="w-4 h-4 sm:w-5 sm:h-5" />
         </div>
-        <h3 class="text-[16px] font-semibold text-[#171717] dark:text-white">Corporate Salary Slip & PDF</h3>
-        <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+        <h3 class="text-[15px] sm:text-[16px] font-semibold text-[#171717] dark:text-white">Corporate Salary Slip &amp; PDF</h3>
+        <p class="text-[12.5px] sm:text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
           Generate an authentic corporate salary slip formatted with gross monthly earnings, itemized deductions, employer PF, and net pay for negotiation or loan proof.
         </p>
       </div>
 
       {/* Feature 3 */}
-      <div class="p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-3">
-        <div class="w-10 h-10 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#171717] dark:text-white">
-          <Lock className="w-5 h-5" />
+      <div class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-3">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex items-center justify-center text-[#171717] dark:text-white">
+          <Lock className="w-4 h-4 sm:w-5 sm:h-5" />
         </div>
-        <h3 class="text-[16px] font-semibold text-[#171717] dark:text-white">Zero-Tracking Privacy</h3>
-        <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+        <h3 class="text-[15px] sm:text-[16px] font-semibold text-[#171717] dark:text-white">Zero-Tracking Privacy</h3>
+        <p class="text-[12.5px] sm:text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
           All computations execute strictly in your browser memory. We never track your IP, salary figures, or employer name on any server.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- Comprehensive 800-1200 Word SEO Editorial Guide -->
-  <SeoContentSection />
+  <!-- Popular Salary Packages Directory & Freshers IT Slabs (TCS, Infosys, Wipro, Accenture) -->
+  <section class="max-w-6xl mx-auto mt-12 sm:mt-16 p-4 sm:p-8 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-4 sm:space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#ebebeb] dark:border-[#262626] pb-3 sm:pb-4">
+      <div>
+        <span class="text-[10.5px] sm:text-[11px] font-mono uppercase tracking-wider text-[#0070f3] font-semibold block">
+          Programmatic Salary Slabs · FY 2025-26 &amp; 2026-27
+        </span>
+        <h2 class="text-lg sm:text-2xl font-bold text-[#171717] dark:text-white mt-0.5">
+          Popular In Hand Salary Packages in India
+        </h2>
+      </div>
+      <span class="text-[11px] sm:text-[12px] font-mono text-[#888888] dark:text-[#737373]">
+        Pre-computed take-home &amp; tax
+      </span>
+    </div>
+
+    <!-- Quick Pill Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 sm:gap-2.5 font-mono text-[12px]">
+      <a href="/salary/3-lpa" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group">
+        <strong class="text-[#171717] dark:text-white block group-hover:text-[#0070f3]">₹3 LPA</strong>
+        <span class="text-[11px] text-[#10b981]">₹23.1k/mo</span>
+      </a>
+      <a href="/salary/3-25-lpa" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group">
+        <strong class="text-[#171717] dark:text-white block group-hover:text-[#0070f3]">₹3.25 LPA</strong>
+        <span class="text-[11px] text-[#10b981]">₹25.0k/mo</span>
+      </a>
+      <a href="/salary/3-36-lpa" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group">
+        <strong class="text-[#171717] dark:text-white block group-hover:text-[#0070f3]">₹3.36 LPA</strong>
+        <span class="text-[11px] text-[#10b981]">₹25.9k/mo</span>
+      </a>
+      <a href="/salary/3-5-lpa" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group">
+        <strong class="text-[#171717] dark:text-white block group-hover:text-[#0070f3]">₹3.5 LPA</strong>
+        <span class="text-[11px] text-[#10b981]">₹27.0k/mo</span>
+      </a>
+      <a href="/salary/4-lpa" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group">
+        <strong class="text-[#171717] dark:text-white block group-hover:text-[#0070f3]">₹4 LPA</strong>
+        <span class="text-[11px] text-[#10b981]">₹30.8k/mo</span>
+      </a>
+      <a href="/salary/4-5-lpa" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group bg-[#0070f3]/5 border-[#0070f3]/30">
+        <strong class="text-[#0070f3] block">₹4.5 LPA</strong>
+        <span class="text-[11px] text-[#10b981] font-bold">₹34.8k/mo</span>
+      </a>
+      <a href="/salary/5-lpa" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group">
+        <strong class="text-[#171717] dark:text-white block group-hover:text-[#0070f3]">₹5 LPA</strong>
+        <span class="text-[11px] text-[#10b981]">₹38.5k/mo</span>
+      </a>
+      <a href="/salary/6-lpa" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group">
+        <strong class="text-[#171717] dark:text-white block group-hover:text-[#0070f3]">₹6 LPA</strong>
+        <span class="text-[11px] text-[#10b981]">₹46.2k/mo</span>
+      </a>
+      <a href="/salary/7-5-lpa" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group">
+        <strong class="text-[#171717] dark:text-white block group-hover:text-[#0070f3]">₹7.5 LPA</strong>
+        <span class="text-[11px] text-[#10b981]">₹57.7k/mo</span>
+      </a>
+      <a href="/salary/10-lpa" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group">
+        <strong class="text-[#171717] dark:text-white block group-hover:text-[#0070f3]">₹10 LPA</strong>
+        <span class="text-[11px] text-[#10b981]">₹72.8k/mo</span>
+      </a>
+      <a href="/salary/12-lpa" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group">
+        <strong class="text-[#171717] dark:text-white block group-hover:text-[#0070f3]">₹12 LPA</strong>
+        <span class="text-[11px] text-[#10b981]">₹86.4k/mo</span>
+      </a>
+      <a href="/salary/15-lpa" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group">
+        <strong class="text-[#171717] dark:text-white block group-hover:text-[#0070f3]">₹15 LPA</strong>
+        <span class="text-[11px] text-[#10b981]">₹1.05L/mo</span>
+      </a>
+      <a href="/salary/18-lpa" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group">
+        <strong class="text-[#171717] dark:text-white block group-hover:text-[#0070f3]">₹18 LPA</strong>
+        <span class="text-[11px] text-[#10b981]">₹1.24L/mo</span>
+      </a>
+      <a href="/salary/20-lpa" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group">
+        <strong class="text-[#171717] dark:text-white block group-hover:text-[#0070f3]">₹20 LPA</strong>
+        <span class="text-[11px] text-[#10b981]">₹1.37L/mo</span>
+      </a>
+      <a href="/salary/25-lpa" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group">
+        <strong class="text-[#171717] dark:text-white block group-hover:text-[#0070f3]">₹25 LPA</strong>
+        <span class="text-[11px] text-[#10b981]">₹1.68L/mo</span>
+      </a>
+      <a href="/salary/30-lpa" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group">
+        <strong class="text-[#171717] dark:text-white block group-hover:text-[#0070f3]">₹30 LPA</strong>
+        <span class="text-[11px] text-[#10b981]">₹2.00L/mo</span>
+      </a>
+      <a href="/salary/50-lpa" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group">
+        <strong class="text-[#171717] dark:text-white block group-hover:text-[#0070f3]">₹50 LPA</strong>
+        <span class="text-[11px] text-[#10b981]">₹3.12L/mo</span>
+      </a>
+      <a href="/salary/1-cr" class="p-2 sm:p-2.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] transition-colors text-center group">
+        <strong class="text-[#171717] dark:text-white block group-hover:text-[#0070f3]">₹1 Crore</strong>
+        <span class="text-[11px] text-[#10b981]">₹5.85L/mo</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- In-Depth Payroll Documentation Callout Banner -->
+  <section class="max-w-6xl mx-auto mt-12 sm:mt-16 p-4 sm:p-8 rounded-2xl bg-gradient-to-r from-white via-white to-[#fafafa] dark:from-[#121212] dark:via-[#121212] dark:to-[#161616] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
+    <div class="space-y-1.5 max-w-xl">
+      <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10.5px] sm:text-[11px] font-mono font-semibold bg-[#0070f3]/10 text-[#0070f3] dark:text-[#38bdf8]">
+        📖 Official Documentation
+      </div>
+      <h3 class="text-base sm:text-xl font-bold text-[#171717] dark:text-white">
+        Need the complete theoretical breakdown of Indian payroll?
+      </h3>
+      <p class="text-[12.5px] sm:text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+        Read our comprehensive 5-chapter guide on Section 87A marginal relief, HRA exemption formulas, 15/26 gratuity mathematics, and New vs Old regime trade-offs.
+      </p>
+    </div>
+
+    <a 
+      href="/guide" 
+      class="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:py-3 rounded-full bg-[#171717] dark:bg-white text-white dark:text-[#171717] text-[13px] font-semibold hover:scale-102 transition-transform shadow-sm shrink-0"
+    >
+      <span>Read Full Payroll Guide</span>
+      <span aria-hidden="true">→</span>
+    </a>
+  </section>
 
   <!-- Comprehensive FAQs -->
   <FaqSection />

@@ -13,20 +13,26 @@ import {
   FileSpreadsheet,
   Check,
   Sparkles,
-  Info
+  Info,
+  ChevronDown
 } from 'lucide-react';
 
 interface ExitGratuityCalculatorProps {
   monthlyBasicSalary: number;
   monthlyGrossSalary: number;
   annualCtc: number;
+  isCollapsible?: boolean;
+  defaultOpen?: boolean;
 }
 
 export const ExitGratuityCalculator: React.FC<ExitGratuityCalculatorProps> = ({
   monthlyBasicSalary,
   monthlyGrossSalary,
-  annualCtc
+  annualCtc,
+  isCollapsible = true,
+  defaultOpen = false
 }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(defaultOpen);
   // Gratuity states
   const [serviceYears, setServiceYears] = useState<number>(5);
   const [customBasic, setCustomBasic] = useState<number | null>(null);
@@ -76,12 +82,17 @@ export const ExitGratuityCalculator: React.FC<ExitGratuityCalculatorProps> = ({
   }, [gratuityRawAmount, leaveEncashmentAmount, noticeAdjustmentAmount, buyoutMode]);
 
   return (
-    <div className="bg-white dark:bg-[#121212] rounded-2xl border border-[#ebebeb] dark:border-[#262626] shadow-stacked overflow-hidden transition-colors space-y-0">
-      {/* Module Header */}
-      <div className="p-6 sm:p-7 border-b border-[#ebebeb] dark:border-[#262626] bg-[#fafafa]/50 dark:bg-[#181818]/50">
+    <div className="bg-white dark:bg-[#121212] rounded-2xl border border-[#ebebeb] dark:border-[#262626] shadow-stacked overflow-hidden transition-all duration-200 space-y-0">
+      {/* Module Header (Dropdown Trigger when collapsible) */}
+      <div 
+        onClick={isCollapsible ? () => setIsOpen(prev => !prev) : undefined}
+        className={`p-5 sm:p-6 bg-[#fafafa]/60 dark:bg-[#181818]/60 transition-colors ${
+          isCollapsible ? 'cursor-pointer select-none hover:bg-[#f5f5f5] dark:hover:bg-[#202020]' : ''
+        } ${isOpen ? 'border-b border-[#ebebeb] dark:border-[#262626]' : ''}`}
+      >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="p-1.5 rounded-lg bg-[#10b981]/10 text-[#10b981]">
                 <Briefcase className="w-4 h-4" />
               </span>
@@ -96,10 +107,27 @@ export const ExitGratuityCalculator: React.FC<ExitGratuityCalculatorProps> = ({
               Calculate statutory gratuity payout, notice period shortfall recovery/buyout, and net full &amp; final (F&amp;F) settlement upon resignation.
             </p>
           </div>
+
+          {isCollapsible && (
+            <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-center">
+              <span className="hidden md:inline-flex items-center gap-1.5 text-[12px] font-mono font-semibold text-[#10b981] bg-[#10b981]/10 px-2.5 py-1 rounded-lg border border-[#10b981]/20">
+                Est. Net F&amp;F: {formatINR(netTerminalSettlement)}
+              </span>
+              <button
+                type="button"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-medium border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#121212] text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white shadow-2xs transition-colors cursor-pointer"
+                aria-expanded={isOpen}
+              >
+                <span>{isOpen ? 'Collapse' : 'Expand Calculator'}</span>
+                <ChevronDown className={`w-4 h-4 text-[#888888] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      {isOpen && (
+        <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start animate-in fade-in duration-200">
         {/* Left 7 Columns: Interactive Calculation Modules */}
         <div className="lg:col-span-7 space-y-6">
           {/* SUB-MODULE A: GRATUITY CALCULATION */}
@@ -388,6 +416,7 @@ export const ExitGratuityCalculator: React.FC<ExitGratuityCalculatorProps> = ({
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 };

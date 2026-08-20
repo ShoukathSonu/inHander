@@ -1,8 +1,97 @@
-import { type SalaryInputs, DEFAULT_SALARY_INPUTS } from './taxEngine';
+import { type SalaryInputs, DEFAULT_SALARY_INPUTS } from './taxEngine.ts';
+
+export type DocumentType = 'PAYSLIP' | 'OFFER_LETTER' | 'APPRAISAL_LETTER' | 'FORM_16' | 'TAX_SHEET' | 'UNKNOWN';
+
+export interface ProrationInfo {
+  isProrated: boolean;
+  totalDays: number;
+  paidDays: number;
+  lwpDays: number;
+  prorationFactor: number;
+  explanation: string;
+}
+
+export interface OneTimeOrVariableItem {
+  label: string;
+  amount: number;
+  category: 'BONUS' | 'ARREARS' | 'LEAVE_ENCASHMENT' | 'OVERTIME' | 'RELOCATION' | 'INCENTIVE' | 'OTHER';
+}
+
+export interface CompensationBreakdown {
+  documentType: DocumentType;
+  classificationConfidence: 'HIGH' | 'MEDIUM' | 'LOW';
+  classificationReasons: string[];
+
+  // Core Figures
+  annualCtc: number;             // Stated or Projected Total Annual CTC
+  annualGrossSalary: number;     // Normalized (Fixed Monthly * 12) + One-Time/Variable Components
+  monthlyGross: number;          // Stated or total monthly gross (including one-time items)
+  fixedMonthlyGross: number;     // Monthly gross excluding one-time/variable items
+  normalizedFixedMonthlyGross: number; // Full-month normalized recurring fixed monthly gross
+  actualMonthlyGross?: number;   // Raw stated gross from document
+  monthlyNetPay?: number;        // Take home pay from payslip
+
+  // Proration details (for payslips with LWP or partial month)
+  proration?: ProrationInfo;
+
+  // Detailed Earnings Breakdown
+  earnings: {
+    basic: { monthly: number; annual: number; percentageOfCtc: number };
+    hra?: { monthly: number; annual: number };
+    specialAllowance?: { monthly: number; annual: number };
+    conveyance?: { monthly: number; annual: number };
+    medicalAllowance?: { monthly: number; annual: number };
+    otherFixedAllowances?: { label: string; monthly: number; annual: number }[];
+    oneTimeAndVariableEarnings?: OneTimeOrVariableItem[];
+    totalOneTimeVariableAmount: number;
+    variablePayAnnual?: number;
+    joiningBonus?: number;
+    relocationBonus?: number;
+    esopRsuAnnual?: number;
+  };
+
+  // Deductions Breakdown
+  deductions: {
+    employeePfMonthly?: number;
+    employeePfAnnual?: number;
+    professionalTaxMonthly?: number;
+    professionalTaxAnnual?: number;
+    tdsMonthly?: number;
+    tdsAnnualProjected?: number;
+    otherDeductionsMonthly?: number;
+    totalDeductionsMonthly?: number;
+  };
+
+  // Employer Contributions (CTC Additions)
+  employerBenefits: {
+    employerPfAnnual: number;
+    gratuityAnnual: number;
+    insuranceAnnual?: number;
+    otherBenefitsAnnual?: number;
+  };
+
+  // Metadata
+  metadata?: {
+    employerName?: string;
+    designation?: string;
+    location?: string;
+    stateCode?: string;
+    isMetroCity?: boolean;
+    payPeriod?: string;
+    warnings?: string[];
+  };
+  employerName?: string;
+  designation?: string;
+  location?: string;
+  stateCode?: string;
+  isMetroCity?: boolean;
+  payPeriod?: string;
+  warnings?: string[];
+}
 
 export interface ExtractedField {
   label: string;
-  key: keyof SalaryInputs | 'detectedLocation' | 'detectedEmployer' | 'monthlyNetPay' | 'monthlyGrossPay';
+  key: keyof SalaryInputs | 'detectedLocation' | 'detectedEmployer' | 'documentType' | 'monthlyNetPay' | 'monthlyTds' | 'prorationSummary' | 'variableComponentsSummary';
   value: any;
   formattedValue: string;
   confidence: 'HIGH' | 'MEDIUM' | 'LOW';
@@ -11,29 +100,75 @@ export interface ExtractedField {
 
 export interface ParseResult {
   inputs: Partial<SalaryInputs>;
+  breakdown: CompensationBreakdown;
   fields: ExtractedField[];
   rawText: string;
-  documentType: 'OFFER_LETTER' | 'PAYSLIP' | 'FORM_16' | 'TAX_SHEET' | 'UNKNOWN';
+  documentType: DocumentType;
   detectedEmployer?: string;
   detectedDesignation?: string;
   detectedLocation?: string;
   previewUrl?: string;
   detectedMonthlyNet?: number;
   detectedMonthlyGross?: number;
-  detectedMonthlyBasic?: number;
-  detectedMonthlyHra?: number;
-  detectedMonthlyPf?: number;
-  detectedMonthlyPt?: number;
-  detectedMonthlyTds?: number;
-  isMonthlyPayslip?: boolean;
 }
 
-// Convert numbers like "15 LPA", "15,00,000", "1.5 Cr", "150000.00", "85,420" to numeric INR
+// ---------------------------------------------------------------------------
+// 1. Noise Exclusion & Pre-processing
+// ---------------------------------------------------------------------------
+
+/**
+ * Pre-processes and masks non-financial numbers and identifiers to prevent
+ * accidental extraction of PIN codes, UAN numbers, PF numbers, Bank account
+ * numbers, Employee IDs, Phone numbers, PAN/Aadhaar IDs, and dates as salaries.
+ */
+export function maskNoiseIdentifiers(text: string): string {
+  let cleaned = text;
+
+  // 1. Mask 6-digit postal / PIN codes (e.g. Pin: 560001, Bangalore - 560103, Pincode 110001)
+  cleaned = cleaned.replace(/(?:pin(?:\s*code)?|pincode|postal\s*code|zip(?:\s*code)?)[\s:=#-]+(\d{6})\b/gi, (match) => {
+    return match.replace(/\d{6}/, '[MASKED_PINCODE]');
+  });
+  // Also mask standalone 6-digit PIN codes attached to known city / address lines
+  cleaned = cleaned.replace(/([A-Za-z]+(?:\s+[A-Za-z]+)*\s*[-–,]\s*)(\d{6})\b/g, '$1[MASKED_PINCODE]');
+
+  // 2. Mask 12-digit UAN numbers (Universal Account Number)
+  cleaned = cleaned.replace(/(?:uan|universal\s*account\s*no(?:\.|umber)?)[\s:=#-]+(\d{12})\b/gi, (match) => {
+    return match.replace(/\d{12}/, '[MASKED_UAN]');
+  });
+  // Mask any standalone 12-digit numbers that look like UAN / Aadhaar (unless explicitly preceded by ₹/INR)
+  cleaned = cleaned.replace(/(?<!(?:inr|rs\.?|₹)\s*)\b\d{12}\b/gi, '[MASKED_UAN_OR_AADHAAR]');
+
+  // 3. Mask PF numbers & Member IDs (e.g., KN/BNG/0012345/000/0001234, DL/CPM/12345/123)
+  cleaned = cleaned.replace(/(?:pf\s*(?:no|number|a\/?c|member\s*id)?)[\s:=#-]+([A-Z]{2}\/[A-Z0-9/]+)/gi, '[MASKED_PF_ID]');
+
+  // 4. Mask Bank Account numbers (9 to 18 digits)
+  cleaned = cleaned.replace(/(?:bank\s*(?:a\/?c|account)?(?:\s*no(?:\.|umber)?)?|a\/?c\s*no)[\s:=#-]+(\d{9,18})\b/gi, (match) => {
+    return match.replace(/\d{9,18}/, '[MASKED_BANK_AC]');
+  });
+
+  // 5. Mask Employee IDs / Staff numbers (e.g., Emp ID: 10542, Emp Code: E98214)
+  cleaned = cleaned.replace(/(?:emp(?:loyee)?\s*(?:id|no|code|number)|staff\s*(?:id|no)|personnel\s*no)[\s:=#-]+([A-Za-z0-9-]+)\b/gi, '[MASKED_EMP_ID]');
+
+  // 6. Mask 10-digit Phone / Mobile numbers
+  cleaned = cleaned.replace(/(?:phone|mobile|tel|contact)[\s:=#-]+(?:\+91[\s-]?)?([6-9]\d{9})\b/gi, '[MASKED_PHONE]');
+  cleaned = cleaned.replace(/(?<!(?:inr|rs\.?|₹)\s*)\b(?:\+91[\s-]?)?[6-9]\d{9}\b/g, '[MASKED_PHONE]');
+
+  // 7. Mask PAN numbers (5 letters, 4 digits, 1 letter)
+  cleaned = cleaned.replace(/\b[A-Z]{5}[0-9]{4}[A-Z]\b/g, '[MASKED_PAN]');
+
+  // 8. Mask Standard Dates (DD/MM/YYYY, YYYY-MM-DD, DD-Mon-YYYY)
+  cleaned = cleaned.replace(/\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b/g, '[MASKED_DATE]');
+  cleaned = cleaned.replace(/\b\d{1,2}-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*-\d{2,4}\b/gi, '[MASKED_DATE]');
+
+  return cleaned;
+}
+
+// Convert numbers like 15 LPA, 15,00,000, 1.5 Cr, 1500000 to standard numeric INR value
 export function normalizeIndianNumber(str: string): number | null {
   if (!str) return null;
   const clean = str.trim().replace(/,/g, '').replace(/₹/g, '').replace(/rs\.?/gi, '').trim();
 
-  // Check for LPA / Lakhs pattern (e.g., "18 LPA", "12.5 Lacs")
+  // Check for LPA / Lakhs pattern
   const lpaMatch = clean.match(/^([\d.]+)\s*(?:lpa|lacs?|lakhs?)/i);
   if (lpaMatch) {
     const val = parseFloat(lpaMatch[1]);
@@ -47,13 +182,13 @@ export function normalizeIndianNumber(str: string): number | null {
     if (!isNaN(val)) return Math.round(val * 10000000);
   }
 
-  // Direct numeric value (supports decimals like "85420.00")
+  // Direct number
   const directMatch = clean.match(/([\d]+(?:\.\d+)?)/);
   if (directMatch) {
     const val = parseFloat(directMatch[1]);
     if (!isNaN(val)) {
-      // If value is small like 12.5 or 15 and explicitly marked with lpa/ctc/lakh
-      if (val > 0 && val <= 100 && (str.toLowerCase().includes('lpa') || str.toLowerCase().includes('lac') || str.toLowerCase().includes('lakh'))) {
+      // If value is small like 12.5 or 15 with explicit LPA indication
+      if (val > 0 && val <= 100 && (str.toLowerCase().includes('l') || str.toLowerCase().includes('lac') || str.toLowerCase().includes('lakh') || str.toLowerCase().includes('ctc') || str.toLowerCase().includes('lpa'))) {
         return Math.round(val * 100000);
       }
       return Math.round(val);
@@ -63,117 +198,391 @@ export function normalizeIndianNumber(str: string): number | null {
   return null;
 }
 
-// Helper to parse Indian number words (e.g., "Eighty Five Thousand Four Hundred")
-export function parseIndianWordsToNumber(text: string): number | null {
-  if (!text) return null;
-  const clean = text.toLowerCase().replace(/rupees?/g, '').replace(/only/g, '').replace(/and/g, '').trim();
-  
-  const wordMap: Record<string, number> = {
-    zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9,
-    ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16,
-    seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20, thirty: 30, forty: 40, fifty: 50,
-    sixty: 60, seventy: 70, eighty: 80, ninety: 90
+/**
+ * Checks if a string or match snippet has proximity to financial currency
+ * indicators or clear financial labels.
+ */
+export function hasFinancialProximity(contextSnippet: string): boolean {
+  if (!contextSnippet) return false;
+  return /(?:₹|inr|rs\.?|lpa|lacs?|lakhs?|cr|crores?|\/pm|\/month|\/annum|per\s*annum|p\.a\.|gross|basic|hra|ctc|salary|earnings|deductions|allowance|net\s*pay|take\s*home|bonus|package|stipend|arrears?)/i.test(contextSnippet);
+}
+
+// ---------------------------------------------------------------------------
+// 2. Document Classification & Type Detection
+// ---------------------------------------------------------------------------
+
+export interface ClassificationResult {
+  type: DocumentType;
+  confidence: 'HIGH' | 'MEDIUM' | 'LOW';
+  reasons: string[];
+  payPeriod?: string;
+}
+
+export function detectDocumentType(rawText: string): ClassificationResult {
+  const text = rawText || '';
+  const reasons: string[] = [];
+
+  let payslipScore = 0;
+  let offerScore = 0;
+  let appraisalScore = 0;
+  let form16Score = 0;
+  let taxSheetScore = 0;
+
+  // 1. Payslip Indicators
+  if (/payslip|salary\s*slip|pay\s*advice|pay\s*slip/i.test(text)) {
+    payslipScore += 4;
+    reasons.push('Explicit Payslip / Salary Slip header detected');
+  }
+  if (/earnings\s*(?:and|&)\s*deductions|total\s*earnings\s+total\s*deductions/i.test(text)) {
+    payslipScore += 3;
+    reasons.push('Earnings & Deductions table layout detected');
+  }
+  if (/net\s*pay|take\s*home\s*pay|net\s*salary/i.test(text)) {
+    payslipScore += 2;
+    reasons.push('Net Take-Home Pay figure detected');
+  }
+  if (/\b(?:lwp|loss\s*of\s*pay|leave\s*without\s*pay|paid\s*days|days\s*worked|present\s*days)\b/i.test(text)) {
+    payslipScore += 3;
+    reasons.push('Attendance / Days Worked / LWP metadata detected');
+  }
+  // Month-Year Pay Period check
+  let payPeriod: string | undefined;
+  const payPeriodMatch = text.match(/(?:for\s*the\s*month\s*of|pay\s*period|salary\s*for|month)[\s:=]+([A-Za-z]+\s*\d{4}|\d{1,2}[/-]\d{4}|[A-Za-z]{3}[- ]\d{2,4})/i);
+  if (payPeriodMatch) {
+    payslipScore += 2;
+    payPeriod = payPeriodMatch[1].trim();
+    reasons.push(`Pay Period detected: ${payPeriod}`);
+  }
+
+  // 2. Offer Letter Indicators
+  if (/offer\s*of\s*employment|letter\s*of\s*offer|offer\s*letter|appointment\s*letter/i.test(text)) {
+    offerScore += 4;
+    reasons.push('Offer of Employment / Appointment Letter title detected');
+  }
+  if (/date\s*of\s*joining|doj\b|joining\s*date/i.test(text)) {
+    offerScore += 3;
+    reasons.push('Date of Joining (DOJ) reference detected');
+  }
+  if (/compensation\s*annexure|annexure\s*[-–a-z0-9]|terms\s*of\s*employment|we\s*are\s*pleased\s*to\s*offer/i.test(text)) {
+    offerScore += 3;
+    reasons.push('Compensation Annexure / Terms of Employment structure detected');
+  }
+  if (/\b(?:annual\s*ctc|cost\s*to\s*company|total\s*fixed\s*pay|target\s*cash)\b/i.test(text) && !/net\s*pay/i.test(text)) {
+    offerScore += 2;
+  }
+
+  // 3. Appraisal / Revision Letter Indicators
+  if (/revised\s*compensation|salary\s*revision|annual\s*appraisal|performance\s*appraisal|annual\s*increment|increment\s*letter/i.test(text)) {
+    appraisalScore += 5;
+    reasons.push('Salary Revision / Performance Appraisal header detected');
+  }
+  if (/with\s*effect\s*from|w\.?e\.?f\.?|effective\s*date/i.test(text)) {
+    appraisalScore += 2;
+    reasons.push('Effective Date (w.e.f.) reference detected');
+  }
+
+  // 4. Form 16 / Tax Sheet Indicators
+  if (/form\s*16|certificate\s*under\s*section\s*203|assessment\s*year/i.test(text)) {
+    form16Score += 5;
+    reasons.push('Form 16 Tax Certificate detected');
+  }
+  if (/tax\s*computation|incometax\s*statement|computation\s*of\s*total\s*income/i.test(text)) {
+    taxSheetScore += 5;
+    reasons.push('Income Tax Computation Sheet detected');
+  }
+
+  // Determine winning category
+  const scores = [
+    { type: 'PAYSLIP' as DocumentType, score: payslipScore },
+    { type: 'OFFER_LETTER' as DocumentType, score: offerScore },
+    { type: 'APPRAISAL_LETTER' as DocumentType, score: appraisalScore },
+    { type: 'FORM_16' as DocumentType, score: form16Score },
+    { type: 'TAX_SHEET' as DocumentType, score: taxSheetScore }
+  ];
+
+  scores.sort((a, b) => b.score - a.score);
+  const best = scores[0];
+
+  if (best.score >= 4) {
+    return {
+      type: best.type,
+      confidence: best.score >= 6 ? 'HIGH' : 'MEDIUM',
+      reasons,
+      payPeriod
+    };
+  }
+
+  return {
+    type: 'UNKNOWN',
+    confidence: 'LOW',
+    reasons: ['Insufficient structural keywords for definitive classification'],
+    payPeriod
   };
+}
 
-  const tokens = clean.split(/[\s-]+/).filter(Boolean);
-  if (tokens.length === 0) return null;
+// ---------------------------------------------------------------------------
+// 3. Proration & Attendance Extraction (Normalizer Engine)
+// ---------------------------------------------------------------------------
 
-  let total = 0;
-  let current = 0;
+export function extractProrationDetails(text: string): ProrationInfo {
+  let totalDays = 30;
+  let paidDays = 30;
+  let lwpDays = 0;
+  let isProrated = false;
+  let explanation = 'Full month salary (no LWP or proration detected)';
 
-  for (const token of tokens) {
-    if (wordMap[token] !== undefined) {
-      current += wordMap[token];
-    } else if (token === 'hundred') {
-      current = (current === 0 ? 1 : current) * 100;
-    } else if (token === 'thousand') {
-      total += (current === 0 ? 1 : current) * 1000;
-      current = 0;
-    } else if (token === 'lakh' || token === 'lakhs' || token === 'lac' || token === 'lacs') {
-      total += (current === 0 ? 1 : current) * 100000;
-      current = 0;
-    } else if (token === 'crore' || token === 'crores') {
-      total += (current === 0 ? 1 : current) * 10000000;
-      current = 0;
+  // Extract Total / Calendar Days in Month
+  const totalDaysMatch = text.match(/(?:calendar\s*days|total\s*days|month\s*days|days\s*in\s*month)[\s:=]+(\d+(?:\.\d+)?)/i);
+  if (totalDaysMatch) {
+    const val = parseFloat(totalDaysMatch[1]);
+    if (val >= 28 && val <= 31) totalDays = val;
+  }
+
+  // Extract Paid Days / Days Worked
+  const paidDaysMatch = text.match(/(?:paid\s*days|days\s*worked|present\s*days|payable\s*days|worked\s*days|days\s*payable)(?:\s*\([^)]*\))?[\s:=-]+(\d+(?:\.\d+)?)/i);
+  if (paidDaysMatch) {
+    const val = parseFloat(paidDaysMatch[1]);
+    if (val > 0 && val <= 31) paidDays = val;
+  }
+
+  // Extract LWP / Loss of Pay / Unpaid Days
+  const lwpMatch = text.match(/(?:leave\s*without\s*pay|loss\s*of\s*pay|lwp|lop|unpaid\s*days|absent\s*days)(?:\s*\([^)]*\))?[\s:=-]+(\d+(?:\.\d+)?)/i);
+  if (lwpMatch) {
+    const val = parseFloat(lwpMatch[1]);
+    if (val > 0 && val <= 31) lwpDays = val;
+  }
+
+  // Calculate proration
+  if (lwpDays > 0 && paidDays === 30 && !paidDaysMatch) {
+    paidDays = Math.max(1, totalDays - lwpDays);
+  }
+
+  if (paidDays < totalDays || lwpDays > 0) {
+    isProrated = true;
+    const factor = totalDays / Math.max(1, paidDays);
+    const roundedFactor = Math.round(factor * 1000) / 1000;
+    explanation = `${lwpDays > 0 ? `${lwpDays} days LWP` : 'Partial month'} detected (${paidDays}/${totalDays} paid days). Recurring earnings normalized by ${roundedFactor}x to full-month equivalent before annualizing.`;
+
+    return {
+      isProrated: true,
+      totalDays,
+      paidDays,
+      lwpDays,
+      prorationFactor: factor,
+      explanation
+    };
+  }
+
+  return {
+    isProrated: false,
+    totalDays,
+    paidDays: totalDays,
+    lwpDays: 0,
+    prorationFactor: 1.0,
+    explanation
+  };
+}
+
+// ---------------------------------------------------------------------------
+// 4. Component Identification & Separation (Fixed vs Variable / One-Time)
+// ---------------------------------------------------------------------------
+
+/**
+ * Extracts and separates one-time/variable payslip earnings (e.g. Annual Bonus,
+ * Arrears, Leave Encashment, Overtime, Relocation) from recurring monthly components.
+ */
+export function extractOneTimeAndVariableEarnings(text: string, lines: string[]): OneTimeOrVariableItem[] {
+  const items: OneTimeOrVariableItem[] = [];
+  const foundLabels = new Set<string>();
+
+  // Patterns for one-time/variable earnings
+  const variablePatterns: { regex: RegExp; category: OneTimeOrVariableItem['category']; defaultLabel: string }[] = [
+    {
+      regex: /(?:annual\s*bonus|yearly\s*bonus|ytd\s*bonus|annual\s*performance\s*bonus|annual\s*variable(?:\s*pay)?)(?:\s*\([^)]*\))?[\s:=-]+(?:target\s*|approx\s*|upto\s*)?(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i,
+      category: 'BONUS',
+      defaultLabel: 'Annual Bonus'
+    },
+    {
+      regex: /(?:salary\s*arrears?|basic\s*arrears?|hra\s*arrears?|da\s*arrears?|incentive\s*arrears?|\barrears?\b)(?:\s*\([^)]*\))?[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i,
+      category: 'ARREARS',
+      defaultLabel: 'Arrears'
+    },
+    {
+      regex: /(?:leave\s*encashment|el\s*encashment|leave\s*encash)(?:\s*\([^)]*\))?[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i,
+      category: 'LEAVE_ENCASHMENT',
+      defaultLabel: 'Leave Encashment'
+    },
+    {
+      regex: /(?:overtime(?:\s*allowance|\s*pay)?|\bot\s*pay\b|\bot\s*allowance\b)(?:\s*\([^)]*\))?[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i,
+      category: 'OVERTIME',
+      defaultLabel: 'Overtime'
+    },
+    {
+      regex: /(?:relocation\s*bonus|relocation\s*allowance|relocation\s*reimbursement)(?:\s*\([^)]*\))?[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i,
+      category: 'RELOCATION',
+      defaultLabel: 'Relocation Allowance'
+    },
+    {
+      regex: /(?:quarterly\s*incentive|quarterly\s*bonus|quarterly\s*variable)(?:\s*\([^)]*\))?[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i,
+      category: 'INCENTIVE',
+      defaultLabel: 'Quarterly Incentive'
+    },
+    {
+      regex: /(?:joining\s*bonus|sign-?on\s*bonus|retention\s*bonus|referral\s*bonus|spot\s*bonus|ex-?gratia)(?:\s*\([^)]*\))?[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i,
+      category: 'BONUS',
+      defaultLabel: 'One-Time Bonus'
+    }
+  ];
+
+  for (const { regex, category, defaultLabel } of variablePatterns) {
+    const match = text.match(regex);
+    if (match && match[1]) {
+      const amount = normalizeIndianNumber(match[1]);
+      if (amount && amount > 0 && !foundLabels.has(defaultLabel)) {
+        foundLabels.add(defaultLabel);
+        items.push({
+          label: defaultLabel,
+          amount,
+          category
+        });
+      }
     }
   }
 
-  total += current;
-  return total > 0 ? total : null;
+  // Also check line-by-line for any item containing "annual", "yearly", "one-time", "arrear", "encashment"
+  for (const line of lines) {
+    if (/annual|yearly|one-?time|lump-?sum|\bytd\b|encashment|arrears?/i.test(line) && !/total|gross|net\s*pay|ctc|deduction|tax|pf|tds/i.test(line)) {
+      const numMatch = line.match(/(?:inr|rs\.?|₹)?\s*([\d,]{3,9})/i);
+      if (numMatch) {
+        const val = normalizeIndianNumber(numMatch[1]);
+        const cleanLabel = line.split(/[\s:=-]+/)[0] || 'One-Time Component';
+        if (val && val > 0 && !foundLabels.has(cleanLabel) && !items.some(it => it.amount === val)) {
+          foundLabels.add(cleanLabel);
+          items.push({
+            label: cleanLabel,
+            amount: val,
+            category: /arrear/i.test(line) ? 'ARREARS' : /encash/i.test(line) ? 'LEAVE_ENCASHMENT' : 'BONUS'
+          });
+        }
+      }
+    }
+  }
+
+  return items;
 }
 
-// Check if a line is an address, company header, or identifier (to avoid picking PIN codes / Account Nos)
-function isAddressOrIdentifierLine(line: string): boolean {
-  const addressKeywords = [
-    'pin', 'pincode', 'pin code', 'road', 'street', 'floor', 'nagar', 'layout', 'sector', 'plot',
-    'building', 'tower', 'bangalore', 'bengaluru', 'hyderabad', 'mumbai', 'pune', 'delhi', 'chennai',
-    'noida', 'gurgaon', 'gurugram', 'kolkata', 'uan', 'pan', 'account', 'ifsc', 'pf no', 'member id',
-    'emp id', 'employee id', 'bank', 'branch', 'address', 'location', 'state', 'district', 'post', 'cin'
-  ];
-  const lower = line.toLowerCase();
-  return addressKeywords.some(kw => lower.includes(kw));
-}
+// ---------------------------------------------------------------------------
+// 5. Primary Extraction Pipeline & Math Engine
+// ---------------------------------------------------------------------------
 
-// Analyze raw extracted text from OCR / PDF using regex & pattern heuristics
 export function analyzeDocumentText(rawText: string, previewUrl?: string): ParseResult {
   const text = rawText || '';
-  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const cleanedText = maskNoiseIdentifiers(text);
+  const lines = cleanedText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+
   const fields: ExtractedField[] = [];
-  const inputs: Partial<SalaryInputs> = {};
+  const inputs: Partial<SalaryInputs> = { ...DEFAULT_SALARY_INPUTS };
+  const warnings: string[] = [];
 
-  // 1. Detect Document Type
-  let documentType: ParseResult['documentType'] = 'UNKNOWN';
-  if (/payslip|salary\s*slip|pay\s*advice|pay\s*summary|earnings\s*and\s*deductions|salary\s*statement|net\s*pay/i.test(text)) {
-    documentType = 'PAYSLIP';
-  } else if (/offer\s*letter|employment\s*offer|appointment\s*letter|compensation\s*annexure|cost\s*to\s*company/i.test(text)) {
-    documentType = 'OFFER_LETTER';
-  } else if (/form\s*16|certificate\s*under\s*section\s*203/i.test(text)) {
-    documentType = 'FORM_16';
-  } else if (/tax\s*computation|incometax\s*statement/i.test(text)) {
-    documentType = 'TAX_SHEET';
-  }
+  // Step 1: Classify Document
+  const classification = detectDocumentType(text);
+  const documentType = classification.type;
 
-  // 2. Detect Company / Employer Name
+  fields.push({
+    label: 'Document Classification',
+    key: 'documentType',
+    value: documentType,
+    formattedValue: documentType.replace('_', ' '),
+    confidence: classification.confidence,
+    sourceSnippet: classification.reasons.join(' · ')
+  });
+
+  // Step 2: Clean Employer Name Detection
   let detectedEmployer: string | undefined;
-  const employerRegex = /(?:at|with|joining|company|employer|organisation|organization)[:\s]+([A-Za-z0-9\s.,&-]+(?:Pvt\.?\s*Ltd\.?|Limited|LLC|Inc\.?|Technologies|Solutions|Software|Services|Corp|Corporation|Bank))/i;
-  const employerMatch = text.match(employerRegex);
-  if (employerMatch && employerMatch[1]) {
-    detectedEmployer = employerMatch[1].trim().replace(/\s+/g, ' ');
+  
+  // 1. Look for explicit company label prefixes (e.g. "Company: Rakuten India Pvt Ltd")
+  const explicitCompanyRegex = /(?:company(?:\s*name)?|employer(?:\s*name)?|organisation|organization|firm)[:\s]+([A-Za-z0-9\s.,&-]{3,50}?(?:Pvt\.?\s*Ltd\.?|Private\s+Limited|Limited|LLC|Inc\.?|Technologies|Solutions|Corporation|Corp))/i;
+  const explicitMatch = cleanedText.match(explicitCompanyRegex);
+  if (explicitMatch && explicitMatch[1]) {
+    const candidate = explicitMatch[1].trim().replace(/\s+/g, ' ');
+    if (candidate.length <= 50 && !/(?:earnings|deductions|basic|net\s*pay|month\s*of|rupees|slip)/i.test(candidate)) {
+      detectedEmployer = candidate;
+    }
   }
 
-  // 3. Detect Job Role / Designation
+  // 2. If not found, look for standard corporate suffixes directly in the first 250 characters
+  if (!detectedEmployer) {
+    const headerSnippet = cleanedText.slice(0, 250);
+    const companySuffixRegex = /\b([A-Z][A-Za-z0-9&.\s-]{2,45}?(?:Private\s+Limited|Pvt\.?\s*Ltd\.?|Limited|LLC|Inc\.?|Technologies|Solutions|Services|Corporation))\b/i;
+    const suffixMatch = headerSnippet.match(companySuffixRegex);
+    if (suffixMatch && suffixMatch[1]) {
+      const candidate = suffixMatch[1].trim().replace(/\s+/g, ' ');
+      // Verify candidate is clean and reasonable
+      if (candidate.length >= 3 && candidate.length <= 50 && !/(?:earnings|deductions|payslip|employee|joining|salary|slip|month)/i.test(candidate)) {
+        detectedEmployer = candidate;
+      }
+    }
+  }
+
+  // 3. Fallback: check individual split lines (< 60 chars)
+  if (!detectedEmployer) {
+    for (let i = 0; i < Math.min(4, lines.length); i++) {
+      const line = lines[i].trim();
+      if (line.length <= 60 && /(?:Pvt\.?\s*Ltd\.?|Private\s+Limited|Limited|LLC|Inc\.?|Technologies|Solutions|Services)/i.test(line)) {
+        const cleanedLine = line.replace(/[^\w\s.,&-]/g, '').trim();
+        if (!/(?:earnings|deductions|payslip|employee|joining|salary|slip|month)/i.test(cleanedLine)) {
+          detectedEmployer = cleanedLine;
+          break;
+        }
+      }
+    }
+  }
+
+  // Clean and truncate detected employer to max 45 chars
+  if (detectedEmployer) {
+    detectedEmployer = detectedEmployer.replace(/^(?:at|with|for|to)\s+/i, '').trim();
+    if (detectedEmployer.length > 45 || /(?:earnings|deductions|payslip|net\s*pay)/i.test(detectedEmployer)) {
+      detectedEmployer = undefined;
+    }
+  }
+
+  // Step 3: Designation / Role Detection
   let detectedDesignation: string | undefined;
-  const roleRegex = /(?:position|designation|role|title|appointed\s*as)[:\s]+([A-Za-z0-9\s.,&/-]+(?:Engineer|Developer|Architect|Manager|Lead|Analyst|Consultant|Scientist|Specialist|Associate|Designer|Director|VP|Officer))/i;
-  const roleMatch = text.match(roleRegex);
+  const roleRegex = /(?:position|designation|role|title|appointed\s*as)[:\s]+([A-Za-z0-9\s.,&/-]{2,40}?(?:Engineer(?:\s+[I|V|X]+)?|Developer|Architect|Manager|Lead|Analyst|Consultant|Scientist|Specialist|Associate|Designer|Director|VP|Executive))/i;
+  const roleMatch = cleanedText.match(roleRegex);
   if (roleMatch && roleMatch[1]) {
-    detectedDesignation = roleMatch[1].trim().replace(/\s+/g, ' ');
+    const candidate = roleMatch[1].trim().replace(/\s+/g, ' ');
+    const cleanCandidate = candidate.split(/(?:Bank|PAN|DOB|Date|Emp|PF|UAN|Gross|Basic)/i)[0].trim();
+    if (cleanCandidate.length >= 3 && cleanCandidate.length <= 40) {
+      detectedDesignation = cleanCandidate;
+    }
   }
 
-  // 4. Detect Work Location (State & Metro City)
+  // Step 4: Work Location (State & City for PT/HRA)
   let detectedLocation: string | undefined;
-  if (/bengaluru|bangalore|karnataka/i.test(text)) {
+  if (/bengaluru|bangalore|karnataka/i.test(cleanedText)) {
     detectedLocation = 'Bengaluru, Karnataka';
     inputs.stateCode = 'KA';
-    inputs.isMetroCity = false; // Bengaluru is Non-Metro for statutory HRA
-  } else if (/mumbai|navi\s*mumbai|pune|maharashtra/i.test(text)) {
-    const isMumbai = /mumbai/i.test(text);
+    inputs.isMetroCity = false;
+  } else if (/mumbai|navi\s*mumbai|pune|maharashtra/i.test(cleanedText)) {
+    const isMumbai = /mumbai/i.test(cleanedText);
     detectedLocation = isMumbai ? 'Mumbai, Maharashtra' : 'Pune, Maharashtra';
     inputs.stateCode = 'MH';
-    inputs.isMetroCity = isMumbai; // Mumbai is Metro
-  } else if (/delhi|gurgaon|gurugram|noida|faridabad|ncr/i.test(text)) {
-    const isDelhi = /delhi/i.test(text);
+    inputs.isMetroCity = isMumbai;
+  } else if (/delhi|gurgaon|gurugram|noida|faridabad|ncr/i.test(cleanedText)) {
+    const isDelhi = /delhi/i.test(cleanedText);
     detectedLocation = isDelhi ? 'New Delhi (NCR)' : 'Gurugram / Noida (NCR)';
-    inputs.stateCode = isDelhi ? 'DL' : /gurgaon|gurugram/i.test(text) ? 'HR' : 'UP';
+    inputs.stateCode = isDelhi ? 'DL' : /gurgaon|gurugram/i.test(cleanedText) ? 'HR' : 'UP';
     inputs.isMetroCity = isDelhi;
-  } else if (/hyderabad|secunderabad|telangana/i.test(text)) {
+  } else if (/hyderabad|secunderabad|telangana/i.test(cleanedText)) {
     detectedLocation = 'Hyderabad, Telangana';
     inputs.stateCode = 'TS';
     inputs.isMetroCity = false;
-  } else if (/chennai|tamil\s*nadu/i.test(text)) {
+  } else if (/chennai|tamil\s*nadu/i.test(cleanedText)) {
     detectedLocation = 'Chennai, Tamil Nadu';
     inputs.stateCode = 'TN';
     inputs.isMetroCity = true;
-  } else if (/kolkata|calcutta|west\s*bengal/i.test(text)) {
+  } else if (/kolkata|calcutta|west\s*bengal/i.test(cleanedText)) {
     detectedLocation = 'Kolkata, West Bengal';
     inputs.stateCode = 'WB';
     inputs.isMetroCity = true;
@@ -190,378 +599,531 @@ export function analyzeDocumentText(rawText: string, previewUrl?: string): Parse
     });
   }
 
-  // ==========================================
-  // 5. EXTRACT PAYSLIP SPECIFIC MONTHLY VALUES
-  // ==========================================
-  let detectedMonthlyNet: number | undefined;
-  let detectedMonthlyGross: number | undefined;
-  let detectedMonthlyBasic: number | undefined;
-  let detectedMonthlyHra: number | undefined;
-  let detectedMonthlyPf: number | undefined;
-  let detectedMonthlyPt: number | undefined;
-  let detectedMonthlyTds: number | undefined;
+  // Step 5: Execute Specialized Parsing Engine by Document Type
 
-  // A. Net Pay / Take Home (e.g., Net Pay, Net Salary, Take Home Pay, Net Amount Credited)
-  const netPayPatterns = [
-    /(?:net\s*pay(?:able)?|net\s*salary|take\s*home(?:\s*pay)?|net\s*amount(?:\s*credited)?|amount\s*transferred(?:\s*to\s*bank)?|net\s*disbursement|total\s*net\s*pay)[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i,
-    /(?:inr|rs\.?|₹)\s*([\d,]+(?:\.\d+)?)\s*(?:credited|transferred\s*to\s*bank|net\s*pay)/i
-  ];
+  let finalAnnualCtc = 0;
+  let finalAnnualGross = 0;
+  let finalMonthlyGross = 0;
+  let fixedMonthlyGross = 0;
+  let normalizedFixedMonthlyGross = 0;
+  let actualMonthlyGross: number | undefined;
+  let monthlyNetPay: number | undefined;
+  let prorationInfo: ProrationInfo | undefined;
+  let oneTimeAndVariableItems: OneTimeOrVariableItem[] = [];
+  let totalOneTimeVariableAmount = 0;
 
-  for (const pattern of netPayPatterns) {
-    const match = text.match(pattern);
-    if (match && match[1]) {
-      const val = normalizeIndianNumber(match[1]);
-      if (val && val >= 5000 && val <= 5000000) {
-        detectedMonthlyNet = val;
-        fields.push({
-          label: 'Monthly Net Take-Home (Payslip)',
-          key: 'monthlyNetPay',
-          value: val,
-          formattedValue: `₹${val.toLocaleString('en-IN')}/month`,
-          confidence: 'HIGH',
-          sourceSnippet: match[0]
-        });
-        break;
-      }
-    }
-  }
+  // Breakdown sub-objects
+  let basicMonthly = 0;
+  let basicAnnual = 0;
+  let hraMonthly = 0;
+  let hraAnnual = 0;
+  let specialMonthly = 0;
+  let specialAnnual = 0;
+  let conveyanceMonthly = 0;
+  let conveyanceAnnual = 0;
+  let medicalMonthly = 0;
+  let medicalAnnual = 0;
+  let variablePayAnnual = 0;
+  let joiningBonus = 0;
+  let relocationBonus = 0;
+  let esopRsuAnnual = 0;
 
-  // B. Net Pay in Words Fallback (e.g. "Net Pay in Words: Rupees Eighty Five Thousand Four Hundred Only")
-  if (!detectedMonthlyNet) {
-    const wordsMatch = text.match(/(?:net\s*pay\s*in\s*words|amount\s*in\s*words|net\s*amount\s*in\s*words|rupees\s*in\s*words)[\s:=-]+(?:inr|rs\.?|₹)?\s*([a-zA-Z\s-]+(?:only)?)/i);
-    if (wordsMatch && wordsMatch[1]) {
-      const valFromWords = parseIndianWordsToNumber(wordsMatch[1]);
-      if (valFromWords && valFromWords >= 5000 && valFromWords <= 5000000) {
-        detectedMonthlyNet = valFromWords;
-        fields.push({
-          label: 'Monthly Net Take-Home (From Words)',
-          key: 'monthlyNetPay',
-          value: valFromWords,
-          formattedValue: `₹${valFromWords.toLocaleString('en-IN')}/month`,
-          confidence: 'HIGH',
-          sourceSnippet: wordsMatch[0]
-        });
-      }
-    }
-  }
+  let employeePfMonthly = 0;
+  let employeePfAnnual = 0;
+  let ptMonthly = 0;
+  let ptAnnual = 0;
+  let tdsMonthly = 0;
+  let tdsAnnualProjected = 0;
+  let totalDeductionsMonthly = 0;
 
-  // C. Gross Earnings / Total Earnings
-  const grossPatterns = [
-    /(?:gross\s*earnings|total\s*earnings|gross\s*pay|gross\s*salary|total\s*gross(?:\s*earnings)?)[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i
-  ];
-  for (const pattern of grossPatterns) {
-    const match = text.match(pattern);
-    if (match && match[1]) {
-      const val = normalizeIndianNumber(match[1]);
-      if (val && val >= 5000 && val <= 10000000) {
-        detectedMonthlyGross = val;
-        fields.push({
-          label: 'Monthly Gross Earnings',
-          key: 'monthlyGrossPay',
-          value: val,
-          formattedValue: `₹${val.toLocaleString('en-IN')}/month`,
-          confidence: 'HIGH',
-          sourceSnippet: match[0]
-        });
-        break;
-      }
-    }
-  }
+  let employerPfAnnual = 0;
+  let gratuityAnnual = 0;
 
-  // D. Basic Salary (Monthly or Annual)
-  const basicMatch = text.match(/(?:basic\s*salary|basic\s*pay|\bbasic\b)[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i);
-  if (basicMatch && basicMatch[1]) {
-    const val = normalizeIndianNumber(basicMatch[1]);
-    if (val && val > 0) {
-      detectedMonthlyBasic = val;
-    }
-  }
+  if (documentType === 'PAYSLIP') {
+    // -----------------------------------------------------------------------
+    // PAYSLIP NORMALIZATION & NON-RECURRING ISOLATION ENGINE
+    // -----------------------------------------------------------------------
+    prorationInfo = extractProrationDetails(cleanedText);
 
-  // E. HRA (Monthly or Annual)
-  const hraMatch = text.match(/(?:house\s*rent\s*allowance|\bhra\b)[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i);
-  if (hraMatch && hraMatch[1]) {
-    const val = normalizeIndianNumber(hraMatch[1]);
-    if (val && val > 0) {
-      detectedMonthlyHra = val;
-    }
-  }
-
-  // F. Employee PF Deduction
-  const pfMatch = text.match(/(?:provident\s*fund|epf|pf\s*deduction|employee\s*pf|\bpf\b)[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i);
-  if (pfMatch && pfMatch[1]) {
-    const val = normalizeIndianNumber(pfMatch[1]);
-    if (val && val > 0 && val <= 100000) {
-      detectedMonthlyPf = val;
-      if (val === 1800) {
-        inputs.epfCapped = true;
-      }
-    }
-  }
-
-  // G. Professional Tax (PT)
-  const ptMatch = text.match(/(?:professional\s*tax|p\.?t\.?|prof\s*tax)[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i);
-  if (ptMatch && ptMatch[1]) {
-    const val = normalizeIndianNumber(ptMatch[1]);
-    if (val && val > 0 && val <= 5000) {
-      detectedMonthlyPt = val;
-    }
-  }
-
-  // H. Income Tax / TDS
-  const tdsMatch = text.match(/(?:income\s*tax|tds|tax\s*deducted(?:\s*at\s*source)?)[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i);
-  if (tdsMatch && tdsMatch[1]) {
-    const val = normalizeIndianNumber(tdsMatch[1]);
-    if (val && val > 0) {
-      detectedMonthlyTds = val;
-    }
-  }
-
-  // ==========================================
-  // 6. DETECT ANNUAL CTC (FROM OFFER OR PAYSLIP)
-  // ==========================================
-  let ctcFound: number | null = null;
-  const isMonthlyPayslip = documentType === 'PAYSLIP' || !!detectedMonthlyNet || !!detectedMonthlyGross;
-
-  // Check explicit Annual CTC patterns (Offer Letters)
-  const ctcPatterns = [
-    /(?:cost\s*to\s*company|total\s*ctc|annual\s*ctc|total\s*compensation|total\s*fixed\s*pay|total\s*gross\s*package|fixed\s*ctc|annual\s*package|total\s*remuneration|ctc\s*\(inr\)|annual\s*target\s*cash)[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?\s*(?:lpa|lacs?|lakhs?|cr|per annum|\/annum|\/yr)?)/i,
-    /(?:inr|rs\.?|₹)\s*([\d,]+(?:\.\d+)?)\s*(?:lpa|lakhs?|per\s*annum|\/annum|\/yr)\s*(?:ctc|compensation|package)?/i,
-    /(?:package\s*of|compensation\s*of)\s*(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?\s*(?:lpa|lacs?|lakhs?|cr))/i,
-    /\b([\d.]+)\s*lpa\b/i
-  ];
-
-  for (const pattern of ctcPatterns) {
-    const match = text.match(pattern);
-    if (match && match[1]) {
-      const val = normalizeIndianNumber(match[1]);
-      if (val && val >= 100000 && val <= 100000000) {
-        ctcFound = val;
-        fields.push({
-          label: 'Annual Cost to Company (CTC)',
-          key: 'annualCtc',
-          value: val,
-          formattedValue: `₹${val.toLocaleString('en-IN')}`,
-          confidence: 'HIGH',
-          sourceSnippet: match[0]
-        });
-        break;
-      }
-    }
-  }
-
-  // SMART PAYSLIP ANNUALIZER:
-  // If it's a monthly payslip (no explicit annual CTC), compute Annual CTC from Gross Monthly
-  if (!ctcFound && (detectedMonthlyGross || detectedMonthlyNet)) {
-    if (detectedMonthlyGross) {
-      // Annual CTC = (Monthly Gross + Employer PF + Gratuity Provision) * 12
-      const employerPfMonthly = detectedMonthlyPf 
-        ? detectedMonthlyPf 
-        : (detectedMonthlyBasic ? Math.round(detectedMonthlyBasic * 0.12) : Math.round(detectedMonthlyGross * 0.05));
-      const gratuityMonthly = detectedMonthlyBasic 
-        ? Math.round((15 / 26) * (detectedMonthlyBasic / 12)) 
-        : Math.round(detectedMonthlyGross * 0.45 * 0.0481 / 12);
-      
-      const computedAnnualCtc = Math.round((detectedMonthlyGross + employerPfMonthly + gratuityMonthly) * 12);
-      ctcFound = computedAnnualCtc;
-
+    if (prorationInfo.isProrated) {
       fields.push({
-        label: 'Annual CTC (Annualized from Monthly Gross)',
-        key: 'annualCtc',
-        value: computedAnnualCtc,
-        formattedValue: `₹${computedAnnualCtc.toLocaleString('en-IN')} (₹${(computedAnnualCtc / 100000).toFixed(2)} LPA)`,
+        label: 'Proration & LWP Adjustment',
+        key: 'prorationSummary',
+        value: prorationInfo.prorationFactor,
+        formattedValue: prorationInfo.explanation,
         confidence: 'HIGH',
-        sourceSnippet: `Computed from Monthly Gross ₹${detectedMonthlyGross.toLocaleString('en-IN')} + Employer PF ₹${employerPfMonthly.toLocaleString('en-IN')} + Gratuity ₹${gratuityMonthly.toLocaleString('en-IN')}`
-      });
-    } else if (detectedMonthlyNet) {
-      // Rough annual gross-up from Net Pay
-      const estimatedAnnualCtc = Math.round(detectedMonthlyNet * 12 * 1.15);
-      ctcFound = estimatedAnnualCtc;
-
-      fields.push({
-        label: 'Annual CTC (Estimated from Net Pay)',
-        key: 'annualCtc',
-        value: estimatedAnnualCtc,
-        formattedValue: `₹${estimatedAnnualCtc.toLocaleString('en-IN')} (₹${(estimatedAnnualCtc / 100000).toFixed(2)} LPA)`,
-        confidence: 'MEDIUM',
-        sourceSnippet: `Estimated from Monthly Net Take-Home ₹${detectedMonthlyNet.toLocaleString('en-IN')}`
+        sourceSnippet: `Paid: ${prorationInfo.paidDays}/${prorationInfo.totalDays}, LWP: ${prorationInfo.lwpDays}`
       });
     }
-  }
 
-  // Fallback scanner with strict ADDRESS & PINCODE filter
-  if (!ctcFound) {
-    for (const line of lines) {
-      if (isAddressOrIdentifierLine(line)) continue; // SKIP ADDRESS & PINCODE LINES!
+    // 1. Identify One-Time / Variable Components (Bonus, Arrears, Overtime, Leave Encashment, etc.)
+    oneTimeAndVariableItems = extractOneTimeAndVariableEarnings(cleanedText, lines);
+    totalOneTimeVariableAmount = oneTimeAndVariableItems.reduce((sum, item) => sum + item.amount, 0);
 
-      if (/ctc|gross|total\s*pay|fixed\s*pay/i.test(line)) {
-        const numMatch = line.match(/(?:inr|rs\.?|₹)?\s*([\d,]{6,12})/i);
-        if (numMatch) {
-          const val = normalizeIndianNumber(numMatch[1]);
-          // Ignore standard 6-digit pin codes like 560027 or 110001
-          const isPincode = /^[1-9][0-9]{5}$/.test(numMatch[1].replace(/,/g, '').trim());
-          if (val && val >= 100000 && val <= 100000000 && !isPincode) {
-            ctcFound = val;
-            fields.push({
-              label: 'Annual CTC (Detected from Table)',
-              key: 'annualCtc',
-              value: val,
-              formattedValue: `₹${val.toLocaleString('en-IN')}`,
-              confidence: 'MEDIUM',
-              sourceSnippet: line
-            });
-            break;
+    if (totalOneTimeVariableAmount > 0) {
+      const summaryLabels = oneTimeAndVariableItems.map(i => `${i.label} (₹${i.amount.toLocaleString('en-IN')})`).join(', ');
+      fields.push({
+        label: 'One-Time & Variable Components (Isolated)',
+        key: 'variableComponentsSummary',
+        value: totalOneTimeVariableAmount,
+        formattedValue: `₹${totalOneTimeVariableAmount.toLocaleString('en-IN')} total [${summaryLabels}]`,
+        confidence: 'HIGH',
+        sourceSnippet: `Isolated ${oneTimeAndVariableItems.length} non-recurring component(s). Added once without 12x multiplication.`
+      });
+    }
+
+    // 2. Extract Monthly Gross Earnings from Payslip
+    let extractedGross: number | null = null;
+    const grossPatterns = [
+      /(?:gross\s*(?:earnings|salary|pay|remuneration|amount)?|total\s*earnings)(?:\s*\([^)]*\))?[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i,
+      /(?:inr|rs\.?|₹)\s*([\d,]+(?:\.\d+)?)\s*(?:gross\s*pay|gross\s*salary|total\s*earnings)/i
+    ];
+
+    for (const pat of grossPatterns) {
+      const match = cleanedText.match(pat);
+      if (match && match[1]) {
+        const val = normalizeIndianNumber(match[1]);
+        if (val && val >= 5000 && val <= 10000000) {
+          extractedGross = val;
+          break;
+        }
+      }
+    }
+
+    // 3. Extract Monthly Basic Salary
+    const basicMatch = cleanedText.match(/(?:basic\s*(?:salary|pay)?|basic)(?:\s*\([^)]*\))?[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i);
+    let extractedBasic: number | null = null;
+    if (basicMatch && basicMatch[1]) {
+      const val = normalizeIndianNumber(basicMatch[1]);
+      if (val && val >= 3000 && val <= 5000000) {
+        extractedBasic = val;
+      }
+    }
+
+    // 4. Extract Monthly HRA
+    const hraMatch = cleanedText.match(/(?:house\s*rent\s*allowance|hra)(?:\s*\([^)]*\))?[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i);
+    let extractedHra: number | null = null;
+    if (hraMatch && hraMatch[1]) {
+      const val = normalizeIndianNumber(hraMatch[1]);
+      if (val && val > 0 && val <= 5000000) {
+        extractedHra = val;
+      }
+    }
+
+    // 5. Extract Special Allowance
+    const specialMatch = cleanedText.match(/(?:special\s*allowance|spl\s*allowance|personal\s*allowance|flexi\s*allowance)(?:\s*\([^)]*\))?[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i);
+    let extractedSpecial: number | null = null;
+    if (specialMatch && specialMatch[1]) {
+      const val = normalizeIndianNumber(specialMatch[1]);
+      if (val && val > 0 && val <= 5000000) {
+        extractedSpecial = val;
+      }
+    }
+
+    // 6. Extract Transport / Conveyance Allowance
+    const conveyanceMatch = cleanedText.match(/(?:transport\s*allowance|conveyance\s*allowance|conveyance|travel\s*allowance)(?:\s*\([^)]*\))?[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i);
+    if (conveyanceMatch && conveyanceMatch[1]) {
+      const val = normalizeIndianNumber(conveyanceMatch[1]);
+      if (val && val > 0 && val <= 5000000) {
+        conveyanceMonthly = val;
+        conveyanceAnnual = val * 12;
+      }
+    }
+
+    // 7. Extract Medical Allowance
+    const medicalMatch = cleanedText.match(/(?:medical\s*allowance|health\s*allowance)(?:\s*\([^)]*\))?[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i);
+    if (medicalMatch && medicalMatch[1]) {
+      const val = normalizeIndianNumber(medicalMatch[1]);
+      if (val && val > 0 && val <= 5000000) {
+        medicalMonthly = val;
+        medicalAnnual = val * 12;
+      }
+    }
+
+    // If gross was not explicitly matched, sum up known earnings
+    const sumFixedEarnings = (extractedBasic || 0) + (extractedHra || 0) + (extractedSpecial || 0) + conveyanceMonthly + medicalMonthly;
+    if (!extractedGross && sumFixedEarnings > 0) {
+      extractedGross = sumFixedEarnings + totalOneTimeVariableAmount;
+    }
+
+    // Fallback if still no gross found: look for highest positive earnings line
+    if (!extractedGross) {
+      for (const line of lines) {
+        if (/earnings|allowance|pay/i.test(line) && !/deduction|pf|tax|loan/i.test(line)) {
+          const numMatch = line.match(/(?:inr|rs\.?|₹)?\s*([\d,]{4,9})/i);
+          if (numMatch) {
+            const val = normalizeIndianNumber(numMatch[1]);
+            if (val && val >= 10000 && val <= 5000000) {
+              extractedGross = val;
+              break;
+            }
           }
         }
       }
     }
-  }
 
-  if (ctcFound) {
-    inputs.annualCtc = ctcFound;
-  }
+    actualMonthlyGross = extractedGross || 50000;
+    finalMonthlyGross = actualMonthlyGross;
 
-  // 7. Calculate Basic Salary Percentage accurately
-  if (detectedMonthlyBasic && ctcFound) {
-    const annualBasic = detectedMonthlyBasic > 100000 ? detectedMonthlyBasic : detectedMonthlyBasic * 12;
-    const percent = Math.round((annualBasic / ctcFound) * 100);
-    if (percent >= 20 && percent <= 70) {
-      inputs.basicPercent = percent;
-      fields.push({
-        label: 'Basic Salary Percentage',
-        key: 'basicPercent',
-        value: percent,
-        formattedValue: `${percent}% (₹${annualBasic.toLocaleString('en-IN')}/yr)`,
-        confidence: 'HIGH',
-        sourceSnippet: `Basic: ₹${detectedMonthlyBasic.toLocaleString('en-IN')}`
-      });
-    }
-  }
-
-  // 8. Detect Variable Bonus / Annual Performance Bonus
-  const bonusMatch = text.match(/(?:variable\s*pay|performance\s*bonus|target\s*bonus|annual\s*variable|performance\s*incentive|annual\s*bonus)[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?\s*(?:lpa|lacs?|lakhs?)?)/i);
-  if (bonusMatch && bonusMatch[1]) {
-    const val = normalizeIndianNumber(bonusMatch[1]);
-    if (val && val > 0 && val < (inputs.annualCtc || 10000000)) {
-      inputs.variableBonusAnnual = val;
-      fields.push({
-        label: 'Annual Variable / Performance Bonus',
-        key: 'variableBonusAnnual',
-        value: val,
-        formattedValue: `₹${val.toLocaleString('en-IN')}`,
-        confidence: 'HIGH',
-        sourceSnippet: bonusMatch[0]
-      });
-    }
-  }
-
-  // 9. Detect Joining / Sign-On Bonus
-  const joiningMatch = text.match(/(?:joining\s*bonus|sign-?on\s*bonus|relocation\s*bonus|retention\s*bonus)[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?\s*(?:lpa|lacs?|lakhs?)?)/i);
-  if (joiningMatch && joiningMatch[1]) {
-    const val = normalizeIndianNumber(joiningMatch[1]);
-    if (val && val > 0 && val < (inputs.annualCtc || 10000000)) {
-      inputs.joiningBonusAnnual = val;
-      fields.push({
-        label: 'Joining / Sign-on Bonus',
-        key: 'joiningBonusAnnual',
-        value: val,
-        formattedValue: `₹${val.toLocaleString('en-IN')}`,
-        confidence: 'HIGH',
-        sourceSnippet: joiningMatch[0]
-      });
-    }
-  }
-
-  // 10. Detect RSU / Stock Grants
-  const rsuMatch = text.match(/(?:rsu|esop|stock\s*grant|equity\s*grant|restricted\s*stock\s*units?)[\s:=-]+(?:inr|rs\.?|₹|\$|usd)?\s*([\d,]+(?:\.\d+)?\s*(?:lpa|lacs?|lakhs?|cr)?)/i);
-  if (rsuMatch && rsuMatch[1]) {
-    const val = normalizeIndianNumber(rsuMatch[1]);
-    if (val && val > 0) {
-      let annualRsu = val;
-      if (/4\s*years?|over\s*4\s*years/i.test(text)) {
-        annualRsu = Math.round(val / 4);
+    // 8. Separate Fixed Monthly Gross from One-Time / Variable
+    if (totalOneTimeVariableAmount > 0) {
+      if (sumFixedEarnings > 0) {
+        fixedMonthlyGross = sumFixedEarnings;
+      } else {
+        fixedMonthlyGross = Math.max(0, actualMonthlyGross - totalOneTimeVariableAmount);
       }
-      inputs.rsuVestedAnnual = annualRsu;
-      fields.push({
-        label: 'Annual Vested RSUs / Stocks',
-        key: 'rsuVestedAnnual',
-        value: annualRsu,
-        formattedValue: `₹${annualRsu.toLocaleString('en-IN')}/yr`,
-        confidence: 'MEDIUM',
-        sourceSnippet: rsuMatch[0]
-      });
+    } else {
+      fixedMonthlyGross = actualMonthlyGross;
     }
-  }
 
-  // 11. Detect EPF Rules & Gratuity
-  if (/pf\s*capped|1800\s*pm|15000\s*ceiling|statutory\s*pf/i.test(text)) {
-    inputs.epfCapped = true;
-    fields.push({
-      label: 'EPF Mode',
-      key: 'epfCapped',
-      value: true,
-      formattedValue: 'Capped at ₹1,800/month',
-      confidence: 'HIGH',
-      sourceSnippet: 'Detected statutory PF capping'
-    });
-  }
+    // 9. Apply Proration Factor strictly to Fixed Monthly Recurring Components
+    normalizedFixedMonthlyGross = Math.round(fixedMonthlyGross * prorationInfo.prorationFactor);
 
-  if (/gratuity/i.test(text)) {
+    if (extractedBasic) {
+      basicMonthly = Math.round(extractedBasic * prorationInfo.prorationFactor);
+    } else {
+      basicMonthly = Math.round(normalizedFixedMonthlyGross * 0.50);
+    }
+    basicAnnual = basicMonthly * 12;
+
+    if (extractedHra) {
+      hraMonthly = Math.round(extractedHra * prorationInfo.prorationFactor);
+      hraAnnual = hraMonthly * 12;
+    }
+    if (extractedSpecial) {
+      specialMonthly = Math.round(extractedSpecial * prorationInfo.prorationFactor);
+      specialAnnual = specialMonthly * 12;
+    }
+
+    // 10. Annual Gross Calculation:
+    // Annual Gross = (Sum of Fixed Monthly Components × 12) + (Sum of Variable/One-Time Components)
+    finalAnnualGross = (normalizedFixedMonthlyGross * 12) + totalOneTimeVariableAmount;
+
+    // 11. Extract Deductions (Employee PF, PT, TDS, Total Deductions)
+    const pfMatch = cleanedText.match(/(?:provident\s*fund|epf|pf\s*(?:deduction|contribution|employee)?|e-pf)(?:\s*\([^)]*\))?[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i);
+    if (pfMatch && pfMatch[1]) {
+      const val = normalizeIndianNumber(pfMatch[1]);
+      if (val && val > 0 && val < finalMonthlyGross) {
+        employeePfMonthly = val;
+        employeePfAnnual = val * 12;
+      }
+    }
+
+    const ptMatch = cleanedText.match(/(?:professional\s*tax|profession\s*tax|prof\s*tax|pt)(?:\s*\([^)]*\))?[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i);
+    if (ptMatch && ptMatch[1]) {
+      const val = normalizeIndianNumber(ptMatch[1]);
+      if (val && val > 0 && val <= 2500) {
+        ptMonthly = val;
+        ptAnnual = val * 12;
+      }
+    }
+
+    const tdsMatch = cleanedText.match(/(?:income\s*tax|tax\s*deducted(?:\s*at\s*source)?|tds|it\s*deduction|i\.?\s*tax)(?:\s*\([^)]*\))?[\s:=-]+(?:target\s*|approx\s*|upto\s*)?(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i);
+    if (tdsMatch && tdsMatch[1]) {
+      const val = normalizeIndianNumber(tdsMatch[1]);
+      if (val && val > 0 && val < finalMonthlyGross) {
+        tdsMonthly = val;
+        tdsAnnualProjected = val * 12;
+        fields.push({
+          label: 'Monthly TDS (Tax Deducted at Source)',
+          key: 'monthlyTds',
+          value: val,
+          formattedValue: `₹${val.toLocaleString('en-IN')}/mo (Projected ₹${tdsAnnualProjected.toLocaleString('en-IN')}/yr)`,
+          confidence: 'HIGH',
+          sourceSnippet: tdsMatch[0]
+        });
+      }
+    }
+
+    const netMatch = cleanedText.match(/(?:net\s*(?:take\s*home\s*pay|take\s*home|pay|salary|amount)|take\s*home\s*pay|take\s*home|amount\s*credited)(?:\s*\([^)]*\))?[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i);
+    if (netMatch && netMatch[1]) {
+      const val = normalizeIndianNumber(netMatch[1]);
+      if (val && val > 0 && val <= finalMonthlyGross) {
+        monthlyNetPay = val;
+        fields.push({
+          label: 'Monthly Net Take-Home Pay',
+          key: 'monthlyNetPay',
+          value: val,
+          formattedValue: `₹${val.toLocaleString('en-IN')}/mo`,
+          confidence: 'HIGH',
+          sourceSnippet: netMatch[0]
+        });
+      }
+    }
+
+    // 12. Calculate Employer Benefits & Project True Annual CTC
+    const isEpfCapped = /pf\s*capped|1800\s*pm|15000\s*ceiling|statutory\s*pf/i.test(cleanedText) || employeePfMonthly === 1800;
+    inputs.epfCapped = isEpfCapped;
+
+    if (isEpfCapped) {
+      employerPfAnnual = 21600;
+    } else {
+      employerPfAnnual = Math.round(basicAnnual * 0.12);
+    }
+
+    // Statutory Gratuity Provision (15/26 rule = ~4.81% of Basic)
+    gratuityAnnual = Math.round(basicAnnual * (15 / (26 * 12)));
     inputs.includeGratuity = true;
+
+    // Projected Annual CTC = Base Annual Gross + Employer PF + Gratuity
+    finalAnnualCtc = finalAnnualGross + employerPfAnnual + gratuityAnnual;
+
+    // Calculate Basic Percentage of CTC
+    const basicPct = Math.min(70, Math.max(30, Math.round((basicAnnual / finalAnnualCtc) * 100)));
+    inputs.annualCtc = finalAnnualCtc;
+    inputs.basicPercent = basicPct;
+    if (totalOneTimeVariableAmount > 0) {
+      inputs.variableBonusAnnual = totalOneTimeVariableAmount;
+    }
+
+    fields.push({
+      label: 'Annual Cost to Company (Projected CTC)',
+      key: 'annualCtc',
+      value: finalAnnualCtc,
+      formattedValue: `₹${finalAnnualCtc.toLocaleString('en-IN')}/yr (Gross ₹${finalAnnualGross.toLocaleString('en-IN')})`,
+      confidence: 'HIGH',
+      sourceSnippet: `Projected from Fixed Monthly (₹${normalizedFixedMonthlyGross.toLocaleString('en-IN')} × 12) + One-time (₹${totalOneTimeVariableAmount.toLocaleString('en-IN')}) + Employer PF + Gratuity`
+    });
+
+  } else {
+    // -----------------------------------------------------------------------
+    // OFFER LETTER / APPRAISAL LETTER / ANNUAL PACKAGE ENGINE
+    // -----------------------------------------------------------------------
+
+    // A. Detect Annual CTC directly (Do NOT multiply by 12)
+    let ctcFound: number | null = null;
+    const ctcPatterns = [
+      /(?:cost\s*to\s*company|total\s*ctc|annual\s*ctc|total\s*compensation|total\s*fixed\s*pay|total\s*gross\s*package|fixed\s*ctc|annual\s*package|total\s*remuneration|ctc|annual\s*target\s*cash|revised\s*ctc)(?:\s*\([^)]*\))?[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?\s*(?:lpa|lacs?|lakhs?|cr|per\s*annum|\/annum|\/yr)?)/i,
+      /(?:inr|rs\.?|₹)\s*([\d,]+(?:\.\d+)?)\s*(?:lpa|lakhs?|per\s*annum|\/annum|\/yr)\s*(?:ctc|compensation|package)?/i,
+      /(?:package\s*of|compensation\s*of)\s*(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?\s*(?:lpa|lacs?|lakhs?|cr))/i,
+      /\b([\d.]+)\s*lpa\b/i
+    ];
+
+    for (const pat of ctcPatterns) {
+      const match = cleanedText.match(pat);
+      if (match && match[1]) {
+        const val = normalizeIndianNumber(match[1]);
+        if (val && val >= 100000 && val <= 100000000) {
+          ctcFound = val;
+          fields.push({
+            label: 'Annual Cost to Company (CTC)',
+            key: 'annualCtc',
+            value: val,
+            formattedValue: `₹${val.toLocaleString('en-IN')}`,
+            confidence: 'HIGH',
+            sourceSnippet: match[0]
+          });
+          break;
+        }
+      }
+    }
+
+    // Fallback: Check highest annual figure adjacent to financial labels
+    if (!ctcFound) {
+      for (const line of lines) {
+        if (/ctc|gross|total|fixed|remuneration/i.test(line) && hasFinancialProximity(line)) {
+          const numMatch = line.match(/(?:inr|rs\.?|₹)?\s*([\d,]{6,10})/i);
+          if (numMatch) {
+            const val = normalizeIndianNumber(numMatch[1]);
+            if (val && val >= 200000 && val <= 100000000) {
+              ctcFound = val;
+              fields.push({
+                label: 'Annual CTC (Extracted from Table)',
+                key: 'annualCtc',
+                value: val,
+                formattedValue: `₹${val.toLocaleString('en-IN')}`,
+                confidence: 'MEDIUM',
+                sourceSnippet: line
+              });
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    finalAnnualCtc = ctcFound || 1200000;
+    inputs.annualCtc = finalAnnualCtc;
+
+    // B. Detect Basic Salary & Percentage
+    const basicMatch = cleanedText.match(/(?:basic\s*salary|basic\s*pay|basic)(?:\s*\([^)]*\))?[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?)/i);
+    if (basicMatch && basicMatch[1]) {
+      const rawBasic = normalizeIndianNumber(basicMatch[1]);
+      if (rawBasic && rawBasic > 0) {
+        let annualB = rawBasic;
+        if (rawBasic < finalAnnualCtc * 0.15) {
+          // Stated as monthly in the offer breakdown table
+          annualB = rawBasic * 12;
+        }
+        basicAnnual = annualB;
+        basicMonthly = Math.round(annualB / 12);
+        const percent = Math.min(70, Math.max(30, Math.round((annualB / finalAnnualCtc) * 100)));
+        inputs.basicPercent = percent;
+        fields.push({
+          label: 'Basic Salary Percentage',
+          key: 'basicPercent',
+          value: percent,
+          formattedValue: `${percent}% (₹${annualB.toLocaleString('en-IN')}/yr)`,
+          confidence: 'HIGH',
+          sourceSnippet: basicMatch[0]
+        });
+      }
+    } else {
+      inputs.basicPercent = 50;
+      basicAnnual = Math.round(finalAnnualCtc * 0.50);
+      basicMonthly = Math.round(basicAnnual / 12);
+    }
+
+    // C. Detect One-Time & Variable Incentives
+    // Variable Performance Bonus
+    const bonusMatch = cleanedText.match(/(?:(?:annual\s*)?(?:performance\s*)?variable\s*(?:pay|bonus|incentive)|performance\s*bonus|target\s*bonus|annual\s*variable|performance\s*incentive|annual\s*bonus)(?:\s*\([^)]*\))?[\s:=-]+(?:target\s*|approx\s*|upto\s*|max\s*)?(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?\s*(?:lpa|lacs?|lakhs?)?)/i);
+    if (bonusMatch && bonusMatch[1]) {
+      const val = normalizeIndianNumber(bonusMatch[1]);
+      if (val && val > 0 && val < finalAnnualCtc) {
+        variablePayAnnual = val;
+        inputs.variableBonusAnnual = val;
+        fields.push({
+          label: 'Annual Variable / Performance Bonus',
+          key: 'variableBonusAnnual',
+          value: val,
+          formattedValue: `₹${val.toLocaleString('en-IN')}`,
+          confidence: 'HIGH',
+          sourceSnippet: bonusMatch[0]
+        });
+      }
+    }
+
+    // Joining / Sign-on Bonus (One-time)
+    const joiningMatch = cleanedText.match(/(?:joining\s*bonus|sign-?on\s*bonus|relocation\s*bonus|retention\s*bonus)(?:\s*\([^)]*\))?[\s:=-]+(?:target\s*|approx\s*|upto\s*|max\s*)?(?:inr|rs\.?|₹)?\s*([\d,]+(?:\.\d+)?\s*(?:lpa|lacs?|lakhs?)?)/i);
+    if (joiningMatch && joiningMatch[1]) {
+      const val = normalizeIndianNumber(joiningMatch[1]);
+      if (val && val > 0 && val < finalAnnualCtc) {
+        joiningBonus = val;
+        inputs.joiningBonusAnnual = val;
+        fields.push({
+          label: 'Joining / Sign-on Bonus (One-Time)',
+          key: 'joiningBonusAnnual',
+          value: val,
+          formattedValue: `₹${val.toLocaleString('en-IN')}`,
+          confidence: 'HIGH',
+          sourceSnippet: joiningMatch[0]
+        });
+      }
+    }
+
+    // RSUs / Stock Grants
+    const rsuMatch = cleanedText.match(/(?:(?:equity\s*(?:\/\s*rsu)?)|\brsu\b|esop|stock\s*grant|equity\s*grant|restricted\s*stock\s*units?)(?:\s*grant)?(?:\s*value)?(?:\s*\([^)]*\))?[\s:=-]+(?:target\s*|approx\s*|upto\s*)?(?:inr|rs\.?|₹|\$|usd)?\s*([\d,]+(?:\.\d+)?\s*(?:lpa|lacs?|lakhs?|cr)?)/i);
+    if (rsuMatch && rsuMatch[1]) {
+      const val = normalizeIndianNumber(rsuMatch[1]);
+      if (val && val > 0) {
+        let annualRsu = val;
+        if (/4\s*years?|over\s*4\s*years/i.test(cleanedText)) {
+          annualRsu = Math.round(val / 4);
+        }
+        esopRsuAnnual = annualRsu;
+        inputs.rsuVestedAnnual = annualRsu;
+        fields.push({
+          label: 'Annual Vested RSUs / Stocks',
+          key: 'rsuVestedAnnual',
+          value: annualRsu,
+          formattedValue: `₹${annualRsu.toLocaleString('en-IN')}/yr`,
+          confidence: 'MEDIUM',
+          sourceSnippet: rsuMatch[0]
+        });
+      }
+    }
+
+    // Statutory Gratuity & PF flags
+    if (/pf\s*capped|1800\s*pm|15000\s*ceiling|statutory\s*pf/i.test(cleanedText)) {
+      inputs.epfCapped = true;
+      employerPfAnnual = 21600;
+    } else {
+      employerPfAnnual = Math.round(basicAnnual * 0.12);
+    }
+    gratuityAnnual = Math.round(basicAnnual * (15 / (26 * 12)));
+
+    finalAnnualGross = Math.max(0, finalAnnualCtc - employerPfAnnual - gratuityAnnual - variablePayAnnual);
+    finalMonthlyGross = Math.round(finalAnnualGross / 12);
+    fixedMonthlyGross = finalMonthlyGross;
+    normalizedFixedMonthlyGross = finalMonthlyGross;
   }
 
-  // 12. Detect Tax Deductions (80C, 80D, Rent) from Form 16 / Tax sheets
-  const sec80CMatch = text.match(/(?:80c|chapter\s*vi-?a|ppf|elss)[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+)/i);
+  // Deductions from Form 16 / Tax sheets (80C, 80D, Rent)
+  const sec80CMatch = cleanedText.match(/(?:80c|chapter\s*vi-?a|ppf|elss)[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+)/i);
   if (sec80CMatch && sec80CMatch[1]) {
     const val = normalizeIndianNumber(sec80CMatch[1]);
     if (val && val > 0) {
       const capped80c = Math.min(150000, val);
       inputs.sec80C_Investments = capped80c;
-      fields.push({
-        label: 'Section 80C Deduction',
-        key: 'sec80C_Investments',
-        value: capped80c,
-        formattedValue: `₹${capped80c.toLocaleString('en-IN')}`,
-        confidence: 'MEDIUM',
-        sourceSnippet: sec80CMatch[0]
-      });
     }
   }
 
-  const sec80DMatch = text.match(/(?:80d|medical\s*insurance|health\s*insurance)[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+)/i);
+  const sec80DMatch = cleanedText.match(/(?:80d|medical\s*insurance|health\s*insurance)[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+)/i);
   if (sec80DMatch && sec80DMatch[1]) {
     const val = normalizeIndianNumber(sec80DMatch[1]);
     if (val && val > 0) {
       const capped80d = Math.min(25000, val);
       inputs.sec80D_SelfFamily = capped80d;
-      fields.push({
-        label: 'Section 80D Health Insurance',
-        key: 'sec80D_SelfFamily',
-        value: capped80d,
-        formattedValue: `₹${capped80d.toLocaleString('en-IN')}`,
-        confidence: 'MEDIUM',
-        sourceSnippet: sec80DMatch[0]
-      });
     }
   }
 
-  const rentMatch = text.match(/(?:rent\s*paid|hra\s*exemption|house\s*rent)[\s:=-]+(?:inr|rs\.?|₹)?\s*([\d,]+)/i);
-  if (rentMatch && rentMatch[1]) {
-    const val = normalizeIndianNumber(rentMatch[1]);
-    if (val && val > 0) {
-      inputs.annualRentPaid = val;
-      fields.push({
-        label: 'Annual Rent Paid',
-        key: 'annualRentPaid',
-        value: val,
-        formattedValue: `₹${val.toLocaleString('en-IN')}`,
-        confidence: 'MEDIUM',
-        sourceSnippet: rentMatch[0]
-      });
+  // Construct structured compensation breakdown object
+  const breakdown: CompensationBreakdown = {
+    documentType,
+    classificationConfidence: classification.confidence,
+    classificationReasons: classification.reasons,
+    annualCtc: finalAnnualCtc,
+    annualGrossSalary: finalAnnualGross,
+    monthlyGross: finalMonthlyGross,
+    fixedMonthlyGross,
+    normalizedFixedMonthlyGross,
+    actualMonthlyGross,
+    monthlyNetPay,
+    proration: prorationInfo,
+    earnings: {
+      basic: {
+        monthly: basicMonthly,
+        annual: basicAnnual,
+        percentageOfCtc: inputs.basicPercent || 50
+      },
+      hra: hraMonthly ? { monthly: hraMonthly, annual: hraAnnual } : undefined,
+      specialAllowance: specialMonthly ? { monthly: specialMonthly, annual: specialAnnual } : undefined,
+      conveyance: conveyanceMonthly ? { monthly: conveyanceMonthly, annual: conveyanceAnnual } : undefined,
+      medicalAllowance: medicalMonthly ? { monthly: medicalMonthly, annual: medicalAnnual } : undefined,
+      oneTimeAndVariableEarnings: oneTimeAndVariableItems.length > 0 ? oneTimeAndVariableItems : undefined,
+      totalOneTimeVariableAmount,
+      variablePayAnnual: variablePayAnnual || (totalOneTimeVariableAmount > 0 ? totalOneTimeVariableAmount : undefined),
+      joiningBonus: joiningBonus || undefined,
+      relocationBonus: relocationBonus || undefined,
+      esopRsuAnnual: esopRsuAnnual || undefined
+    },
+    deductions: {
+      employeePfMonthly: employeePfMonthly || undefined,
+      employeePfAnnual: employeePfAnnual || undefined,
+      professionalTaxMonthly: ptMonthly || undefined,
+      professionalTaxAnnual: ptAnnual || undefined,
+      tdsMonthly: tdsMonthly || undefined,
+      tdsAnnualProjected: tdsAnnualProjected || undefined,
+      totalDeductionsMonthly: totalDeductionsMonthly || (employeePfMonthly + ptMonthly + tdsMonthly) || undefined
+    },
+    employerBenefits: {
+      employerPfAnnual,
+      gratuityAnnual
+    },
+    metadata: {
+      employerName: detectedEmployer,
+      designation: detectedDesignation,
+      location: detectedLocation,
+      stateCode: inputs.stateCode,
+      isMetroCity: inputs.isMetroCity,
+      payPeriod: classification.payPeriod,
+      warnings
     }
-  }
+  };
 
   return {
     inputs,
+    breakdown,
     fields,
     rawText,
     documentType,
@@ -569,25 +1131,23 @@ export function analyzeDocumentText(rawText: string, previewUrl?: string): Parse
     detectedDesignation,
     detectedLocation,
     previewUrl,
-    detectedMonthlyNet,
-    detectedMonthlyGross,
-    detectedMonthlyBasic,
-    detectedMonthlyHra,
-    detectedMonthlyPf,
-    detectedMonthlyPt,
-    detectedMonthlyTds,
-    isMonthlyPayslip
+    detectedMonthlyNet: monthlyNetPay,
+    detectedMonthlyGross: finalMonthlyGross
   };
 }
 
-// Client-side PDF Parser using pdfjs-dist
+// ---------------------------------------------------------------------------
+// 6. Client-Side PDF Parser using pdfjs-dist
+// ---------------------------------------------------------------------------
+
 export async function parsePdfDocument(
-  file: File, 
+  file: File,
   onProgress?: (msg: string, pct: number) => void
 ): Promise<ParseResult> {
   onProgress?.('Loading PDF engine...', 15);
   const pdfjs = await import('pdfjs-dist');
-  
+
+  // Set up worker safely
   if (typeof window !== 'undefined') {
     pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version || '4.10.38'}/build/pdf.worker.min.mjs`;
   }
@@ -639,14 +1199,17 @@ export async function parsePdfDocument(
   return analyzeDocumentText(fullText, previewUrl);
 }
 
-// Client-side Image OCR Parser using tesseract.js
+// ---------------------------------------------------------------------------
+// 7. Client-Side Image OCR Parser using tesseract.js
+// ---------------------------------------------------------------------------
+
 export async function parseImageDocument(
-  imageSource: File | Blob | string, 
+  imageSource: File | Blob | string,
   onProgress?: (msg: string, pct: number) => void
 ): Promise<ParseResult> {
   onProgress?.('Initializing OCR Neural Engine...', 15);
   const { createWorker } = await import('tesseract.js');
-  
+
   let previewUrl: string | undefined;
   if (typeof imageSource === 'string') {
     previewUrl = imageSource;
@@ -664,43 +1227,21 @@ export async function parseImageDocument(
   return analyzeDocumentText(result.data.text, previewUrl);
 }
 
-// Sample presets for 1-click testing
+// ---------------------------------------------------------------------------
+// 8. Sample Presets for 1-Click Testing
+// ---------------------------------------------------------------------------
+
 export const SAMPLE_DOCUMENTS = [
-  {
-    title: 'Monthly Tech Payslip (Bangalore)',
-    subtitle: 'Net Pay ₹85,420 · Gross ₹1.05L · Bangalore 560027 (PIN Guard Test)',
-    sampleText: `
-INFOSYS TECHNOLOGIES INDIA LIMITED
-Electronics City, Hosur Road, Bangalore, Karnataka - 560027
-PAYSLIP FOR THE MONTH OF JANUARY 2026
-
-Employee Name: Rahul Sharma
-Designation: Senior Systems Engineer
-Location: Bengaluru, Karnataka
-Bank Account: XXXXXXXXXX4029 | PAN: ABCDE1234F | UAN: 100928374615
-
-EARNINGS                    AMOUNT (INR)    DEDUCTIONS                  AMOUNT (INR)
--------------------------------------------------------------------------------------
-Basic Salary                 52,500.00      Provident Fund (EPF)         6,300.00
-House Rent Allowance (HRA)   26,250.00      Professional Tax (PT)          200.00
-Special Allowance            21,250.00      Income Tax (TDS)            13,080.00
-Medical Allowance             1,250.00
-Transport Allowance           3,750.00
--------------------------------------------------------------------------------------
-TOTAL GROSS EARNINGS:       1,05,000.00     TOTAL DEDUCTIONS:           19,580.00
--------------------------------------------------------------------------------------
-NET PAY:                      85,420.00
-NET PAY IN WORDS: Rupees Eighty Five Thousand Four Hundred Twenty Only
-`
-  },
   {
     title: 'Bengaluru Tech SDE-2 Offer',
     subtitle: '₹24 LPA CTC · ₹2.5L Bonus · ₹6L RSUs · KA PT',
     sampleText: `
 COMPENSATION & BENEFITS ANNEXURE
+Offer of Employment
 Position: Senior Software Engineer (SDE-2)
 Location: Bengaluru, Karnataka
 Organisation: CloudScale Technologies India Pvt. Ltd.
+Date of Joining: 01/04/2025
 
 1. Basic Salary: INR 12,00,000 per annum (50% of CTC)
 2. House Rent Allowance (HRA): INR 6,00,000 per annum
@@ -716,26 +1257,57 @@ ADDITIONAL INCENTIVES:
 `
   },
   {
-    title: 'Mumbai Lead Offer (Metro)',
-    subtitle: '₹35 LPA CTC · ₹4L Variable · Mumbai Metro HRA',
+    title: 'Monthly Payslip (With 5 Days LWP & TDS)',
+    subtitle: '₹1.2L Normal Gross · 5 Days LWP · ₹8,000 TDS · Pincode & UAN Filtered',
     sampleText: `
-LETTER OF EMPLOYMENT & SALARY STRUCTURE
-Designation: Engineering Lead
-Location: Mumbai, Maharashtra
-Employer: FinTech Global Services Private Limited
+INFOTECH GLOBAL SOLUTIONS PVT LTD
+Survey No 45, Outer Ring Road, Bellandur, Bengaluru, Karnataka - 560103
+Pin Code: 560103, Tel: +91 9876543210
 
-ANNUAL COMPENSATION BREAKUP:
-- Basic Pay: INR 17,50,000 / annum
-- House Rent Allowance: INR 8,75,000 / annum (Metro 50%)
-- Flexible Benefit Allowance: INR 5,75,000 / annum
-- Employer Provident Fund Contribution: INR 2,10,000 / annum
-- Gratuity: INR 84,135 / annum
-- Total Fixed Cost to Company (CTC): INR 35,00,000 per annum (₹35 LPA)
+SALARY SLIP FOR THE MONTH OF AUGUST 2025
+Employee ID: EMP-98214
+Employee Name: Rahul Sharma
+Designation: Senior Software Engineer
+UAN: 101234567890
+PF No: KN/BNG/0012345/000/0001234
+Bank A/c No: 918020038472918
+PAN: ABCDE1234F
 
-VARIABLE COMPENSATION:
-- Annual Performance Incentive: Target INR 4,00,000
-- Health Insurance (Section 80D): Covered for Family up to INR 25,000
-- Rent Paid for HRA: INR 3,60,000 / year (₹30,000/month)
+ATTENDANCE DETAILS:
+Calendar Days: 30
+Paid Days: 25
+Leave Without Pay (LWP): 5
+
+EARNINGS                       AMOUNT (INR)     DEDUCTIONS                     AMOUNT (INR)
+Basic Pay                      41,667           Employee PF                    5,000
+House Rent Allowance (HRA)     20,833           Professional Tax (PT)          200
+Special Allowance              37,500           Income Tax (TDS)               8,000
+Gross Earnings (INR):          1,00,000         Total Deductions (INR):        13,200
+
+NET TAKE HOME PAY: INR 86,800
+(Rupees Eighty-Six Thousand Eight Hundred Only)
+`
+  },
+  {
+    title: 'Payslip with Annual Bonus & Arrears',
+    subtitle: '₹1.5L Gross · ₹50k Annual Bonus (1x) · ₹15k Arrears (1x) · Isolated',
+    sampleText: `
+TECH DYNAMICS INDIA PVT LTD
+PAYSLIP FOR THE MONTH OF MARCH 2026
+Employee Name: Ananya Sen | Designation: Technical Lead
+Location: Bengaluru, Karnataka | PAN: ABCDE1234F | UAN: 100987654321
+
+EARNINGS                    AMOUNT (INR)    DEDUCTIONS                  AMOUNT (INR)
+-------------------------------------------------------------------------------------
+Basic Pay                    50,000.00      Provident Fund (EPF)         6,000.00
+House Rent Allowance (HRA)   25,000.00      Professional Tax (PT)          200.00
+Special Allowance            10,000.00      Income Tax (TDS)            12,000.00
+Annual Bonus                 50,000.00
+Salary Arrears               15,000.00
+-------------------------------------------------------------------------------------
+TOTAL GROSS EARNINGS:       1,50,000.00     TOTAL DEDUCTIONS:           18,200.00
+-------------------------------------------------------------------------------------
+NET TAKE HOME PAY:          1,31,800.00
 `
   }
 ];

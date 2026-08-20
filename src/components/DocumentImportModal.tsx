@@ -334,27 +334,27 @@ export const DocumentImportModal: React.FC<DocumentImportModalProps> = ({
             <div className="space-y-6 animate-in fade-in duration-200">
               {/* Header Badge Strip */}
               <div className="p-4 rounded-2xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] flex flex-wrap items-center justify-between gap-3">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
+                <div className="space-y-1 max-w-lg">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/20">
                       ✓ {parseResult.documentType.replace('_', ' ')} PARSED
                     </span>
-                    {parseResult.detectedEmployer && (
-                      <span className="text-[13px] font-semibold text-[#171717] dark:text-white flex items-center gap-1">
-                        <Building className="w-3.5 h-3.5 text-[#888888]" />
-                        {parseResult.detectedEmployer}
+                    {parseResult.detectedEmployer && parseResult.detectedEmployer.length <= 50 && (
+                      <span className="text-[13px] font-semibold text-[#171717] dark:text-white flex items-center gap-1 truncate max-w-xs">
+                        <Building className="w-3.5 h-3.5 text-[#888888] shrink-0" />
+                        <span className="truncate">{parseResult.detectedEmployer}</span>
                       </span>
                     )}
                   </div>
-                  {parseResult.detectedDesignation && (
-                    <div className="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1] flex items-center gap-1.5">
-                      <Briefcase className="w-3.5 h-3.5 text-[#888888]" />
-                      <span>{parseResult.detectedDesignation}</span>
+                  {parseResult.detectedDesignation && parseResult.detectedDesignation.length <= 40 && (
+                    <div className="text-[12px] text-[#4d4d4d] dark:text-[#a1a1a1] flex items-center gap-1.5 truncate max-w-sm">
+                      <Briefcase className="w-3.5 h-3.5 text-[#888888] shrink-0" />
+                      <span className="truncate">{parseResult.detectedDesignation}</span>
                       {parseResult.detectedLocation && (
                         <>
                           <span className="text-[#888888]">·</span>
-                          <MapPin className="w-3.5 h-3.5 text-[#888888]" />
-                          <span>{parseResult.detectedLocation}</span>
+                          <MapPin className="w-3.5 h-3.5 text-[#888888] shrink-0" />
+                          <span className="truncate">{parseResult.detectedLocation}</span>
                         </>
                       )}
                     </div>
@@ -363,34 +363,143 @@ export const DocumentImportModal: React.FC<DocumentImportModalProps> = ({
 
                 <button
                   onClick={() => setStep('upload')}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#121212] text-[12px] font-medium text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#ebebeb] dark:border-[#262626] bg-white dark:bg-[#121212] text-[12px] font-medium text-[#4d4d4d] dark:text-[#a1a1a1] hover:text-[#171717] dark:hover:text-white transition-colors cursor-pointer shrink-0"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   <span>Scan Another</span>
                 </button>
               </div>
 
+              {/* Proration & LWP Alert Banner if detected */}
+              {parseResult.breakdown?.proration?.isProrated && (
+                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-300 text-[12px] flex items-start gap-2.5">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
+                  <div className="space-y-0.5">
+                    <strong className="font-semibold block text-[13px]">
+                      Partial Month &amp; LWP Normalization Applied
+                    </strong>
+                    <p className="text-[12px] leading-relaxed opacity-90">
+                      {parseResult.breakdown.proration.explanation}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* One-Time & Variable Earnings Isolation Banner if detected */}
+              {parseResult.breakdown?.earnings?.totalOneTimeVariableAmount > 0 && (
+                <div className="p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-700 dark:text-blue-300 text-[12px] flex items-start gap-2.5">
+                  <Zap className="w-4 h-4 shrink-0 mt-0.5 text-blue-600 dark:text-blue-400" />
+                  <div className="space-y-0.5">
+                    <strong className="font-semibold block text-[13px]">
+                      Non-Recurring Earnings Isolated ({formatINR(parseResult.breakdown.earnings.totalOneTimeVariableAmount)})
+                    </strong>
+                    <p className="text-[12px] leading-relaxed opacity-90">
+                      Components like {parseResult.breakdown.earnings.oneTimeAndVariableEarnings?.map(i => `${i.label} (${formatINR(i.amount)})`).join(', ')} were isolated and added once to the annual total without 12x multiplication.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Structured Key Figures Strip */}
+              {parseResult.breakdown && (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  <div className="p-3 rounded-xl bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-xs">
+                    <div className="text-[10px] font-mono text-[#888888] dark:text-[#737373] uppercase font-semibold">
+                      {parseResult.documentType === 'PAYSLIP' ? 'Projected Annual CTC' : 'Annual CTC'}
+                    </div>
+                    <div className="text-[15px] font-bold text-[#0070f3] mt-0.5">
+                      {formatINR(parseResult.breakdown.annualCtc)}
+                    </div>
+                    <div className="text-[10px] text-[#888888] font-mono">
+                      ₹{parseResult.breakdown.monthlyGross.toLocaleString('en-IN')}/mo Gross
+                    </div>
+                  </div>
+
+                  {parseResult.breakdown.monthlyNetPay ? (
+                    <div className="p-3 rounded-xl bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-xs">
+                      <div className="text-[10px] font-mono text-[#888888] dark:text-[#737373] uppercase font-semibold">
+                        Monthly Net Take-Home
+                      </div>
+                      <div className="text-[15px] font-bold text-[#10b981] mt-0.5">
+                        {formatINR(parseResult.breakdown.monthlyNetPay)}
+                      </div>
+                      <div className="text-[10px] text-[#888888] font-mono">
+                        Net in-hand from slip
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-3 rounded-xl bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-xs">
+                      <div className="text-[10px] font-mono text-[#888888] dark:text-[#737373] uppercase font-semibold">
+                        Base Annual Gross
+                      </div>
+                      <div className="text-[15px] font-bold text-[#171717] dark:text-white mt-0.5">
+                        {formatINR(parseResult.breakdown.annualGrossSalary)}
+                      </div>
+                      <div className="text-[10px] text-[#888888] font-mono">
+                        Excl. Employer Benefits
+                      </div>
+                    </div>
+                  )}
+
+                  {parseResult.breakdown.deductions.tdsMonthly ? (
+                    <div className="p-3 rounded-xl bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-xs">
+                      <div className="text-[10px] font-mono text-[#888888] dark:text-[#737373] uppercase font-semibold">
+                        Monthly TDS (Tax)
+                      </div>
+                      <div className="text-[15px] font-bold text-[#ee0000] mt-0.5">
+                        {formatINR(parseResult.breakdown.deductions.tdsMonthly)}
+                      </div>
+                      <div className="text-[10px] text-[#888888] font-mono">
+                        Projected ₹{parseResult.breakdown.deductions.tdsAnnualProjected?.toLocaleString('en-IN')}/yr
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-3 rounded-xl bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-xs">
+                      <div className="text-[10px] font-mono text-[#888888] dark:text-[#737373] uppercase font-semibold">
+                        Employer Benefits
+                      </div>
+                      <div className="text-[15px] font-bold text-[#171717] dark:text-white mt-0.5">
+                        {formatINR(parseResult.breakdown.employerBenefits.employerPfAnnual + parseResult.breakdown.employerBenefits.gratuityAnnual)}
+                      </div>
+                      <div className="text-[10px] text-[#888888] font-mono">
+                        EPF &amp; Gratuity / yr
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="p-3 rounded-xl bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-xs">
+                    <div className="text-[10px] font-mono text-[#888888] dark:text-[#737373] uppercase font-semibold">
+                      Basic Salary (% CTC)
+                    </div>
+                    <div className="text-[15px] font-bold text-[#171717] dark:text-white mt-0.5">
+                      {parseResult.breakdown.earnings.basic.percentageOfCtc}%
+                    </div>
+                    <div className="text-[10px] text-[#888888] font-mono">
+                      ₹{parseResult.breakdown.earnings.basic.monthly.toLocaleString('en-IN')}/mo Basic
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Two Column Layout: Document / Preview + Extracted Values */}
               <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                {/* Left Preview / Raw text (4 Cols) */}
+                {/* Left Preview / Document Structure Card (5 Cols) */}
                 <div className="md:col-span-5 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-[12px] font-mono uppercase text-[#888888] dark:text-[#737373] font-semibold">
-                      Document Source
+                      Document Source &amp; Extraction
                     </span>
-                    <button
-                      onClick={() => setShowRawText(!showRawText)}
-                      className="text-[11px] font-mono text-[#0070f3] hover:underline cursor-pointer"
-                    >
-                      {showRawText ? 'Show Preview' : 'Show Raw Text'}
-                    </button>
+                    {parseResult.previewUrl && (
+                      <button
+                        onClick={() => setShowRawText(!showRawText)}
+                        className="text-[11px] font-mono text-[#0070f3] hover:underline cursor-pointer"
+                      >
+                        {showRawText ? 'Show Image' : 'Show Summary'}
+                      </button>
+                    )}
                   </div>
 
-                  {showRawText || !parseResult.previewUrl ? (
-                    <div className="h-64 p-3 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] overflow-y-auto font-mono text-[11px] text-[#4d4d4d] dark:text-[#a1a1a1] whitespace-pre-wrap leading-relaxed">
-                      {parseResult.rawText}
-                    </div>
-                  ) : (
+                  {!showRawText && parseResult.previewUrl ? (
                     <div className="h-64 rounded-xl border border-[#ebebeb] dark:border-[#262626] overflow-hidden bg-[#fafafa] dark:bg-[#181818] relative group">
                       <img
                         src={parseResult.previewUrl}
@@ -399,15 +508,97 @@ export const DocumentImportModal: React.FC<DocumentImportModalProps> = ({
                       />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-3 text-center">
                         <span className="text-white text-[12px] font-medium bg-black/60 px-3 py-1.5 rounded-full">
-                          Scanned on device
+                          Scanned locally on device
                         </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="h-64 p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] overflow-y-auto space-y-3">
+                      <div className="flex items-center gap-2.5 pb-2.5 border-b border-[#ebebeb] dark:border-[#262626]">
+                        <div className="p-2 rounded-lg bg-[#0070f3]/10 text-[#0070f3] shrink-0">
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-[12px] font-bold text-[#171717] dark:text-white block truncate">
+                            {parseResult.detectedEmployer || 'Extracted Document'}
+                          </span>
+                          <span className="text-[10px] font-mono text-[#888888] dark:text-[#737373] block truncate">
+                            {parseResult.detectedDesignation || parseResult.documentType.replace('_', ' ')}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Structured Detected Line Items */}
+                      <div className="space-y-2 text-[11px] font-mono">
+                        {parseResult.breakdown?.earnings?.basic?.monthly ? (
+                          <div className="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+                            <span>Basic Salary:</span>
+                            <span className="font-semibold text-[#171717] dark:text-white">
+                              {formatINR(parseResult.breakdown.earnings.basic.monthly)}/mo
+                            </span>
+                          </div>
+                        ) : null}
+
+                        {parseResult.breakdown?.earnings?.hra?.monthly ? (
+                          <div className="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+                            <span>HRA:</span>
+                            <span className="font-semibold text-[#171717] dark:text-white">
+                              {formatINR(parseResult.breakdown.earnings.hra.monthly)}/mo
+                            </span>
+                          </div>
+                        ) : null}
+
+                        {parseResult.breakdown?.earnings?.specialAllowance?.monthly ? (
+                          <div className="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+                            <span>Special Allowance:</span>
+                            <span className="font-semibold text-[#171717] dark:text-white">
+                              {formatINR(parseResult.breakdown.earnings.specialAllowance.monthly)}/mo
+                            </span>
+                          </div>
+                        ) : null}
+
+                        {parseResult.breakdown?.deductions?.employeePfMonthly ? (
+                          <div className="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+                            <span>Employee PF (12%):</span>
+                            <span className="font-semibold text-[#ee0000]">
+                              -{formatINR(parseResult.breakdown.deductions.employeePfMonthly)}/mo
+                            </span>
+                          </div>
+                        ) : null}
+
+                        {parseResult.breakdown?.deductions?.professionalTaxMonthly ? (
+                          <div className="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+                            <span>Professional Tax:</span>
+                            <span className="font-semibold text-[#ee0000]">
+                              -{formatINR(parseResult.breakdown.deductions.professionalTaxMonthly)}/mo
+                            </span>
+                          </div>
+                        ) : null}
+
+                        {parseResult.breakdown?.deductions?.tdsMonthly ? (
+                          <div className="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+                            <span>Monthly TDS (Tax):</span>
+                            <span className="font-semibold text-[#ee0000]">
+                              -{formatINR(parseResult.breakdown.deductions.tdsMonthly)}/mo
+                            </span>
+                          </div>
+                        ) : null}
+
+                        {parseResult.breakdown?.monthlyNetPay ? (
+                          <div className="pt-2 border-t border-[#ebebeb] dark:border-[#262626] flex justify-between font-bold text-[#10b981] text-[12px]">
+                            <span>Net In-Hand (From Slip):</span>
+                            <span>{formatINR(parseResult.breakdown.monthlyNetPay)}/mo</span>
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                   )}
 
-                  <div className="space-y-1 text-[11px] text-[#888888] dark:text-[#737373] font-mono">
-                    <div>Fields Extracted: <strong className="text-[#171717] dark:text-white">{parseResult.fields.length} items</strong></div>
-                    <div>Confidence: <span className="text-[#10b981] font-semibold">High / Neural Validated</span></div>
+                  <div className="flex items-center justify-between text-[11px] text-[#888888] dark:text-[#737373] font-mono pt-0.5">
+                    <span>Fields Extracted: <strong className="text-[#171717] dark:text-white">{parseResult.fields.length}</strong></span>
+                    <span className="text-[#10b981] font-semibold flex items-center gap-1">
+                      <ShieldCheck className="w-3 h-3" /> Verified Structure
+                    </span>
                   </div>
                 </div>
 

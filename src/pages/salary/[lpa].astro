@@ -1,102 +1,51 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { SalaryCalculator } from '../../components/SalaryCalculator';
-import FaqSection from '../../components/FaqSection.astro';
-import ProximitySidebar, { type ProximitySection } from '../../components/ProximitySidebar';
+import FaqSection, { type FAQItem } from '../../components/FaqSection.astro';
 import { calculateSalary, DEFAULT_SALARY_INPUTS } from '../../lib/taxEngine';
 import { formatINR } from '../../lib/formatters';
+import { ArrowRight, CheckCircle2, ShieldCheck, Sparkles, TrendingUp, HelpCircle } from 'lucide-react';
 
-const sections: ProximitySection[] = [
-  {
-    id: "salary-inputs",
-    label: "Salary Inputs & CTC",
-    level: 1,
-    subItems: [
-      { label: "Annual Cost to Company (CTC)" },
-      { label: "Upload & Scan Payslip (PDF/Image)" },
-      { label: "Maximize In-Hand Tax Optimizer" },
-      { label: "State Professional Tax (PT)" },
-      { label: "CTC Range Slider & Preset Chips" },
-      { label: "Cash vs Bonus & ESOP Split" },
-    ],
-  },
-  {
-    id: "take-home-summary",
-    label: "Monthly Take-Home",
-    level: 2,
-    subItems: [
-      { label: "Optimal Regime Recommendation" },
-      { label: "Net Monthly In-Hand (Credited)" },
-      { label: "Annual Net Pay & Effective Tax" },
-      { label: "Visual Salary Distribution Chart" },
-      { label: "Real Cash vs Paper Money Breakdown" },
-      { label: "Salary Percentile Rank & Benchmark" },
-    ],
-  },
-  {
-    id: "regime-comparison",
-    label: "Regime Comparison",
-    level: 2,
-    subItems: [
-      { label: "Budget 2024 New Regime Slabs" },
-      { label: "Standard Deduction (₹75,000)" },
-      { label: "Section 87A Rebate & Marginal Relief" },
-      { label: "Old Tax Regime Deductions" },
-      { label: "Side-by-Side Dual Matrix" },
-    ],
-  },
-  {
-    id: "tax-deductions",
-    label: "Deductions & HRA",
-    level: 3,
-    subItems: [
-      { label: "Basic Salary & HRA Exemption (10(13A))" },
-      { label: "Section 80C Deductions (EPF, PPF, ELSS)" },
-      { label: "Section 80D Health Insurance" },
-      { label: "NPS Tier-1 & Employer NPS (80CCD)" },
-      { label: "EPF Statutory Cap (₹1,800/mo) vs 12%" },
-      { label: "Gratuity & Terminal Benefits" },
-    ],
-  },
-  {
-    id: "faq",
-    label: "FAQs & Guide",
-    level: 3,
-    subItems: [
-      { label: "In-Hand Salary Calculation Formula" },
-      { label: "₹7.75L Tax-Free Threshold in New Regime" },
-      { label: "Take-Home Slabs (4 LPA - 50 LPA)" },
-      { label: "Section 87A Marginal Relief Protection" },
-      { label: "HRA Exemption Calculation Rules" },
-      { label: "State-wise Professional Tax Rules" },
-    ],
-  },
+export const ALL_PACKAGES = [
+  { lpa: '3-lpa', ctc: 300000, label: '3 LPA', popular: true },
+  { lpa: '3-25-lpa', ctc: 325000, label: '3.25 LPA' },
+  { lpa: '3-36-lpa', ctc: 336000, label: '3.36 LPA' },
+  { lpa: '3-5-lpa', ctc: 350000, label: '3.5 LPA' },
+  { lpa: '3-6-lpa', ctc: 360000, label: '3.6 LPA' },
+  { lpa: '3-8-lpa', ctc: 380000, label: '3.8 LPA' },
+  { lpa: '4-lpa', ctc: 400000, label: '4 LPA', popular: true },
+  { lpa: '4-25-lpa', ctc: 425000, label: '4.25 LPA' },
+  { lpa: '4-5-lpa', ctc: 450000, label: '4.5 LPA', popular: true },
+  { lpa: '5-lpa', ctc: 500000, label: '5 LPA', popular: true },
+  { lpa: '6-lpa', ctc: 600000, label: '6 LPA', popular: true },
+  { lpa: '6-5-lpa', ctc: 650000, label: '6.5 LPA' },
+  { lpa: '7-lpa', ctc: 700000, label: '7 LPA' },
+  { lpa: '7-5-lpa', ctc: 750000, label: '7.5 LPA', popular: true },
+  { lpa: '8-lpa', ctc: 800000, label: '8 LPA' },
+  { lpa: '8-5-lpa', ctc: 850000, label: '8.5 LPA' },
+  { lpa: '9-lpa', ctc: 900000, label: '9 LPA' },
+  { lpa: '9-5-lpa', ctc: 950000, label: '9.5 LPA' },
+  { lpa: '10-lpa', ctc: 1000000, label: '10 LPA', popular: true },
+  { lpa: '11-lpa', ctc: 1100000, label: '11 LPA' },
+  { lpa: '12-lpa', ctc: 1200000, label: '12 LPA', popular: true },
+  { lpa: '13-lpa', ctc: 1300000, label: '13 LPA' },
+  { lpa: '14-lpa', ctc: 1400000, label: '14 LPA' },
+  { lpa: '15-lpa', ctc: 1500000, label: '15 LPA', popular: true },
+  { lpa: '16-lpa', ctc: 1600000, label: '16 LPA' },
+  { lpa: '18-lpa', ctc: 1800000, label: '18 LPA', popular: true },
+  { lpa: '20-lpa', ctc: 2000000, label: '20 LPA', popular: true },
+  { lpa: '22-lpa', ctc: 2200000, label: '22 LPA' },
+  { lpa: '25-lpa', ctc: 2500000, label: '25 LPA', popular: true },
+  { lpa: '30-lpa', ctc: 3000000, label: '30 LPA', popular: true },
+  { lpa: '35-lpa', ctc: 3500000, label: '35 LPA' },
+  { lpa: '40-lpa', ctc: 4000000, label: '40 LPA' },
+  { lpa: '50-lpa', ctc: 5000000, label: '50 LPA', popular: true },
+  { lpa: '75-lpa', ctc: 7500000, label: '75 LPA' },
+  { lpa: '1-cr', ctc: 10000000, label: '1 Crore', popular: true },
 ];
 
 export function getStaticPaths() {
-  const packages = [
-    { lpa: '3-lpa', ctc: 300000, label: '3 LPA' },
-    { lpa: '4-lpa', ctc: 400000, label: '4 LPA' },
-    { lpa: '4-5-lpa', ctc: 450000, label: '4.5 LPA' },
-    { lpa: '5-lpa', ctc: 500000, label: '5 LPA' },
-    { lpa: '6-lpa', ctc: 600000, label: '6 LPA' },
-    { lpa: '7-lpa', ctc: 700000, label: '7 LPA' },
-    { lpa: '7-5-lpa', ctc: 750000, label: '7.5 LPA' },
-    { lpa: '8-lpa', ctc: 800000, label: '8 LPA' },
-    { lpa: '9-lpa', ctc: 900000, label: '9 LPA' },
-    { lpa: '10-lpa', ctc: 1000000, label: '10 LPA' },
-    { lpa: '12-lpa', ctc: 1200000, label: '12 LPA' },
-    { lpa: '15-lpa', ctc: 1500000, label: '15 LPA' },
-    { lpa: '18-lpa', ctc: 1800000, label: '18 LPA' },
-    { lpa: '20-lpa', ctc: 2000000, label: '20 LPA' },
-    { lpa: '25-lpa', ctc: 2500000, label: '25 LPA' },
-    { lpa: '30-lpa', ctc: 3000000, label: '30 LPA' },
-    { lpa: '40-lpa', ctc: 4000000, label: '40 LPA' },
-    { lpa: '50-lpa', ctc: 5000000, label: '50 LPA' },
-    { lpa: '1-cr', ctc: 10000000, label: '1 Crore' },
-  ];
-
-  return packages.map(pkg => ({
+  return ALL_PACKAGES.map(pkg => ({
     params: { lpa: pkg.lpa },
     props: { pkg }
   }));
@@ -105,52 +54,158 @@ export function getStaticPaths() {
 const { pkg } = Astro.props;
 const analysis = calculateSalary({ ...DEFAULT_SALARY_INPUTS, annualCtc: pkg.ctc });
 const bestRegime = analysis.betterRegime === 'OLD' ? analysis.oldRegime : analysis.newRegime;
+
+// Freshers 3 to 4.5 LPA Comparison Benchmarks
+const fresherBands = [
+  { label: '3.0 LPA', ctc: 300000, link: '/salary/3-lpa', role: 'Entry Fresher / Trainee' },
+  { label: '3.25 LPA', ctc: 325000, link: '/salary/3-25-lpa', role: 'TCS Ninja Fresher' },
+  { label: '3.36 LPA', ctc: 336000, link: '/salary/3-36-lpa', role: 'Infosys Systems Engineer' },
+  { label: '3.5 LPA', ctc: 350000, link: '/salary/3-5-lpa', role: 'Wipro Project Engineer / Accenture ASE' },
+  { label: '3.6 LPA', ctc: 360000, link: '/salary/3-6-lpa', role: 'Cognizant GenC' },
+  { label: '4.0 LPA', ctc: 400000, link: '/salary/4-lpa', role: 'Capgemini Analyst' },
+  { label: '4.5 LPA', ctc: 450000, link: '/salary/4-5-lpa', role: 'Accenture Advanced ASE / Tech Mahindra' },
+].map(band => {
+  const bandAnalysis = calculateSalary({ ...DEFAULT_SALARY_INPUTS, annualCtc: band.ctc });
+  const bandBest = bandAnalysis.betterRegime === 'OLD' ? bandAnalysis.oldRegime : bandAnalysis.newRegime;
+  return {
+    ...band,
+    monthlyGross: bandAnalysis.monthlyGross,
+    monthlyTakeHome: bandBest.monthlyTakeHome,
+    monthlyPf: bandBest.monthlyEmployeePf,
+    annualTax: bandBest.totalAnnualTax
+  };
+});
+
+// Monthly Take-Home to LPA Reverse Conversion Table (Answers "80000 in LPA", "50000 in LPA")
+const monthlyConversions = [
+  { monthlyInHand: 25000, approxCtc: 325000, ctcLabel: '3.25 LPA', link: '/salary/3-25-lpa' },
+  { monthlyInHand: 30000, approxCtc: 390000, ctcLabel: '3.9 LPA - 4 LPA', link: '/salary/4-lpa' },
+  { monthlyInHand: 34800, approxCtc: 450000, ctcLabel: '4.5 LPA', link: '/salary/4-5-lpa' },
+  { monthlyInHand: 40000, approxCtc: 520000, ctcLabel: '5.2 LPA', link: '/salary/5-lpa' },
+  { monthlyInHand: 50000, approxCtc: 660000, ctcLabel: '6.5 LPA - 7 LPA', link: '/salary/6-5-lpa' },
+  { monthlyInHand: 60000, approxCtc: 800000, ctcLabel: '8 LPA - 8.5 LPA', link: '/salary/8-lpa' },
+  { monthlyInHand: 70000, approxCtc: 950000, ctcLabel: '9.5 LPA - 10 LPA', link: '/salary/10-lpa' },
+  { monthlyInHand: 80000, approxCtc: 1100000, ctcLabel: '11 LPA - 11.5 LPA', link: '/salary/11-lpa' },
+  { monthlyInHand: 100000, approxCtc: 1450000, ctcLabel: '14.5 LPA - 15 LPA', link: '/salary/15-lpa' },
+  { monthlyInHand: 125000, approxCtc: 1800000, ctcLabel: '18 LPA', link: '/salary/18-lpa' },
+  { monthlyInHand: 150000, approxCtc: 2300000, ctcLabel: '23 LPA - 24 LPA', link: '/salary/25-lpa' },
+  { monthlyInHand: 200000, approxCtc: 3200000, ctcLabel: '32 LPA - 35 LPA', link: '/salary/35-lpa' },
+];
+
+// Targeted Package FAQ items
+const packageFaqs: FAQItem[] = [
+  {
+    question: `What is the exact monthly in hand salary for ${pkg.label} in India?`,
+    answer: `<p>For a package of <strong>${pkg.label} CTC (${formatINR(pkg.ctc)} per annum)</strong>, your estimated monthly in hand salary is approximately <strong>${formatINR(bestRegime.monthlyTakeHome)} per month</strong> under the ${analysis.betterRegime} Tax Regime (assuming standard 50% Basic Salary and 12% Employee Provident Fund deduction). Annual take-home pay is approximately <strong>${formatINR(bestRegime.annualTakeHome)}</strong>.</p>`
+  },
+  {
+    question: `Is income tax deducted on a ${pkg.label} package in India?`,
+    answer: bestRegime.totalAnnualTax === 0
+      ? `<p><strong>No income tax is payable on ₹${pkg.label} CTC</strong> under the New Tax Regime (Budget 2024). After the ₹75,000 Standard Deduction, your net taxable income is well within the ₹7,00,000 limit, qualifying for <strong>100% tax rebate under Section 87A (₹0 Income Tax)</strong>.</p>`
+      : `<p>Under the ${analysis.betterRegime} Tax Regime, the projected annual income tax on ₹${pkg.label} is approximately <strong>${formatINR(bestRegime.totalAnnualTax)} per year (~${formatINR(Math.round(bestRegime.totalAnnualTax / 12))}/month TDS)</strong>. You can lower this by optimizing HRA exemptions and 80C deductions.</p>`
+  },
+  {
+    question: `What are the monthly PF and Professional Tax deductions for ${pkg.label}?`,
+    answer: `<p>For ${pkg.label} CTC, monthly deductions typically comprise:<br />• <strong>Employee Provident Fund (EPF):</strong> ~${formatINR(Math.round(analysis.employeePfAnnual / 12))}/month (12% of basic pay)<br />• <strong>Professional Tax (PT):</strong> ₹200/month (in states like Karnataka, Maharashtra, Telangana)<br />• <strong>Employer Benefits included in CTC:</strong> Employer PF (${formatINR(analysis.employerPfAnnual)}/yr) and Gratuity (${formatINR(analysis.gratuityAnnual)}/yr).</p>`
+  },
+  {
+    question: `What is the difference between New and Old Tax Regime for ${pkg.label}?`,
+    answer: `<p>For ${pkg.label}, the <strong>${analysis.betterRegime} Tax Regime</strong> provides higher in-hand take-home pay (saving approximately <strong>${formatINR(analysis.annualTaxSavings)} per year</strong>). The New Regime offers a flat ₹75,000 standard deduction with zero paperwork, while the Old Regime requires at least ~₹3.75L+ in 80C, 80D, and HRA deductions to break even.</p>`
+  }
+];
+
+// Rich Structured Data for Package Page (BreadcrumbList + FAQPage)
+const packageSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://inhander.com"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Salary Slabs",
+          "item": "https://inhander.com/tax-slabs"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": `${pkg.label} In Hand Salary`,
+          "item": `https://inhander.com/salary/${pkg.lpa}`
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": packageFaqs.map(faq => ({
+        "@type": "Question",
+        "name": faq.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.answer.replace(/<[^>]+>/g, '')
+        }
+      }))
+    }
+  ]
+};
 ---
 
 <Layout
-  title={`₹${pkg.label} In Hand Salary in India (FY 2025-26 & 26-27) | inHander.com`}
-  description={`Calculate exact ₹${pkg.label} in-hand salary per month. Monthly take-home is approximately ${formatINR(bestRegime.monthlyTakeHome)}/mo with ${formatINR(bestRegime.totalAnnualTax)} annual income tax under the ${analysis.betterRegime} Tax Regime.`}
+  title={`${pkg.label} In Hand Salary: ${formatINR(bestRegime.monthlyTakeHome)}/Month Take-Home (FY 2025-26) | inHander`}
+  description={`Calculate exact ₹${pkg.label} in hand salary per month in India (FY 2025-26 & 26-27). Monthly take-home is ${formatINR(bestRegime.monthlyTakeHome)}/mo with ${bestRegime.totalAnnualTax === 0 ? '₹0 income tax (100% tax-free under Section 87A)' : `${formatINR(bestRegime.totalAnnualTax)} annual tax`}. See detailed Basic, HRA, EPF, and take-home calculator.`}
+  keywords={`in hand salary calculator, ${pkg.label} in hand salary, ${pkg.label} in hand salary per month, ${pkg.label} ctc to in hand, ${pkg.label} take home salary, ${pkg.label} monthly salary, ${pkg.label} salary slip, in hand salary calculator india, 3 to 4.5 lpa in hand salary, 80000 in lpa`}
   activeTab="calculator"
 >
-  <!-- Pinned Proximity Sidebar (Hidden on mobile/tablet, visible on desktop) -->
-  <div class="fixed right-2 top-1/2 -translate-y-1/2 z-40 hidden xl:flex">
-    <ProximitySidebar client:load sections={sections} side="right" />
-  </div>
+  <!-- Injected Schema.org Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify(packageSchema)} />
 
-  <div class="space-y-10">
+  <div class="space-y-12">
     <!-- Package Hero Header -->
     <section class="text-center space-y-4 max-w-4xl mx-auto pt-4">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm">
-        <span class="text-[12px] font-mono font-medium text-[#4d4d4d] dark:text-[#a1a1a1]">
-          Pre-Computed Package Breakdown · FY 2025-26 & 26-27
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm">
+        <Sparkles class="w-3.5 h-3.5 text-[#0070f3]" />
+        <span class="text-[12px] font-mono font-semibold text-[#171717] dark:text-white">
+          Verified Indian Compensation Benchmark · Budget 2024 Slabs
         </span>
       </div>
 
       <h1 class="text-3xl sm:text-5xl font-bold text-[#171717] dark:text-white tracking-tight">
-        ₹{pkg.label} In Hand Salary.
+        ₹{pkg.label} In Hand Salary
       </h1>
 
       <p class="text-base sm:text-lg text-[#4d4d4d] dark:text-[#a1a1a1] max-w-2xl mx-auto leading-relaxed">
-        For an annual CTC of <strong class="text-[#171717] dark:text-white">{formatINR(pkg.ctc)}</strong>, your estimated monthly in-hand take-home salary is <strong class="text-[#10b981] font-mono text-xl">{formatINR(bestRegime.monthlyTakeHome)}/month</strong>.
+        For an annual CTC of <strong class="text-[#171717] dark:text-white">{formatINR(pkg.ctc)}</strong>, your estimated monthly in hand salary is <strong class="text-[#10b981] font-mono text-xl sm:text-2xl">{formatINR(bestRegime.monthlyTakeHome)}/month</strong>.
       </p>
 
       {/* Snapshot cards */}
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto pt-4 text-left">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5 max-w-3xl mx-auto pt-4 text-left">
         <div class="p-4 rounded-xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm">
           <span class="text-[11px] font-mono uppercase text-[#888888] dark:text-[#737373] block">Monthly In-Hand</span>
           <span class="text-xl sm:text-2xl font-bold font-mono text-[#10b981]">{formatINR(bestRegime.monthlyTakeHome)}</span>
+          <span class="text-[10px] text-[#888888] block mt-0.5">Credited to bank</span>
         </div>
         <div class="p-4 rounded-xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm">
           <span class="text-[11px] font-mono uppercase text-[#888888] dark:text-[#737373] block">Annual Net Pay</span>
           <span class="text-xl sm:text-2xl font-bold font-mono text-[#171717] dark:text-white">{formatINR(bestRegime.annualTakeHome)}</span>
+          <span class="text-[10px] text-[#888888] block mt-0.5">Total annual cash</span>
         </div>
         <div class="p-4 rounded-xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm">
           <span class="text-[11px] font-mono uppercase text-[#888888] dark:text-[#737373] block">Annual Income Tax</span>
-          <span class="text-xl sm:text-2xl font-bold font-mono text-[#ee0000]">{formatINR(bestRegime.totalAnnualTax)}</span>
+          <span class="text-xl sm:text-2xl font-bold font-mono text-[#ee0000]">
+            {bestRegime.totalAnnualTax === 0 ? '₹0 (Tax Free)' : formatINR(bestRegime.totalAnnualTax)}
+          </span>
+          <span class="text-[10px] text-[#888888] block mt-0.5">{bestRegime.totalAnnualTax === 0 ? 'Sec 87A rebate' : 'TDS liability'}</span>
         </div>
         <div class="p-4 rounded-xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm">
           <span class="text-[11px] font-mono uppercase text-[#888888] dark:text-[#737373] block">Best Tax Regime</span>
-          <span class="text-xl sm:text-2xl font-bold font-mono text-[#0070f3]">{analysis.betterRegime}</span>
+          <span class="text-xl sm:text-2xl font-bold font-mono text-[#0070f3]">{analysis.betterRegime} Regime</span>
+          <span class="text-[10px] text-[#10b981] block mt-0.5">+{formatINR(analysis.annualTaxSavings)}/yr savings</span>
         </div>
       </div>
     </section>
@@ -160,48 +215,196 @@ const bestRegime = analysis.betterRegime === 'OLD' ? analysis.oldRegime : analys
       <SalaryCalculator client:load initialCtc={pkg.ctc} />
     </section>
 
-    <!-- CTC Breakdown Narrative Section -->
-    <section class="max-w-5xl mx-auto p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-4">
-      <h2 class="text-xl font-bold text-[#171717] dark:text-white">Detailed CTC Structure for ₹{pkg.label}</h2>
-      <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
-        Under standard corporate compensation structures in India (assuming 50% Basic Salary split and Metro location):
-      </p>
+    <!-- CTC Breakdown Narrative & Structure Section -->
+    <section id="package-breakdown" class="max-w-5xl mx-auto p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-6">
+      <div>
+        <span class="text-[11px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] font-semibold block">
+          Corporate Salary Structure Breakdown
+        </span>
+        <h2 class="text-xl sm:text-2xl font-bold text-[#171717] dark:text-white mt-1">
+          Detailed Monthly &amp; Annual Components for ₹{pkg.label}
+        </h2>
+        <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed mt-1">
+          Under standard Indian corporate compensation structures (assuming 50% Basic Salary allocation, Bangalore/Mumbai Metro HRA, and standard statutory EPF):
+        </p>
+      </div>
+
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[13px]">
-        <div class="space-y-1.5 p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626]">
-          <strong class="text-[#171717] dark:text-white block font-mono text-[12px] uppercase">Annual Earnings</strong>
-          <div class="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
+        {/* Earnings Side */}
+        <div class="space-y-2 p-5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626]">
+          <strong class="text-[#0070f3] block font-mono text-[12px] uppercase font-bold">
+            1. Monthly Earnings (Gross Pay)
+          </strong>
+          <div class="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1] pt-1">
             <span>Basic Salary (50%):</span>
-            <span class="font-mono text-[#171717] dark:text-white">{formatINR(analysis.basicAnnual)}</span>
+            <span class="font-mono font-semibold text-[#171717] dark:text-white">{formatINR(Math.round(analysis.basicAnnual / 12))}/mo ({formatINR(analysis.basicAnnual)}/yr)</span>
           </div>
           <div class="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
             <span>House Rent Allowance (HRA):</span>
-            <span class="font-mono text-[#171717] dark:text-white">{formatINR(analysis.hraAnnual)}</span>
+            <span class="font-mono text-[#171717] dark:text-white">{formatINR(Math.round(analysis.hraAnnual / 12))}/mo</span>
           </div>
           <div class="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
             <span>Special Allowance:</span>
-            <span class="font-mono text-[#171717] dark:text-white">{formatINR(analysis.specialAllowanceAnnual)}</span>
+            <span class="font-mono text-[#171717] dark:text-white">{formatINR(Math.round(analysis.specialAllowanceAnnual / 12))}/mo</span>
+          </div>
+          <div class="pt-2 border-t border-[#ebebeb] dark:border-[#262626] flex justify-between font-semibold text-[#171717] dark:text-white">
+            <span>Total Gross Monthly Earnings:</span>
+            <span class="font-mono text-[#0070f3]">{formatINR(analysis.monthlyGross)}/mo</span>
           </div>
         </div>
 
-        <div class="space-y-1.5 p-4 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626]">
-          <strong class="text-[#171717] dark:text-white block font-mono text-[12px] uppercase">Annual Deductions & Statutory</strong>
-          <div class="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
-            <span>Employee Provident Fund (12%):</span>
-            <span class="font-mono text-[#171717] dark:text-white">{formatINR(analysis.employeePfAnnual)}</span>
+        {/* Deductions Side */}
+        <div class="space-y-2 p-5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626]">
+          <strong class="text-[#ee0000] block font-mono text-[12px] uppercase font-bold">
+            2. Monthly Deductions &amp; Taxes
+          </strong>
+          <div class="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1] pt-1">
+            <span>Employee PF (12% of basic):</span>
+            <span class="font-mono text-[#171717] dark:text-white">-{formatINR(Math.round(analysis.employeePfAnnual / 12))}/mo</span>
           </div>
           <div class="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
             <span>Professional Tax (Bengaluru/Mumbai):</span>
-            <span class="font-mono text-[#171717] dark:text-white">{formatINR(analysis.ptAnnual)}</span>
+            <span class="font-mono text-[#171717] dark:text-white">-₹200/mo</span>
           </div>
           <div class="flex justify-between text-[#4d4d4d] dark:text-[#a1a1a1]">
-            <span>Income Tax TDS ({analysis.betterRegime} Regime):</span>
-            <span class="font-mono text-[#ee0000]">{formatINR(bestRegime.totalAnnualTax)}</span>
+            <span>Income Tax (TDS in {analysis.betterRegime} Regime):</span>
+            <span class="font-mono text-[#ee0000]">
+              {bestRegime.totalAnnualTax === 0 ? '-₹0/mo (Tax Free)' : `-${formatINR(Math.round(bestRegime.totalAnnualTax / 12))}/mo`}
+            </span>
+          </div>
+          <div class="pt-2 border-t border-[#ebebeb] dark:border-[#262626] flex justify-between font-bold text-[#10b981]">
+            <span>Net Monthly In-Hand Salary:</span>
+            <span class="font-mono text-[15px]">{formatINR(bestRegime.monthlyTakeHome)}/mo</span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- FAQ -->
-    <FaqSection />
+    <!-- Freshers IT Salary Bands: 3 LPA to 4.5 LPA Comparison Section -->
+    <section class="max-w-5xl mx-auto p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#ebebeb] dark:border-[#262626] pb-4">
+        <div>
+          <span class="text-[11px] font-mono uppercase tracking-wider text-[#0070f3] font-semibold block">
+            Fresher IT Package Benchmarks
+          </span>
+          <h2 class="text-xl font-bold text-[#171717] dark:text-white mt-0.5">
+            3 LPA to 4.5 LPA In Hand Salary Comparison (TCS, Infosys, Wipro, Accenture)
+          </h2>
+        </div>
+        <span class="px-2.5 py-1 rounded-full text-[11px] font-mono bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/20 shrink-0">
+          100% Tax-Free Zone (₹0 Tax)
+        </span>
+      </div>
+
+      <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed">
+        Entry-level campus hires in Indian IT companies (TCS Ninja, Infosys SE, Wipro Elite, Cognizant GenC, Accenture ASE) typically receive packages between ₹3 LPA and ₹4.5 LPA. Because all taxable incomes below ₹7.75 Lakhs qualify for the Section 87A full tax rebate under Budget 2024, <strong>zero income tax is deducted</strong> on any of these packages.
+      </p>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-[13px] border-collapse">
+          <thead>
+            <tr class="border-b border-[#ebebeb] dark:border-[#262626] text-[11px] font-mono uppercase text-[#888888] dark:text-[#737373]">
+              <th class="py-3 px-3">Annual Package (CTC)</th>
+              <th class="py-3 px-3">Typical Company &amp; Role</th>
+              <th class="py-3 px-3">Monthly Gross</th>
+              <th class="py-3 px-3">Monthly EPF</th>
+              <th class="py-3 px-3 text-[#10b981]">Net In-Hand / Month</th>
+              <th class="py-3 px-3 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#ebebeb] dark:divide-[#262626] font-mono">
+            {fresherBands.map((band) => (
+              <tr class={`hover:bg-[#fafafa] dark:hover:bg-[#181818] transition-colors ${band.label === pkg.label ? 'bg-[#0070f3]/5 font-semibold' : ''}`}>
+                <td class="py-3.5 px-3 text-[#171717] dark:text-white font-bold">
+                  ₹{band.label}
+                  {band.label === pkg.label && (
+                    <span class="ml-1.5 text-[10px] px-1.5 py-0.5 rounded bg-[#0070f3] text-white">Current</span>
+                  )}
+                </td>
+                <td class="py-3.5 px-3 font-sans text-[#4d4d4d] dark:text-[#a1a1a1]">{band.role}</td>
+                <td class="py-3.5 px-3 text-[#171717] dark:text-white">{formatINR(band.monthlyGross)}</td>
+                <td class="py-3.5 px-3 text-[#888888]">-{formatINR(band.monthlyPf)}</td>
+                <td class="py-3.5 px-3 text-[#10b981] font-bold text-[14px]">
+                  {formatINR(band.monthlyTakeHome)}
+                </td>
+                <td class="py-3.5 px-3 text-right font-sans">
+                  <a href={band.link} class="inline-flex items-center gap-1 text-[12px] font-medium text-[#0070f3] hover:underline">
+                    <span>View</span>
+                    <ArrowRight class="w-3 h-3" />
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Monthly Salary to LPA Reverse Reference Table (Answers "80000 in LPA") -->
+    <section class="max-w-5xl mx-auto p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-5">
+      <div>
+        <span class="text-[11px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] font-semibold block">
+          Monthly to Annual Reverse Lookup
+        </span>
+        <h2 class="text-xl font-bold text-[#171717] dark:text-white mt-0.5">
+          Target Monthly Take-Home to Required Annual CTC Converter
+        </h2>
+        <p class="text-[13px] text-[#4d4d4d] dark:text-[#a1a1a1] leading-relaxed mt-1">
+          Wondering <strong>"What is ₹80,000 monthly take home in LPA?"</strong> or <strong>"How much CTC is needed for ₹50k or ₹1 Lakh per month?"</strong>. Use this reverse conversion chart:
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 font-mono">
+        {monthlyConversions.map((conv) => (
+          <a
+            href={conv.link}
+            class="p-3.5 rounded-xl bg-[#fafafa] dark:bg-[#181818] border border-[#ebebeb] dark:border-[#262626] hover:border-[#0070f3] dark:hover:border-[#38bdf8] transition-all group block shadow-2xs"
+          >
+            <span class="text-[11px] text-[#888888] dark:text-[#737373] block uppercase">Monthly Take-Home</span>
+            <div class="text-[16px] font-bold text-[#10b981] group-hover:text-[#0070f3] transition-colors">
+              {formatINR(conv.monthlyInHand)}/mo
+            </div>
+            <div class="text-[12px] text-[#171717] dark:text-white font-sans mt-1">
+              Requires <strong>₹{conv.ctcLabel}</strong> CTC
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- All Salary Packages Explorer Grid -->
+    <section class="max-w-5xl mx-auto p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#121212] border border-[#ebebeb] dark:border-[#262626] shadow-stacked-sm space-y-5">
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="text-[11px] font-mono uppercase tracking-wider text-[#888888] dark:text-[#737373] font-semibold block">
+            Complete Salary Directory
+          </span>
+          <h2 class="text-lg sm:text-xl font-bold text-[#171717] dark:text-white">
+            Explore All In Hand Salary Packages (3 LPA - 1 Crore)
+          </h2>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2 text-[12px] font-mono">
+        {ALL_PACKAGES.map((p) => {
+          const isCurrent = p.label === pkg.label;
+          return (
+            <a
+              href={`/salary/${p.lpa}`}
+              class={`p-2.5 rounded-lg border text-center transition-all ${
+                isCurrent
+                  ? 'bg-[#171717] dark:bg-white text-white dark:text-[#171717] border-[#171717] dark:border-white font-bold'
+                  : 'bg-[#fafafa] dark:bg-[#181818] text-[#4d4d4d] dark:text-[#a1a1a1] border-[#ebebeb] dark:border-[#262626] hover:text-[#171717] dark:hover:text-white hover:border-[#0070f3]'
+              }`}
+            >
+              {p.label}
+            </a>
+          );
+        })}
+      </div>
+    </section>
+
+    <!-- Targeted Package FAQs -->
+    <FaqSection items={packageFaqs} title={`Frequently Asked Questions for ${pkg.label} Package.`} />
   </div>
 </Layout>
