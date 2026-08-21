@@ -30,7 +30,9 @@ import {
   Printer,
   Compass,
   TrendingUp,
-  BarChart3
+  BarChart3,
+  ArrowRight,
+  AlertTriangle
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -76,12 +78,19 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({ initialCtc }
   const [isEditingCtc, setIsEditingCtc] = useState(false);
   const [ctcInputValue, setCtcInputValue] = useState(() => formatINR(inputs.annualCtc).replace('₹', ''));
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [hasAcknowledgedAdvanced, setHasAcknowledgedAdvanced] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('inhander_adv_acked') === 'true';
+    }
+    return false;
+  });
 
   // Payslip customization state
   const [employeeDesignation, setEmployeeDesignation] = useState('Senior Software Engineer');
   const [employerCompanyName, setEmployerCompanyName] = useState('Tech Enterprises India Pvt. Ltd.');
 
   const resultsRef = useRef<HTMLDivElement>(null);
+  const advancedSectionRef = useRef<HTMLDivElement>(null);
 
   // Sync formatted text when inputs.annualCtc changes outside direct typing
   useEffect(() => {
@@ -177,6 +186,9 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({ initialCtc }
   };
 
   const handleCalculateClick = () => {
+    if (isEditingCtc) {
+      handleCtcInputBlur();
+    }
     try {
       confetti({
         particleCount: 50,
@@ -186,7 +198,10 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({ initialCtc }
     } catch {
       // ignore
     }
-    showToast(`Calculated: ${formatINR(analysis.compensationSplit.monthlyGuaranteedInHand)}/month take-home`);
+    if (resultsRef.current && typeof window !== 'undefined' && window.innerWidth < 768) {
+      resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    showToast(`Calculated: ${formatINR(analysis.compensationSplit.monthlyGuaranteedInHand)}/mo take-home`);
   };
 
   // 1-Click Maximize In-Hand Optimizer
@@ -224,6 +239,24 @@ export const SalaryCalculator: React.FC<SalaryCalculatorProps> = ({ initialCtc }
       // ignore
     }
     showToast("Deductions maximized");
+  };
+
+  const handleOpenAdvancedSettings = () => {
+    setIsAdvancedOpen(true);
+    setHasAcknowledgedAdvanced(true);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('inhander_adv_acked', 'true');
+      } catch {
+        // ignore
+      }
+    }
+    setTimeout(() => {
+      if (advancedSectionRef.current) {
+        advancedSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 60);
+    showToast("Advanced settings expanded");
   };
 
   const handleShareLink = () => {
@@ -332,17 +365,17 @@ Generated via inHander.com
         
         {/* Top Input Area with Generous Whitespace */}
         <div className="p-8 sm:p-12 lg:p-14 bg-[#fafafa]/60 dark:bg-[#161616]/60">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 lg:gap-12">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 lg:gap-12">
             
             {/* Input Zone */}
-            <div className="space-y-4 w-full lg:w-auto">
-              <label className="text-sm font-normal text-[#666666] dark:text-[#999999] block">
+            <div className="space-y-2.5 w-full lg:w-auto">
+              <label className="text-xs sm:text-sm font-medium text-[#666666] dark:text-[#999999] block">
                 Annual Cost to Company (CTC)
               </label>
               
-              {/* Typeable CTC Display */}
-              <div className="flex items-baseline gap-3 w-full">
-                <div className="flex-1 sm:flex-initial inline-flex items-baseline gap-2 bg-white dark:bg-[#1a1a1a] px-5 py-3 rounded-2xl shadow-xs focus-within:ring-2 focus-within:ring-[#0070f3]/20 transition-all min-w-0">
+              {/* Typeable CTC Display + Embedded Calculate Button */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full">
+                <div className="flex-1 sm:flex-initial inline-flex items-center gap-2 bg-white dark:bg-[#1a1a1a] px-4 sm:px-5 h-12 sm:h-13 rounded-2xl shadow-xs border border-[#ebebeb] dark:border-[#262626] focus-within:ring-2 focus-within:ring-[#0070f3]/30 transition-all min-w-0">
                   <span className="text-2xl sm:text-3xl font-medium text-[#888888] dark:text-[#777777] select-none shrink-0">
                     ₹
                   </span>
@@ -358,18 +391,27 @@ Generated via inHander.com
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         (e.target as HTMLInputElement).blur();
+                        handleCalculateClick();
                       }
                     }}
-                    className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#171717] dark:text-white tracking-tight bg-transparent border-0 focus:outline-hidden w-full sm:w-56 lg:w-64 min-w-0"
+                    className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#171717] dark:text-white tracking-tight bg-transparent border-0 focus:outline-hidden w-full sm:w-52 lg:w-60 min-w-0"
                     placeholder="12,00,000"
                     aria-label="Annual Cost to Company (CTC)"
                   />
                   <Pencil className="w-3.5 h-3.5 text-[#aaaaaa] opacity-50 shrink-0 self-center" />
+                  <span className="text-xs sm:text-sm text-[#888888] dark:text-[#777777] font-normal shrink-0 ml-1">
+                    / yr
+                  </span>
                 </div>
-                
-                <span className="text-base sm:text-lg text-[#888888] dark:text-[#777777] font-normal shrink-0">
-                  / year
-                </span>
+
+                <button
+                  type="button"
+                  onClick={handleCalculateClick}
+                  className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 h-12 sm:h-13 rounded-2xl bg-[#171717] dark:bg-white text-white dark:text-[#171717] font-semibold text-sm hover:opacity-90 active:scale-95 transition-all shadow-sm cursor-pointer shrink-0"
+                >
+                  <span>Calculate</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
             </div>
 
@@ -378,7 +420,7 @@ Generated via inHander.com
               <button
                 type="button"
                 onClick={() => setIsImportModalOpen(true)}
-                className="inline-flex items-center justify-center gap-1.5 px-3.5 h-11 sm:h-12 rounded-xl bg-white dark:bg-[#1a1a1a] hover:bg-[#f0f0f0] dark:hover:bg-[#242424] text-[#555555] dark:text-[#aaaaaa] hover:text-[#171717] dark:hover:text-white text-xs sm:text-sm font-medium transition-all cursor-pointer touch-manipulation text-center shadow-2xs"
+                className="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 h-12 sm:h-13 rounded-2xl bg-white dark:bg-[#1a1a1a] hover:bg-[#f0f0f0] dark:hover:bg-[#242424] text-[#555555] dark:text-[#aaaaaa] hover:text-[#171717] dark:hover:text-white text-xs sm:text-sm font-medium transition-all cursor-pointer touch-manipulation text-center shadow-xs border border-[#ebebeb] dark:border-[#262626]"
                 title="Upload & Scan Payslip (PDF / Image)"
               >
                 <Upload className="w-3.5 h-3.5 text-[#0070f3] shrink-0" />
@@ -388,14 +430,14 @@ Generated via inHander.com
               <button
                 type="button"
                 onClick={handleOptimizeTax}
-                className="inline-flex items-center justify-center gap-1.5 px-3.5 h-11 sm:h-12 rounded-xl bg-white dark:bg-[#1a1a1a] hover:bg-[#f0f0f0] dark:hover:bg-[#242424] text-[#555555] dark:text-[#aaaaaa] hover:text-[#171717] dark:hover:text-white text-xs sm:text-sm font-medium transition-all cursor-pointer touch-manipulation text-center shadow-2xs"
+                className="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 h-12 sm:h-13 rounded-2xl bg-white dark:bg-[#1a1a1a] hover:bg-[#f0f0f0] dark:hover:bg-[#242424] text-[#555555] dark:text-[#aaaaaa] hover:text-[#171717] dark:hover:text-white text-xs sm:text-sm font-medium transition-all cursor-pointer touch-manipulation text-center shadow-xs border border-[#ebebeb] dark:border-[#262626]"
                 title="Maximize Tax Deductions"
               >
                 <Zap className="w-3.5 h-3.5 text-[#f5a623] shrink-0" />
                 <span>{isOptimized ? 'Optimized' : 'Optimize'}</span>
               </button>
 
-              <div className="inline-flex items-center justify-center gap-1 px-3 h-11 sm:h-12 rounded-xl bg-white dark:bg-[#1a1a1a] text-[#555555] dark:text-[#aaaaaa] hover:text-[#171717] dark:hover:text-white shadow-2xs transition-colors">
+              <div className="inline-flex items-center justify-center gap-1 px-3 sm:px-3.5 h-12 sm:h-13 rounded-2xl bg-white dark:bg-[#1a1a1a] text-[#555555] dark:text-[#aaaaaa] hover:text-[#171717] dark:hover:text-white shadow-xs border border-[#ebebeb] dark:border-[#262626] transition-colors">
                 <MapPin className="w-3.5 h-3.5 shrink-0 text-[#888888]" />
                 <select
                   value={inputs.stateCode}
@@ -483,13 +525,34 @@ Generated via inHander.com
                   </button>
                 </div>
 
-                {/* Savings Pill */}
-                {analysis.annualTaxSavings > 0 && (
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ecfdf5] dark:bg-[#064e3b]/30 text-[#059669] dark:text-[#34d399] text-xs font-medium shrink-0">
-                    <Sparkles className="w-3.5 h-3.5 shrink-0" />
-                    <span>+{formatINR(analysis.annualTaxSavings)}/yr in {analysis.betterRegime}</span>
-                  </div>
-                )}
+                {/* Savings Pill & Caution Button */}
+                <div className="flex items-center gap-2">
+                  {analysis.annualTaxSavings > 0 && (
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ecfdf5] dark:bg-[#064e3b]/30 text-[#059669] dark:text-[#34d399] text-xs font-medium shrink-0">
+                      <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                      <span>+{formatINR(analysis.annualTaxSavings)}/yr in {analysis.betterRegime}</span>
+                    </div>
+                  )}
+
+                  {/* Caution Button (Icon Only - Redirects to Advanced Settings) */}
+                  <button
+                    type="button"
+                    onClick={handleOpenAdvancedSettings}
+                    className={`w-7 h-7 rounded-full flex items-center justify-center transition-all cursor-pointer group shadow-2xs hover:scale-105 active:scale-95 shrink-0 ${
+                      hasAcknowledgedAdvanced || isAdvancedOpen
+                        ? 'bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#777777] dark:text-[#888888] hover:text-[#171717] dark:hover:text-white border border-transparent'
+                        : 'bg-[#fffbeb] dark:bg-[#78350f]/30 hover:bg-[#fef3c7] dark:hover:bg-[#78350f]/50 text-[#d97706] dark:text-[#fbbf24] border border-[#fde68a] dark:border-[#92400e]/50'
+                    }`}
+                    title="Use advanced settings to get the accurate values"
+                    aria-label="Use advanced settings to get the accurate values"
+                  >
+                    <AlertTriangle className={`w-3.5 h-3.5 shrink-0 transition-transform ${
+                      hasAcknowledgedAdvanced || isAdvancedOpen
+                        ? 'text-[#777777] dark:text-[#888888] group-hover:text-[#171717] dark:group-hover:text-white'
+                        : 'text-[#d97706] dark:text-[#fbbf24] group-hover:scale-110'
+                    }`} />
+                  </button>
+                </div>
               </div>
 
               {/* LEVEL 1: Large, Bold Final Take-Home Pay Number */}
@@ -568,7 +631,11 @@ Generated via inHander.com
       {/* ========================================================================= */}
       {/* LAYER 2: INPUT ACCORDION (ADVANCED SETTINGS)                               */}
       {/* ========================================================================= */}
-      <div className="bg-white dark:bg-[#121212] rounded-3xl overflow-hidden shadow-sm transition-all">
+      <div 
+        ref={advancedSectionRef} 
+        id="advanced-settings-section" 
+        className="bg-white dark:bg-[#121212] rounded-3xl overflow-hidden shadow-sm transition-all scroll-mt-28"
+      >
         {/* Accordion Trigger Header */}
         <button
           type="button"

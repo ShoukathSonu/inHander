@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import { SalaryCalculator } from '../components/SalaryCalculator';
 import FaqSection from '../components/FaqSection.astro';
-import { ShieldCheck, Zap, Lock, Upload } from 'lucide-react';
+import { Check } from 'lucide-react';
 ---
 
 <Layout 
@@ -11,37 +11,41 @@ import { ShieldCheck, Zap, Lock, Upload } from 'lucide-react';
   keywords="In Hand Salary, in hand salary calculator, in hand salary calculator india, calculate in hand salary, india in hand salary calculator, lpa in hand salary, tax calculator, income tax calculator, paycheck tax calculator, 4 lpa in hand salary, 4.5 lpa in hand salary, 10 lpa in hand salary, 12 lpa in hand salary, 18 lpa in hand salary, in hand salary calculator after tax"
   activeTab="calculator"
 >
-  <!-- Hero Band with Generous Whitespace -->
-  <section class="text-center space-y-6 pt-6 sm:pt-10 pb-12 sm:pb-20 max-w-5xl mx-auto px-2 sm:px-4">
+  <!-- Hero Band -->
+  <section class="text-center space-y-3 sm:space-y-4 pt-2 sm:pt-4 pb-5 sm:pb-7 max-w-5xl mx-auto px-2 sm:px-4">
     <!-- Section Eyebrow -->
     <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/5 dark:bg-white/5 text-xs text-[#666666] dark:text-[#999999] font-normal">
       <span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
       <span>Budget 2024 / FY 2025-26 &amp; 26-27 Slabs Active</span>
     </div>
 
-    <!-- Hero Headline (Fits in one line across all viewports) -->
-    <h1 class="text-[1.4rem] min-[360px]:text-[1.65rem] min-[420px]:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#171717] dark:text-white tracking-tight leading-tight whitespace-nowrap">
+    <!-- Hero Headline (Solid monochrome without gradient) -->
+    <h1 class="text-3xl min-[420px]:text-4xl sm:text-5xl lg:text-6xl font-bold text-[#171717] dark:text-white tracking-tight leading-tight">
       Calculate your in hand salary.
     </h1>
 
-    <!-- Subhead -->
-    <p class="text-sm sm:text-base text-[#666666] dark:text-[#999999] max-w-2xl mx-auto leading-relaxed font-normal">
-      Convert your CTC to exact monthly take-home pay. Side-by-side Dual Tax Regime comparison, HRA exemption, EPF statutory cap, and instant payslip PDF export.
+    <!-- Punchy Human-Readable Subhead -->
+    <p class="text-sm sm:text-base md:text-lg text-[#666666] dark:text-[#a1a1a1] max-w-2xl mx-auto leading-relaxed font-normal">
+      Convert your CTC to exact monthly take-home pay. Instantly compare tax regimes, optimize deductions, and generate a secure payslip.
     </p>
 
-    <!-- Quick Highlights (Single horizontal line) -->
-    <div class="flex items-center justify-center gap-2 sm:gap-2.5 pt-2 text-[11px] sm:text-xs text-[#777777] dark:text-[#888888] overflow-x-auto sm:overflow-visible pb-1 sm:pb-0 scrollbar-none whitespace-nowrap snap-x">
-      <span class="inline-flex items-center gap-1.5 bg-black/5 dark:bg-white/5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full shrink-0 snap-start">
-        <ShieldCheck className="w-3.5 h-3.5 text-[#10b981]" /> ₹7.75L tax-free in New Regime
+    <!-- Clean Secondary Trust Signals (Zero Pill Background Clutter) -->
+    <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-1 text-[11px] sm:text-xs text-[#737373] dark:text-[#888888] font-normal">
+      <span class="inline-flex items-center gap-1.5">
+        <Check className="w-3.5 h-3.5 text-[#10b981] shrink-0" />
+        <span>₹7.75L tax-free in New Regime</span>
       </span>
-      <span class="inline-flex items-center gap-1.5 bg-black/5 dark:bg-white/5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full shrink-0 snap-start">
-        <Upload className="w-3.5 h-3.5 text-[#0070f3]" /> Upload payslip &amp; PDF
+      <span class="inline-flex items-center gap-1.5">
+        <Check className="w-3.5 h-3.5 text-[#10b981] shrink-0" />
+        <span>Dual Tax Regime Comparison</span>
       </span>
-      <span class="inline-flex items-center gap-1.5 bg-black/5 dark:bg-white/5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full shrink-0 snap-start">
-        <Zap className="w-3.5 h-3.5 text-[#f5a623]" /> 1-Click tax optimizer
+      <span class="inline-flex items-center gap-1.5">
+        <Check className="w-3.5 h-3.5 text-[#10b981] shrink-0" />
+        <span>1-Click Payslip PDF</span>
       </span>
-      <span class="inline-flex items-center gap-1.5 bg-black/5 dark:bg-white/5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full shrink-0 snap-start">
-        <Lock className="w-3.5 h-3.5 text-[#10b981]" /> 100% Client-side private
+      <span class="inline-flex items-center gap-1.5">
+        <Check className="w-3.5 h-3.5 text-[#10b981] shrink-0" />
+        <span>100% Client-Side Private</span>
       </span>
     </div>
   </section>
